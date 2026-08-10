@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Pencil, X, ArrowUpDown } from 'lucide-react';
 import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m } from './registroConstants';
+import DrawerSelect from './DrawerSelect';
 
 const CONF = {
   a: {
@@ -132,11 +133,14 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </div>
         <div className="min-w-0">
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Tipologia</label>
-          <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-            className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu">
-            <option value="">— Seleziona —</option>
-            {c.tipi.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <DrawerSelect
+            value={form.tipo}
+            onChange={(v) => setForm({ ...form, tipo: v })}
+            options={c.tipi}
+            placeholder="— Seleziona —"
+            label="Tipologia"
+            className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
+          />
         </div>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">{c.noteLabel}</label>
@@ -150,8 +154,31 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
       {err && <div className="px-4 py-1.5 text-[11px] text-rosso bg-rosso-light">{err}</div>}
 
-      {/* Tabella */}
-      <table className="w-full border-collapse text-xs">
+      {/* Mobile cards */}
+      <div className="md:hidden divide-y divide-bordo">
+        {sorted.map((v) => (
+          <div key={v.id} className="px-3 py-2.5 flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-foreground">{fmtD(v.data)}</span>
+                <span className="text-[10px] text-grigio whitespace-nowrap">{v.inizio}–{v.fine}</span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 min-w-0">
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.pillClass} truncate max-w-full`} title={v.tipo}>{v.tipo}</span>
+                {v.note && <span className="text-grigio text-[10px] truncate">{v.note}</span>}
+              </div>
+            </div>
+            <div className="text-sm font-semibold text-blu whitespace-nowrap">{m2h(v.durata_min)}</div>
+            <div className="flex shrink-0">
+              <button onClick={() => onEdit(v)} className="w-11 h-11 flex items-center justify-center text-grigio hover:text-blu rounded-lg hover:bg-blu-light transition-colors" title="Modifica" aria-label="Modifica"><Pencil size={18} /></button>
+              <button onClick={() => onDelete(v.id)} className="w-11 h-11 flex items-center justify-center text-grigio hover:text-rosso rounded-lg hover:bg-rosso-light transition-colors" title="Elimina" aria-label="Elimina"><X size={18} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <table className="hidden md:table w-full border-collapse text-xs">
         <thead>
           <tr>
             {[

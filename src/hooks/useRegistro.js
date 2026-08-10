@@ -96,58 +96,90 @@ export function useRegistro() {
   }, [anni, reloadAnni]);
 
   const addAttivita = useCallback(async (sez, record) => {
+    const tempId = 'temp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+    const tempRec = { ...record, sezione: sez, anno_scolastico: annoCorrente, id: tempId, created_date: new Date().toISOString() };
+    const setter = sez === 'a' ? setAttivitaA : setAttivitaB;
+    setter((prev) => [...prev, tempRec]);
     setSaving(true);
     try {
-      await base44.entities.Attivita.create({ ...record, sezione: sez, anno_scolastico: annoCorrente });
-      await loadData(annoCorrente);
+      const created = await base44.entities.Attivita.create({ ...record, sezione: sez, anno_scolastico: annoCorrente });
+      setter((prev) => prev.map((x) => (x.id === tempId ? created : x)));
+    } catch (e) {
+      setter((prev) => prev.filter((x) => x.id !== tempId));
     } finally {
       setSaving(false);
     }
-  }, [annoCorrente, loadData]);
+  }, [annoCorrente]);
 
   const updateAttivita = useCallback(async (id, record) => {
+    const inA = attivitaA.some((x) => x.id === id);
+    const setter = inA ? setAttivitaA : setAttivitaB;
+    const prev = (inA ? attivitaA : attivitaB).find((x) => x.id === id);
+    setter((p) => p.map((x) => (x.id === id ? { ...x, ...record } : x)));
     setSaving(true);
     try {
       await base44.entities.Attivita.update(id, record);
-      await loadData(annoCorrente);
+    } catch (e) {
+      setter((p) => p.map((x) => (x.id === id ? prev : x)));
     } finally {
       setSaving(false);
     }
-  }, [annoCorrente, loadData]);
+  }, [attivitaA, attivitaB]);
 
   const deleteAttivita = useCallback(async (id) => {
+    const inA = attivitaA.some((x) => x.id === id);
+    const setter = inA ? setAttivitaA : setAttivitaB;
+    const prev = (inA ? attivitaA : attivitaB).find((x) => x.id === id);
+    setter((p) => p.filter((x) => x.id !== id));
     setSaving(true);
     try {
       await base44.entities.Attivita.delete(id);
-      await loadData(annoCorrente);
+    } catch (e) {
+      setter((p) => [...p, prev]);
     } finally {
       setSaving(false);
     }
-  }, [annoCorrente, loadData]);
+  }, [attivitaA, attivitaB]);
 
   const svuotaSezione = useCallback(async (sez) => {
+    const setter = sez === 'a' ? setAttivitaA : setAttivitaB;
+    const backup = sez === 'a' ? [...attivitaA] : [...attivitaB];
+    setter([]);
     setSaving(true);
     try {
       await base44.entities.Attivita.deleteMany({ sezione: sez, anno_scolastico: annoCorrente });
-      await loadData(annoCorrente);
+    } catch (e) {
+      setter(backup);
     } finally {
       setSaving(false);
     }
-  }, [annoCorrente, loadData]);
+  }, [attivitaA, attivitaB, annoCorrente]);
 
   const saveScuola = useCallback(async (data) => {
+    const backup = scuola;
     setSaving(true);
-    try {
-      if (scuola?.id) {
+    if (scuola?.id) {
+      setScuola({ ...scuola, ...data });
+      try {
         await base44.entities.Scuola.update(scuola.id, data);
-      } else {
-        await base44.entities.Scuola.create({ ...data, anno_scolastico: annoCorrente });
+      } catch (e) {
+        setScuola(backup);
+      } finally {
+        setSaving(false);
       }
-      await loadData(annoCorrente);
-    } finally {
-      setSaving(false);
+    } else {
+      const temp = { ...data, anno_scolastico: annoCorrente, id: 'temp-' + Date.now() };
+      setScuola(temp);
+      try {
+        const created = await base44.entities.Scuola.create({ ...data, anno_scolastico: annoCorrente });
+        setScuola(created);
+      } catch (e) {
+        setScuola(backup);
+      } finally {
+        setSaving(false);
+      }
     }
-  }, [scuola, annoCorrente, loadData]);
+  }, [scuola, annoCorrente]);
 
   const saveProfile = useCallback(async (p, nome) => {
     setSaving(true);
@@ -168,6 +200,21 @@ export function useRegistro() {
     } catch (e) { /* ignore */ }
   }, [profilo]);
 
+  const deleteAccount = useCallback(async () => {
+    setSaving(true);
+    try {
+      await base44.functions.invoke('deleteAccount', {});
+      await base44.auth.logout();
+    } catch (e) {
+      setSaving(false);
+      throw e;
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    base44.auth.logout();
+  }, []);
+
   return {
     user, profilo, nomeDocente,
     anni, annoCorrente, setAnnoCorrente,
@@ -176,6 +223,7 @@ export function useRegistro() {
     cambiaAnno, nuovoAnno,
     addAttivita, updateAttivita, deleteAttivita, svuotaSezione,
     saveScuola, saveProfile, updateNomeDocente,
+    deleteAccount, logout,
     suggerisciProssimo: () => (anni.length ? suggerisciAnno(anni[anni.length - 1]) : '2026/2027'),
   };
 }

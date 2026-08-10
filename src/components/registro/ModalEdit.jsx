@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TIPI_A, TIPI_B, t2m } from './registroConstants';
+import DrawerSelect from './DrawerSelect';
 
 export default function ModalEdit({ open, record, sezione, onClose, onSave, saving }) {
   const [form, setForm] = useState({ data: '', inizio: '', fine: '', tipo: '', note: '' });
@@ -50,11 +51,14 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
           </div>
           <div className="col-span-2">
             <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Tipologia</label>
-            <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-              className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu">
-              <option value="">— Seleziona —</option>
-              {tipi.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <DrawerSelect
+              value={form.tipo}
+              onChange={(v) => setForm({ ...form, tipo: v })}
+              options={tipi}
+              placeholder="— Seleziona —"
+              label="Tipologia"
+              className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+            />
           </div>
           <div className="col-span-2">
             <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Note</label>

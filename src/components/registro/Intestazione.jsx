@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Settings } from 'lucide-react';
 
-export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, onEditNome, onEditScuola }) {
+export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, onEditNome, onEditScuola, onOpenSettings }) {
   const [nome, setNome] = useState(nomeDocente);
 
   useEffect(() => {
@@ -40,6 +40,13 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, on
           className="bg-none border-none text-blu text-[11px] underline cursor-pointer flex items-center gap-1"
         >
           <Pencil size={11} /> dati scuola
+        </button>
+        <button
+          onClick={onOpenSettings}
+          className="bg-none border-none text-grigio text-[11px] cursor-pointer flex items-center gap-1 ml-1"
+          aria-label="Impostazioni profilo"
+        >
+          <Settings size={12} /> profilo
         </button>
       </div>
     </div>

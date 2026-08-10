@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRegistro } from '@/hooks/useRegistro';
 import NavAnni from '@/components/registro/NavAnni';
 import Intestazione from '@/components/registro/Intestazione';
@@ -7,19 +8,34 @@ import ModalEdit from '@/components/registro/ModalEdit';
 import ModalScuola from '@/components/registro/ModalScuola';
 import NuovoAnnoModal from '@/components/registro/NuovoAnnoModal';
 import ProfileSetup from '@/components/registro/ProfileSetup';
+import ProfileSettings from '@/components/registro/ProfileSettings';
 import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
 import BarChartTipologie from '@/components/registro/BarChartTipologie';
+import BottomTabs from '@/components/registro/BottomTabs';
 import { esportaPDF } from '@/components/registro/pdfExport';
 
 export default function Home() {
   const r = useRegistro();
-  const [editRecord, setEditRecord] = useState(null);
-  const [editSezione, setEditSezione] = useState('a');
-  const [scuolaOpen, setScuolaOpen] = useState(false);
-  const [nuovoAnnoOpen, setNuovoAnnoOpen] = useState(false);
-  const [vista, setVista] = useState('registro');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const vista = searchParams.get('tab') || 'registro';
+  const modal = searchParams.get('modal');
+  const editId = searchParams.get('id');
+
+  function patchParams(updates, replace = false) {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([k, v]) => {
+      if (v == null || v === '') next.delete(k);
+      else next.set(k, v);
+    });
+    setSearchParams(next, { replace });
+  }
+
+  const setVista = (v) => patchParams({ tab: v });
+  const openModal = (name, id) => patchParams({ modal: name, id: id || null });
+  const closeModal = () => patchParams({ modal: null, id: null }, true);
 
   if (r.loading) {
     return (
@@ -33,10 +49,9 @@ export default function Home() {
     return <ProfileSetup nomeIniziale={r.nomeDocente} onSave={r.saveProfile} saving={r.saving} />;
   }
 
-  function handleEdit(v) {
-    setEditSezione(v.sezione);
-    setEditRecord(v);
-  }
+  const allAttivita = [...r.attivitaA, ...r.attivitaB];
+  const editRecord = editId ? allAttivita.find((a) => a.id === editId) : null;
+  const editSezione = editRecord?.sezione || 'a';
 
   function handleExport() {
     esportaPDF({
@@ -50,8 +65,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f6f2] pb-12 font-body text-foreground">
-      {/* Strip */}
+    <div className="min-h-screen bg-[#f7f6f2] pb-24 md:pb-12 font-body text-foreground">
       <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
 
       <div className="max-w-[820px] mx-auto px-3">
@@ -60,7 +74,8 @@ export default function Home() {
           nomeDocente={r.nomeDocente}
           scuolaNome={r.scuola?.nome}
           onEditNome={r.updateNomeDocente}
-          onEditScuola={() => setScuolaOpen(true)}
+          onEditScuola={() => openModal('scuola')}
+          onOpenSettings={() => openModal('profilo')}
         />
 
         <div className="h-3" />
@@ -69,11 +84,11 @@ export default function Home() {
           anni={r.anni}
           annoCorrente={r.annoCorrente}
           onCambia={r.cambiaAnno}
-          onNuovo={() => setNuovoAnnoOpen(true)}
+          onNuovo={() => openModal('nuovoanno')}
           disabled={r.saving}
         />
 
-        <div className="flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1">
+        <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none">
           {[
             { k: 'registro', l: 'Registro' },
             { k: 'calendario', l: 'Calendario' },
@@ -97,7 +112,7 @@ export default function Home() {
               sezione="a"
               dati={r.attivitaA}
               onAdd={(rec) => r.addAttivita('a', rec)}
-              onEdit={handleEdit}
+              onEdit={(v) => openModal('edit', v.id)}
               onDelete={r.deleteAttivita}
               onSvuota={() => r.svuotaSezione('a')}
               onExport={handleExport}
@@ -107,7 +122,7 @@ export default function Home() {
               sezione="b"
               dati={r.attivitaB}
               onAdd={(rec) => r.addAttivita('b', rec)}
-              onEdit={handleEdit}
+              onEdit={(v) => openModal('edit', v.id)}
               onDelete={r.deleteAttivita}
               onSvuota={() => r.svuotaSezione('b')}
               onExport={handleExport}
@@ -117,17 +132,17 @@ export default function Home() {
         )}
 
         {vista === 'calendario' && (
-          <CalendarioMese attivita={[...r.attivitaA, ...r.attivitaB]} />
+          <CalendarioMese attivita={allAttivita} />
         )}
 
         {vista === 'statistiche' && (
           <div className="space-y-4">
             <BarChartTipologie
-              attivita={[...r.attivitaA, ...r.attivitaB]}
+              attivita={allAttivita}
               titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
             />
             <PieChartTipologie
-              attivita={[...r.attivitaA, ...r.attivitaB]}
+              attivita={allAttivita}
               titolo="Distribuzione ore per tipologia — Totale anno"
             />
             <div className="grid md:grid-cols-2 gap-4">
@@ -140,27 +155,38 @@ export default function Home() {
         <FooterLegale />
       </div>
 
+      <BottomTabs vista={vista} onChange={setVista} />
+
       <ModalEdit
-        open={!!editRecord}
+        open={modal === 'edit' && !!editRecord}
         record={editRecord}
         sezione={editSezione}
-        onClose={() => setEditRecord(null)}
-        onSave={(id, rec) => { r.updateAttivita(id, rec); setEditRecord(null); }}
+        onClose={closeModal}
+        onSave={(id, rec) => { r.updateAttivita(id, rec); closeModal(); }}
         saving={r.saving}
       />
       <ModalScuola
-        open={scuolaOpen}
+        open={modal === 'scuola'}
         annoCorrente={r.annoCorrente}
         scuola={r.scuola}
-        onClose={() => setScuolaOpen(false)}
-        onSave={(data) => { r.saveScuola(data); setScuolaOpen(false); }}
+        onClose={closeModal}
+        onSave={(data) => { r.saveScuola(data); closeModal(); }}
         saving={r.saving}
       />
       <NuovoAnnoModal
-        open={nuovoAnnoOpen}
+        open={modal === 'nuovoanno'}
         suggerito={r.suggerisciProssimo()}
-        onClose={() => setNuovoAnnoOpen(false)}
-        onCrea={(nome) => { r.nuovoAnno(nome); setNuovoAnnoOpen(false); }}
+        onClose={closeModal}
+        onCrea={(nome) => { r.nuovoAnno(nome); closeModal(); }}
+      />
+      <ProfileSettings
+        open={modal === 'profilo'}
+        profilo={r.profilo}
+        nomeDocente={r.nomeDocente}
+        onClose={closeModal}
+        onLogout={r.logout}
+        onDeleteAccount={r.deleteAccount}
+        saving={r.saving}
       />
     </div>
   );
