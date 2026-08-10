@@ -8,6 +8,8 @@ import ModalScuola from '@/components/registro/ModalScuola';
 import NuovoAnnoModal from '@/components/registro/NuovoAnnoModal';
 import ProfileSetup from '@/components/registro/ProfileSetup';
 import FooterLegale from '@/components/registro/FooterLegale';
+import CalendarioMese from '@/components/registro/CalendarioMese';
+import PieChartTipologie from '@/components/registro/PieChartTipologie';
 import { esportaPDF } from '@/components/registro/pdfExport';
 
 export default function Home() {
@@ -16,6 +18,7 @@ export default function Home() {
   const [editSezione, setEditSezione] = useState('a');
   const [scuolaOpen, setScuolaOpen] = useState(false);
   const [nuovoAnnoOpen, setNuovoAnnoOpen] = useState(false);
+  const [vista, setVista] = useState('registro');
 
   if (r.loading) {
     return (
@@ -69,27 +72,65 @@ export default function Home() {
           disabled={r.saving}
         />
 
-        <SezioneRegistro
-          sezione="a"
-          dati={r.attivitaA}
-          onAdd={(rec) => r.addAttivita('a', rec)}
-          onEdit={handleEdit}
-          onDelete={r.deleteAttivita}
-          onSvuota={() => r.svuotaSezione('a')}
-          onExport={handleExport}
-          saving={r.saving}
-        />
+        <div className="flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1">
+          {[
+            { k: 'registro', l: 'Registro' },
+            { k: 'calendario', l: 'Calendario' },
+            { k: 'statistiche', l: 'Statistiche' },
+          ].map((t) => (
+            <button
+              key={t.k}
+              onClick={() => setVista(t.k)}
+              className={`flex-1 text-sm font-semibold py-1.5 rounded-md transition-colors ${
+                vista === t.k ? 'bg-blu text-white' : 'text-grigio hover:bg-blu-light'
+              }`}
+            >
+              {t.l}
+            </button>
+          ))}
+        </div>
 
-        <SezioneRegistro
-          sezione="b"
-          dati={r.attivitaB}
-          onAdd={(rec) => r.addAttivita('b', rec)}
-          onEdit={handleEdit}
-          onDelete={r.deleteAttivita}
-          onSvuota={() => r.svuotaSezione('b')}
-          onExport={handleExport}
-          saving={r.saving}
-        />
+        {vista === 'registro' && (
+          <>
+            <SezioneRegistro
+              sezione="a"
+              dati={r.attivitaA}
+              onAdd={(rec) => r.addAttivita('a', rec)}
+              onEdit={handleEdit}
+              onDelete={r.deleteAttivita}
+              onSvuota={() => r.svuotaSezione('a')}
+              onExport={handleExport}
+              saving={r.saving}
+            />
+            <SezioneRegistro
+              sezione="b"
+              dati={r.attivitaB}
+              onAdd={(rec) => r.addAttivita('b', rec)}
+              onEdit={handleEdit}
+              onDelete={r.deleteAttivita}
+              onSvuota={() => r.svuotaSezione('b')}
+              onExport={handleExport}
+              saving={r.saving}
+            />
+          </>
+        )}
+
+        {vista === 'calendario' && (
+          <CalendarioMese attivita={[...r.attivitaA, ...r.attivitaB]} />
+        )}
+
+        {vista === 'statistiche' && (
+          <div className="space-y-4">
+            <PieChartTipologie
+              attivita={[...r.attivitaA, ...r.attivitaB]}
+              titolo="Distribuzione ore per tipologia — Totale anno"
+            />
+            <div className="grid md:grid-cols-2 gap-4">
+              <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
+              <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — fino a 40 ore" />
+            </div>
+          </div>
+        )}
 
         <FooterLegale />
       </div>

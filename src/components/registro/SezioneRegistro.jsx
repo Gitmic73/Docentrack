@@ -217,7 +217,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         <div className="flex gap-1.5">
           <button onClick={onSvuota} disabled={saving || dati.length === 0}
             className="text-rosso border border-rosso rounded px-3 py-1 text-xs font-semibold hover:bg-rosso hover:text-white transition-colors disabled:opacity-40">
-            Svuta anno
+            Svuota anno
           </button>
           <button onClick={onExport} disabled={dati.length === 0}
             className="text-blu border border-blu rounded px-3 py-1 text-xs font-semibold hover:bg-blu hover:text-white transition-colors disabled:opacity-40">
