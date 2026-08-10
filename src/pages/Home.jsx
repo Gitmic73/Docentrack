@@ -10,6 +10,7 @@ import ProfileSetup from '@/components/registro/ProfileSetup';
 import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
+import BarChartTipologie from '@/components/registro/BarChartTipologie';
 import { esportaPDF } from '@/components/registro/pdfExport';
 
 export default function Home() {
@@ -121,6 +122,10 @@ export default function Home() {
 
         {vista === 'statistiche' && (
           <div className="space-y-4">
+            <BarChartTipologie
+              attivita={[...r.attivitaA, ...r.attivitaB]}
+              titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
+            />
             <PieChartTipologie
               attivita={[...r.attivitaA, ...r.attivitaB]}
               titolo="Distribuzione ore per tipologia — Totale anno"

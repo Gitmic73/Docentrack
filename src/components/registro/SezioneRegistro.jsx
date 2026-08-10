@@ -114,7 +114,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Form inserimento */}
-      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-[105px_62px_62px_1fr_90px_auto] gap-1.5 items-end">
+      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end">
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
@@ -123,17 +123,17 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Inizio</label>
           <input type="time" value={form.inizio} onChange={(e) => setForm({ ...form, inizio: e.target.value })}
-            className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Fine</label>
           <input type="time" value={form.fine} onChange={(e) => setForm({ ...form, fine: e.target.value })}
-            className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Tipologia</label>
           <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-            className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu">
+            className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu">
             <option value="">— Seleziona —</option>
             {c.tipi.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
