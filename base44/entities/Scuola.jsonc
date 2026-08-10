@@ -1,0 +1,48 @@
+{
+  "name": "Scuola",
+  "type": "object",
+  "properties": {
+    "anno_scolastico": {
+      "type": "string",
+      "description": "es. 2025/2026"
+    },
+    "nome": {
+      "type": "string",
+      "description": "Denominazione istituto"
+    },
+    "indirizzo": {
+      "type": "string"
+    },
+    "tel": {
+      "type": "string"
+    },
+    "mail": {
+      "type": "string"
+    },
+    "codice": {
+      "type": "string",
+      "description": "Codice meccanografico"
+    },
+    "ds": {
+      "type": "string",
+      "description": "Dirigente Scolastico"
+    }
+  },
+  "required": [
+    "anno_scolastico"
+  ],
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

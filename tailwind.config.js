@@ -43,6 +43,12 @@ module.exports = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			blu: { DEFAULT: '#1a3a6b', light: '#e8eef7' },
+  			oro: { DEFAULT: '#c9a227', light: '#fdf6e3' },
+  			verde: { DEFAULT: '#1e6b45', light: '#e8f5ee' },
+  			rosso: { DEFAULT: '#b03a2e', light: '#fbeaea' },
+  			grigio: '#5a5a5a',
+  			bordo: '#d0d5dd',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

@@ -1,0 +1,65 @@
+{
+  "name": "Attivita",
+  "type": "object",
+  "properties": {
+    "sezione": {
+      "type": "string",
+      "enum": [
+        "a",
+        "b"
+      ],
+      "description": "a = 40h lett. a Art.29, b = fino a 40h lett. b Art.29"
+    },
+    "tipo": {
+      "type": "string",
+      "description": "Tipologia dell'attivit\u00e0 (da menu preimpostato)"
+    },
+    "data": {
+      "type": "string",
+      "format": "date"
+    },
+    "inizio": {
+      "type": "string",
+      "description": "Orario di inizio HH:MM"
+    },
+    "fine": {
+      "type": "string",
+      "description": "Orario di fine HH:MM"
+    },
+    "durata_min": {
+      "type": "integer",
+      "description": "Durata calcolata in minuti"
+    },
+    "note": {
+      "type": "string",
+      "description": "Note / classe (facoltativo)"
+    },
+    "anno_scolastico": {
+      "type": "string",
+      "description": "es. 2025/2026"
+    }
+  },
+  "required": [
+    "sezione",
+    "tipo",
+    "data",
+    "inizio",
+    "fine",
+    "durata_min",
+    "anno_scolastico"
+  ],
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}
