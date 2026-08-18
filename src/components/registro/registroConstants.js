@@ -19,6 +19,17 @@ export const TIPI_B = [
   'Altro (lett. b)'
 ];
 
+export const COLORI_A = ['#1a3a6b', '#c9a227', '#1e6b45', '#b03a2e', '#7c4dff', '#00838f', '#e65100', '#5d4037'];
+export const COLORI_B = ['#6d4c41', '#ad1457', '#2e7d32', '#455a64', '#0097a7'];
+
+export const COLORI_TIPI = {};
+TIPI_A.forEach((t, i) => { COLORI_TIPI[t] = COLORI_A[i]; });
+TIPI_B.forEach((t, i) => { COLORI_TIPI[t] = COLORI_B[i]; });
+
+export function coloreTipologia(nome) {
+  return COLORI_TIPI[nome] || '#5a5a5a';
+}
+
 export function t2m(t) {
   if (!t) return 0;
   const [h, m] = t.split(':').map(Number);

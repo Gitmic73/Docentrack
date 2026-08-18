@@ -20,6 +20,10 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
       setErr('Tutti i campi sono obbligatori.');
       return;
     }
+    if (form.tipo.startsWith('Altro') && !form.note.trim()) {
+      setErr('Il campo Note è obbligatorio quando si seleziona "Altro".');
+      return;
+    }
     const dur = t2m(form.fine) - t2m(form.inizio);
     if (dur <= 0) {
       setErr("Fine deve essere dopo l'inizio.");
@@ -59,9 +63,11 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
           />
         </div>
         <div className="col-span-2">
-          <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Note</label>
-          <input type="text" value={form.note} placeholder="facoltativo" onChange={(e) => setForm({ ...form, note: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+          <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">
+            Note{form.tipo.startsWith('Altro') && <span className="text-rosso"> *</span>}
+          </label>
+          <input type="text" value={form.note} placeholder={form.tipo.startsWith('Altro') ? 'obbligatorio' : 'facoltativo'} onChange={(e) => setForm({ ...form, note: e.target.value })}
+            className={`w-full text-[13px] px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${form.tipo.startsWith('Altro') ? 'border-rosso' : 'border-bordo'}`} />
         </div>
       </div>
       {err && <div className="mt-2 text-[11px] text-rosso">{err}</div>}

@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import { m2h } from './registroConstants';
-
-const COLORS = ['#1a3a6b', '#c9a227', '#1e6b45', '#b03a2e', '#7c4dff', '#00838f', '#e65100', '#5d4037', '#455a64', '#ad1457', '#2e7d32', '#6d4c41'];
+import { m2h, coloreTipologia } from './registroConstants';
 
 export default function BarChartTipologie({ attivita, titolo }) {
   const data = useMemo(() => {
@@ -42,7 +40,7 @@ export default function BarChartTipologie({ attivita, titolo }) {
               <div className="flex-1 min-w-0 h-5 bg-[#f0f0ee] rounded overflow-hidden">
                 <div
                   className="h-full rounded transition-all duration-500 flex items-center justify-end pr-1"
-                  style={{ width: `${Math.max(w, 2)}%`, background: COLORS[i % COLORS.length] }}
+                  style={{ width: `${Math.max(w, 2)}%`, background: coloreTipologia(d.name) }}
                 >
                   {w > 22 && (
                     <span className="text-[10px] font-semibold text-white whitespace-nowrap">{share}%</span>

@@ -41,6 +41,8 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
   const [filtTipo, setFiltTipo] = useState('');
   const [showFiltri, setShowFiltri] = useState(false);
 
+  const isAltro = form.tipo.startsWith('Altro');
+
   const totMin = dati.reduce((s, v) => s + (v.durata_min || 0), 0);
   const pct = Math.min(100, (totMin / MAX_ORE) * 100);
   const eccedenza = Math.max(0, totMin - MAX_ORE);
@@ -82,6 +84,10 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
   function handleAdd() {
     if (!form.data || !form.inizio || !form.fine || !form.tipo) {
       setErr('Compila data, orario di inizio, fine e tipologia.');
+      return;
+    }
+    if (form.tipo.startsWith('Altro') && !form.note.trim()) {
+      setErr('Il campo Note è obbligatorio quando si seleziona "Altro".');
       return;
     }
     const dur = t2m(form.fine) - t2m(form.inizio);
@@ -164,9 +170,11 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
           />
         </div>
         <div>
-          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">{c.noteLabel}</label>
-          <input type="text" value={form.note} placeholder={c.notePlaceholder} onChange={(e) => setForm({ ...form, note: e.target.value })}
-            className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
+            {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
+          </label>
+          <input type="text" value={form.note} placeholder={isAltro ? 'obbligatorio' : c.notePlaceholder} onChange={(e) => setForm({ ...form, note: e.target.value })}
+            className={`w-full text-xs px-1.5 py-1 border rounded bg-white outline-none focus:border-blu ${isAltro ? 'border-rosso' : 'border-bordo'}`} />
         </div>
         <button onClick={handleAdd} disabled={saving}
           className={`text-white rounded px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors disabled:opacity-50 ${c.btnAddClass}`}>

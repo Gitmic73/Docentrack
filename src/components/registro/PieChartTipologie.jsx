@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { m2h } from './registroConstants';
-
-const COLORS = ['#1a3a6b', '#c9a227', '#1e6b45', '#b03a2e', '#7c4dff', '#00838f', '#e65100', '#5d4037', '#455a64', '#ad1457', '#2e7d32', '#6d4c41'];
+import { m2h, coloreTipologia } from './registroConstants';
 
 export default function PieChartTipologie({ attivita, titolo }) {
   const data = useMemo(() => {
@@ -43,8 +41,8 @@ export default function PieChartTipologie({ attivita, titolo }) {
                 innerRadius={40}
                 paddingAngle={1}
               >
-                {data.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                {data.map((d, i) => (
+                  <Cell key={i} fill={coloreTipologia(d.name)} />
                 ))}
               </Pie>
               <Tooltip
@@ -63,7 +61,7 @@ export default function PieChartTipologie({ attivita, titolo }) {
               const pct = totale ? ((d.value / totale) * 100).toFixed(1) : 0;
               return (
                 <div key={d.name} className="flex items-center gap-2 text-xs min-w-0">
-                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
+                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: coloreTipologia(d.name) }} />
                   <span className="flex-1 min-w-0 truncate text-foreground" title={d.name}>{d.name}</span>
                   <span className="text-grigio whitespace-nowrap font-semibold shrink-0">{pct}%</span>
                   <span className="text-foreground whitespace-nowrap w-12 text-right shrink-0">{m2h(d.value)}</span>
