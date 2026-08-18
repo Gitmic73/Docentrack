@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Pencil, X, ArrowUpDown } from 'lucide-react';
+import { Plus, Pencil, X, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
 import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 
@@ -35,6 +35,11 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
   const [form, setForm] = useState({ data: oggi(), inizio: '', fine: '', tipo: '', note: '' });
   const [sort, setSort] = useState({ col: 'data', asc: false });
   const [err, setErr] = useState('');
+  const [search, setSearch] = useState('');
+  const [filtDa, setFiltDa] = useState('');
+  const [filtA, setFiltA] = useState('');
+  const [filtTipo, setFiltTipo] = useState('');
+  const [showFiltri, setShowFiltri] = useState(false);
 
   const totMin = dati.reduce((s, v) => s + (v.durata_min || 0), 0);
   const pct = Math.min(100, (totMin / MAX_ORE) * 100);
@@ -53,6 +58,22 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
     if (av > bv) return asc ? 1 : -1;
     return 0;
   });
+
+  const filtered = sorted.filter((v) => {
+    if (search) {
+      const q = search.toLowerCase();
+      if (!(`${v.tipo} ${v.note || ''}`.toLowerCase().includes(q))) return false;
+    }
+    if (filtDa && v.data < filtDa) return false;
+    if (filtA && v.data > filtA) return false;
+    if (filtTipo && v.tipo !== filtTipo) return false;
+    return true;
+  });
+
+  const filtriAttivi = search || filtDa || filtA || filtTipo;
+  function resetFiltri() {
+    setSearch(''); setFiltDa(''); setFiltA(''); setFiltTipo('');
+  }
 
   function toggleSort(col) {
     setSort((s) => s.col === col ? { col, asc: !s.asc } : { col, asc: col === 'data' ? false : true });
@@ -154,9 +175,58 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
       {err && <div className="px-4 py-1.5 text-[11px] text-rosso bg-rosso-light">{err}</div>}
 
+      {/* Ricerca e filtri */}
+      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cerca per parola chiave…"
+            className="w-full text-xs pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+          />
+        </div>
+        <button
+          onClick={() => setShowFiltri((s) => !s)}
+          className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded border whitespace-nowrap transition-colors ${showFiltri ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}
+        >
+          <SlidersHorizontal size={13} /> Filtri
+        </button>
+      </div>
+      {showFiltri && (
+        <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-4 gap-2 items-end select-none">
+          <div>
+            <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Dal</label>
+            <input type="date" value={filtDa} onChange={(e) => setFiltDa(e.target.value)}
+              className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+          </div>
+          <div>
+            <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Al</label>
+            <input type="date" value={filtA} onChange={(e) => setFiltA(e.target.value)}
+              className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+          </div>
+          <div className="min-w-0">
+            <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Categoria</label>
+            <DrawerSelect
+              value={filtTipo}
+              onChange={setFiltTipo}
+              options={c.tipi}
+              placeholder="Tutte"
+              label="Categoria"
+              className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
+            />
+          </div>
+          <button onClick={resetFiltri} disabled={!filtriAttivi}
+            className="text-xs px-2 py-1.5 rounded border border-bordo text-grigio hover:bg-blu-light disabled:opacity-40">
+            Reset
+          </button>
+        </div>
+      )}
+
       {/* Mobile cards */}
       <div className="md:hidden divide-y divide-bordo">
-        {sorted.map((v) => (
+        {filtered.map((v) => (
           <div key={v.id} className="px-3 py-2.5 flex items-center gap-2">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -196,7 +266,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
           </tr>
         </thead>
         <tbody>
-          {sorted.map((v) => (
+          {filtered.map((v) => (
             <tr key={v.id} className="border-b border-bordo hover:bg-[#fafaf8]">
               <td className="px-2.5 py-1.5">{fmtD(v.data)}</td>
               <td className="px-2.5 py-1.5 whitespace-nowrap">{v.inizio}–{v.fine}</td>
@@ -213,11 +283,15 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
           ))}
         </tbody>
       </table>
-      {sorted.length === 0 && (
+      {dati.length === 0 ? (
         <div className="text-center py-5 text-grigio italic text-[13px]">
           Nessuna attività registrata per questo anno scolastico
         </div>
-      )}
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-5 text-grigio italic text-[13px]">
+          Nessun risultato per la ricerca
+        </div>
+      ) : null}
 
       {/* Footer sezione */}
       <div className="px-4 py-2 border-t border-bordo bg-[#f4f4f2] flex items-center justify-between gap-2.5 flex-wrap">

@@ -22,6 +22,12 @@ export function useRegistro() {
     return list.map((a) => a.nome).sort();
   }, []);
 
+  const controllaNotifiche = useCallback(async (anno, aMin, bMin) => {
+    try {
+      await base44.functions.invoke('checkNotifications', { anno, totaleMinA: aMin, totaleMinB: bMin });
+    } catch (e) { /* notifiche non bloccanti */ }
+  }, []);
+
   const loadData = useCallback(async (anno) => {
     if (!anno) return;
     const [a, b, s] = await Promise.all([
@@ -32,7 +38,10 @@ export function useRegistro() {
     setAttivitaA(a);
     setAttivitaB(b);
     setScuola(s[0] || null);
-  }, []);
+    const aMin = a.reduce((sum, v) => sum + (v.durata_min || 0), 0);
+    const bMin = b.reduce((sum, v) => sum + (v.durata_min || 0), 0);
+    controllaNotifiche(anno, aMin, bMin);
+  }, [controllaNotifiche]);
 
   // Init: utente + anni + dati
   useEffect(() => {
@@ -104,12 +113,15 @@ export function useRegistro() {
     try {
       const created = await base44.entities.Attivita.create({ ...record, sezione: sez, anno_scolastico: annoCorrente });
       setter((prev) => prev.map((x) => (x.id === tempId ? created : x)));
+      const aMin = attivitaA.reduce((sum, v) => sum + (v.durata_min || 0), 0) + (sez === 'a' ? (record.durata_min || 0) : 0);
+      const bMin = attivitaB.reduce((sum, v) => sum + (v.durata_min || 0), 0) + (sez === 'b' ? (record.durata_min || 0) : 0);
+      controllaNotifiche(annoCorrente, aMin, bMin);
     } catch (e) {
       setter((prev) => prev.filter((x) => x.id !== tempId));
     } finally {
       setSaving(false);
     }
-  }, [annoCorrente]);
+  }, [annoCorrente, attivitaA, attivitaB, controllaNotifiche]);
 
   const updateAttivita = useCallback(async (id, record) => {
     const inA = attivitaA.some((x) => x.id === id);
