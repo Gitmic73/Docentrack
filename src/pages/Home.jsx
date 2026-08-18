@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRegistro } from '@/hooks/useRegistro';
 import NavAnni from '@/components/registro/NavAnni';
@@ -14,6 +14,7 @@ import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
 import BarChartTipologie from '@/components/registro/BarChartTipologie';
 import BottomTabs from '@/components/registro/BottomTabs';
+import PullToRefresh from '@/components/registro/PullToRefresh';
 import { esportaPDF } from '@/components/registro/pdfExport';
 
 export default function Home() {
@@ -66,94 +67,96 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#f7f6f2] pb-24 md:pb-12 font-body text-foreground">
-      <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
-
-      <div className="max-w-[820px] mx-auto px-3">
-        <Intestazione
-          annoCorrente={r.annoCorrente}
-          nomeDocente={r.nomeDocente}
-          scuolaNome={r.scuola?.nome}
-          onEditNome={r.updateNomeDocente}
-          onEditScuola={() => openModal('scuola')}
-          onOpenSettings={() => openModal('profilo')}
-        />
-
-        <div className="h-3" />
-
-        <NavAnni
-          anni={r.anni}
-          annoCorrente={r.annoCorrente}
-          onCambia={r.cambiaAnno}
-          onNuovo={() => openModal('nuovoanno')}
-          disabled={r.saving}
-        />
-
-        <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none">
-          {[
-            { k: 'registro', l: 'Registro' },
-            { k: 'calendario', l: 'Calendario' },
-            { k: 'statistiche', l: 'Statistiche' },
-          ].map((t) => (
-            <button
-              key={t.k}
-              onClick={() => setVista(t.k)}
-              className={`flex-1 text-sm font-semibold py-1.5 rounded-md transition-colors ${
-                vista === t.k ? 'bg-blu text-white' : 'text-grigio hover:bg-blu-light'
-              }`}
-            >
-              {t.l}
-            </button>
-          ))}
-        </div>
-
-        {vista === 'registro' && (
-          <>
-            <SezioneRegistro
-              sezione="a"
-              dati={r.attivitaA}
-              onAdd={(rec) => r.addAttivita('a', rec)}
-              onEdit={(v) => openModal('edit', v.id)}
-              onDelete={r.deleteAttivita}
-              onSvuota={() => r.svuotaSezione('a')}
-              onExport={handleExport}
-              saving={r.saving}
+      <PullToRefresh onRefresh={r.refresh} disabled={!!modal}>
+        <div className="pt-[env(safe-area-inset-top,16px)] md:pt-0">
+          <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
+          <div className="max-w-[820px] mx-auto px-3">
+            <Intestazione
+              annoCorrente={r.annoCorrente}
+              nomeDocente={r.nomeDocente}
+              scuolaNome={r.scuola?.nome}
+              onEditNome={r.updateNomeDocente}
+              onEditScuola={() => openModal('scuola')}
+              onOpenSettings={() => openModal('profilo')}
             />
-            <SezioneRegistro
-              sezione="b"
-              dati={r.attivitaB}
-              onAdd={(rec) => r.addAttivita('b', rec)}
-              onEdit={(v) => openModal('edit', v.id)}
-              onDelete={r.deleteAttivita}
-              onSvuota={() => r.svuotaSezione('b')}
-              onExport={handleExport}
-              saving={r.saving}
-            />
-          </>
-        )}
 
-        {vista === 'calendario' && (
-          <CalendarioMese attivita={allAttivita} />
-        )}
+            <div className="h-3" />
 
-        {vista === 'statistiche' && (
-          <div className="space-y-4">
-            <BarChartTipologie
-              attivita={allAttivita}
-              titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
+            <NavAnni
+              anni={r.anni}
+              annoCorrente={r.annoCorrente}
+              onCambia={r.cambiaAnno}
+              onNuovo={() => openModal('nuovoanno')}
+              disabled={r.saving}
             />
-            <PieChartTipologie
-              attivita={allAttivita}
-              titolo="Distribuzione ore per tipologia — Totale anno"
-            />
-            <div className="grid md:grid-cols-2 gap-4">
-              <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
-              <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — fino a 40 ore" />
+
+            <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none">
+              {[
+                { k: 'registro', l: 'Registro' },
+                { k: 'calendario', l: 'Calendario' },
+                { k: 'statistiche', l: 'Statistiche' },
+              ].map((t) => (
+                <button
+                  key={t.k}
+                  onClick={() => setVista(t.k)}
+                  className={`flex-1 text-sm font-semibold py-1.5 rounded-md transition-colors ${
+                    vista === t.k ? 'bg-blu text-white' : 'text-grigio hover:bg-blu-light'
+                  }`}
+                >
+                  {t.l}
+                </button>
+              ))}
             </div>
-          </div>
-        )}
 
-        <FooterLegale />
-      </div>
+            {/* All tabs mounted concurrently; visibility toggled to preserve scroll/filter state */}
+            <div className={vista === 'registro' ? '' : 'hidden'}>
+              <SezioneRegistro
+                sezione="a"
+                dati={r.attivitaA}
+                onAdd={(rec) => r.addAttivita('a', rec)}
+                onEdit={(v) => openModal('edit', v.id)}
+                onDelete={r.deleteAttivita}
+                onSvuota={() => r.svuotaSezione('a')}
+                onExport={handleExport}
+                saving={r.saving}
+              />
+              <SezioneRegistro
+                sezione="b"
+                dati={r.attivitaB}
+                onAdd={(rec) => r.addAttivita('b', rec)}
+                onEdit={(v) => openModal('edit', v.id)}
+                onDelete={r.deleteAttivita}
+                onSvuota={() => r.svuotaSezione('b')}
+                onExport={handleExport}
+                saving={r.saving}
+              />
+            </div>
+
+            <div className={vista === 'calendario' ? '' : 'hidden'}>
+              <CalendarioMese attivita={allAttivita} />
+            </div>
+
+            <div className={vista === 'statistiche' ? '' : 'hidden'}>
+              <div className="space-y-4">
+                <BarChartTipologie
+                  attivita={allAttivita}
+                  titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
+                />
+                <PieChartTipologie
+                  attivita={allAttivita}
+                  titolo="Distribuzione ore per tipologia — Totale anno"
+                />
+                <div className="grid md:grid-cols-2 gap-4">
+                  <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
+                  <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — fino a 40 ore" />
+                </div>
+              </div>
+            </div>
+
+            <FooterLegale />
+          </div>
+        </div>
+      </PullToRefresh>
 
       <BottomTabs vista={vista} onChange={setVista} />
 

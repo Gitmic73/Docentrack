@@ -115,7 +115,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Form inserimento */}
-      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end">
+      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end select-none">
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
@@ -241,7 +241,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
             </span>
           )}
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 select-none">
           <button onClick={onSvuota} disabled={saving || dati.length === 0}
             className="text-rosso border border-rosso rounded px-3 py-1 text-xs font-semibold hover:bg-rosso hover:text-white transition-colors disabled:opacity-40">
             Svuota anno

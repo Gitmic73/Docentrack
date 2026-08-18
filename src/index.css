@@ -92,3 +92,23 @@
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+/* ===== Dark mode contrast overrides (mobile WebView) ===== */
+.dark .bg-white { background-color: #121212 !important; }
+.dark .bg-\[\#f7f6f2\] { background-color: #121212 !important; }
+.dark .bg-\[\#f4f4f2\] { background-color: #1a1a1a !important; }
+.dark .bg-\[\#fafaf8\] { background-color: #18181b !important; }
+.dark .border-bordo { border-color: #27272a !important; }
+.dark .text-grigio { color: #a1a1aa !important; }
+.dark .text-blu { color: #7aa2ed !important; }
+.dark .text-rosso { color: #f87171 !important; }
+.dark .text-verde { color: #4ade80 !important; }
+.dark .text-\[\#7a5c00\] { color: #fbbf24 !important; }
+.dark .bg-blu-light { background-color: rgba(122,162,237,0.18) !important; }
+.dark .bg-oro-light { background-color: rgba(251,191,36,0.18) !important; }
+.dark .bg-rosso-light { background-color: rgba(248,113,113,0.18) !important; }
+.dark .bg-verde-light { background-color: rgba(74,222,128,0.18) !important; }
+.dark .hover\:bg-\[\#fafaf8\]:hover { background-color: #27272a !important; }
+.dark .hover\:bg-\[\#f0f0ee\]:hover { background-color: #27272a !important; }
+.dark .hover\:bg-\[\#f4f4f2\]:hover { background-color: #27272a !important; }
+.dark .hover\:bg-blu-light:hover { background-color: rgba(122,162,237,0.18) !important; }

@@ -224,6 +224,7 @@ export function useRegistro() {
     addAttivita, updateAttivita, deleteAttivita, svuotaSezione,
     saveScuola, saveProfile, updateNomeDocente,
     deleteAccount, logout,
+    refresh: () => loadData(annoCorrente),
     suggerisciProssimo: () => (anni.length ? suggerisciAnno(anni[anni.length - 1]) : '2026/2027'),
   };
 }

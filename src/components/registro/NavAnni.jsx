@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 export default function NavAnni({ anni, annoCorrente, onCambia, onNuovo, disabled }) {
   const idx = anni.indexOf(annoCorrente);
   return (
-    <div className="flex items-center justify-center gap-2.5 px-4 py-2.5 bg-white border border-bordo rounded-lg mb-5">
+    <div className="flex items-center justify-center gap-2.5 px-4 py-2.5 bg-white border border-bordo rounded-lg mb-5 select-none">
       <button
         onClick={() => onCambia(-1)}
         disabled={idx <= 0 || disabled}
