@@ -2,26 +2,20 @@ export const MAX_ORE = 40 * 60; // 40 ore in minuti
 
 export const TIPI_A = [
   'Collegio Docenti',
-  'Riunione disciplinare / dipartimento',
-  'Programmazione inizio anno',
-  'Verifica fine anno',
-  'Consegna pagelle / ricevimento collettivo',
+  "Collegio d'Ordine",
+  'Riunione dipartimentale / disciplinare',
+  'Attività inizio anno / verifica fine anno',
+  'Informazione alle famiglie / ricevimento collettivo',
   'Formazione obbligatoria',
   'Formazione sicurezza (D.Lgs. 81/2008)',
-  'GLO (Gruppo di Lavoro Operativo)',
-  'Commissione / gruppo di lavoro',
   'Altro (lett. a)'
 ];
 
 export const TIPI_B = [
-  'Consiglio di classe (soli docenti)',
-  'Consiglio di classe (docenti + genitori)',
-  'Interclasse (soli docenti)',
-  'Interclasse (docenti + genitori)',
-  'Intersezione (soli docenti)',
-  'Intersezione (docenti + genitori)',
-  'GLO con genitori / specialisti',
-  'Consiglio di classe straordinario',
+  'Consiglio di classe (ordinario / straordinario)',
+  'Interclasse (scuola primaria)',
+  'Intersezione (scuola dell\'infanzia)',
+  'GLO (Gruppo di Lavoro Operativo)',
   'Altro (lett. b)'
 ];
 
