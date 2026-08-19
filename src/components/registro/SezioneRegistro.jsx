@@ -30,7 +30,7 @@ const CONF = {
   },
 };
 
-export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, onExport, saving }) {
+export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, saving }) {
   const c = CONF[sezione];
   const [form, setForm] = useState({ data: oggi(), inizio: '', fine: '', tipo: '', note: '' });
   const [sort, setSort] = useState({ col: 'data', asc: false });
@@ -327,10 +327,6 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
           <button onClick={onSvuota} disabled={saving || dati.length === 0}
             className="text-rosso border border-rosso rounded px-3 py-1 text-xs font-semibold hover:bg-rosso hover:text-white transition-colors disabled:opacity-40">
             Svuota anno
-          </button>
-          <button onClick={onExport} disabled={dati.length === 0}
-            className="text-blu border border-blu rounded px-3 py-1 text-xs font-semibold hover:bg-blu hover:text-white transition-colors disabled:opacity-40">
-            Esporta PDF
           </button>
         </div>
       </div>

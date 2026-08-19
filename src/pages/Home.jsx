@@ -16,6 +16,8 @@ import BarChartTipologie from '@/components/registro/BarChartTipologie';
 import BottomTabs from '@/components/registro/BottomTabs';
 import PullToRefresh from '@/components/registro/PullToRefresh';
 import { esportaPDF } from '@/components/registro/pdfExport';
+import { esportaCSV } from '@/components/registro/csvExport';
+import ExportToolbar from '@/components/registro/ExportToolbar';
 
 export default function Home() {
   const r = useRegistro();
@@ -65,6 +67,15 @@ export default function Home() {
     });
   }
 
+  function handleCSV() {
+    esportaCSV({
+      docente: r.nomeDocente,
+      anno: r.annoCorrente,
+      attivitaA: r.attivitaA,
+      attivitaB: r.attivitaB,
+    });
+  }
+
   return (
     <div className="min-h-screen bg-[#f7f6f2] pb-24 md:pb-12 font-body text-foreground">
       <PullToRefresh onRefresh={r.refresh} disabled={!!modal}>
@@ -108,6 +119,8 @@ export default function Home() {
               ))}
             </div>
 
+            <ExportToolbar onPDF={handleExport} onCSV={handleCSV} disabled={allAttivita.length === 0} />
+
             {/* All tabs mounted concurrently; visibility toggled to preserve scroll/filter state */}
             <div className={vista === 'registro' ? '' : 'hidden'}>
               <SezioneRegistro
@@ -117,7 +130,6 @@ export default function Home() {
                 onEdit={(v) => openModal('edit', v.id)}
                 onDelete={r.deleteAttivita}
                 onSvuota={() => r.svuotaSezione('a')}
-                onExport={handleExport}
                 saving={r.saving}
               />
               <SezioneRegistro
@@ -127,7 +139,6 @@ export default function Home() {
                 onEdit={(v) => openModal('edit', v.id)}
                 onDelete={r.deleteAttivita}
                 onSvuota={() => r.svuotaSezione('b')}
-                onExport={handleExport}
                 saving={r.saving}
               />
             </div>

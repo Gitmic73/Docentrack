@@ -19,8 +19,8 @@ export const TIPI_B = [
   'Altro (lett. b)'
 ];
 
-export const COLORI_A = ['#1a3a6b', '#c9a227', '#1e6b45', '#b03a2e', '#7c4dff', '#00838f', '#e65100', '#5d4037'];
-export const COLORI_B = ['#6d4c41', '#ad1457', '#2e7d32', '#455a64', '#0097a7'];
+export const COLORI_A = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#9a6324'];
+export const COLORI_B = ['#469990', '#800000', '#808000', '#000075', '#fabed4'];
 
 export const COLORI_TIPI = {};
 TIPI_A.forEach((t, i) => { COLORI_TIPI[t] = COLORI_A[i]; });
