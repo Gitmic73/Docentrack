@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 
-const MAX_MIN = 2400;
-const APPROACH_MIN = 2160;
+const MAX_MIN = 2400;       // 40 ore
+const APPROACH_MIN = 1440;  // 60% = 24 ore
 
 export default async function(req) {
   try {
@@ -11,6 +11,7 @@ export default async function(req) {
 
     const body = await req.json();
     const anno = body.anno;
+    const sez = body.sez || null;
     const totaleMinA = Number(body.totaleMinA) || 0;
     const totaleMinB = Number(body.totaleMinB) || 0;
 
@@ -28,35 +29,38 @@ export default async function(req) {
     const email = user.email;
     const nome = (user.data && user.data.nome_docente) || user.full_name || 'Docente';
 
-    // Hour-limit notifications (per section)
-    const sections = [['a', totaleMinA], ['b', totaleMinB]];
-    for (const [sez, min] of sections) {
+    // Notifica soglia: solo per la sezione appena modificata (a o b)
+    if (sez === 'a' || sez === 'b') {
+      const min = sez === 'a' ? totaleMinA : totaleMinB;
+      const keyApproach = anno + '_' + sez + '_approach';
+      const key100 = anno + '_' + sez + '_100';
+
       if (min >= MAX_MIN) {
-        const key = anno + '_' + sez + '_100';
-        if (!flags[key]) {
-          await base44.asServiceRole.integrations.Core.SendEmail({
-            to: email,
-            subject: 'Registro ore ' + anno + ' — limite 40 ore raggiunto (lett. ' + sez + ')',
-            body: 'Gentile ' + nome + ',\n\nHai raggiunto il limite massimo di 40 ore per la sezione "' + sez + '" del registro attività funzionali (A.S. ' + anno + ').\nOre svolte: ' + fmtH(min) + '.\n\nL\'obbligo CCNL è assolto.\n\n— DocentTrack',
-          });
-          flags[key] = true;
-          sent.push({ sez: sez, type: 'reached' });
-        }
+        // Raggiunto/superato il 100%: invia sempre (prima volta o aggiornamento successivo)
+        const isFirst = !flags[key100];
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: email,
+          subject: 'Registro ore ' + anno + ' — limite 40 ore raggiunto (lett. ' + sez + ')',
+          body: 'Gentile ' + nome + ',\n\ncon l\'attività appena svolta hai raggiunto il limite massimo di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + '.\nL\'obbligo CCNL è assolto.\n\nGrazie per aver usato DocentTrack',
+        });
+        flags[key100] = true;
+        flags[keyApproach] = true;
+        sent.push({ sez: sez, type: isFirst ? 'reached' : 'reached_update' });
       } else if (min >= APPROACH_MIN) {
-        const key = anno + '_' + sez + '_90';
-        if (!flags[key]) {
+        // Soglia 60%: una sola volta per anno/sezione
+        if (!flags[keyApproach]) {
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: email,
-            subject: 'Registro ore ' + anno + ' — vicino al limite (lett. ' + sez + ')',
-            body: 'Gentile ' + nome + ',\n\nStai per raggiungere il limite di 40 ore per la sezione "' + sez + '" (A.S. ' + anno + ').\nOre svolte: ' + fmtH(min) + ' su 40 (' + pct(min) + '%).\nMancano ' + fmtH(MAX_MIN - min) + ' al completamento.\n\n— DocentTrack',
+            subject: 'Registro ore ' + anno + ' — vicino al limite 40 ore (lett. ' + sez + ')',
+            body: 'Gentile ' + nome + ',\n\nstai per raggiungere il limite di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + ' su 40 (' + pct(min) + '% / 100%). Mancano ' + fmtH(MAX_MIN - min) + ' al completamento.\n\nGrazie per aver scelto DocentTrack',
           });
-          flags[key] = true;
-          sent.push({ sez: sez, type: 'approaching' });
+          flags[keyApproach] = true;
+          sent.push({ sez: sez, type: 'approach' });
         }
       }
     }
 
-    // Deadline notification: school year ends June 30 of the end year
+    // Notifica scadenza: fine anno scolastico al 30 giugno dell'anno finale
     const parts = String(anno).split('/');
     const endYear = parseInt(parts[1], 10);
     let days = null;

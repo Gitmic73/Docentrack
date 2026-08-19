@@ -22,9 +22,9 @@ export function useRegistro() {
     return list.map((a) => a.nome).sort();
   }, []);
 
-  const controllaNotifiche = useCallback(async (anno, aMin, bMin) => {
+  const controllaNotifiche = useCallback(async (anno, sez, aMin, bMin) => {
     try {
-      await base44.functions.invoke('checkNotifications', { anno, totaleMinA: aMin, totaleMinB: bMin });
+      await base44.functions.invoke('checkNotifications', { anno, sez, totaleMinA: aMin, totaleMinB: bMin });
     } catch (e) { /* notifiche non bloccanti */ }
   }, []);
 
@@ -40,7 +40,7 @@ export function useRegistro() {
     setScuola(s[0] || null);
     const aMin = a.reduce((sum, v) => sum + (v.durata_min || 0), 0);
     const bMin = b.reduce((sum, v) => sum + (v.durata_min || 0), 0);
-    controllaNotifiche(anno, aMin, bMin);
+    controllaNotifiche(anno, null, aMin, bMin);
   }, [controllaNotifiche]);
 
   // Init: utente + anni + dati
@@ -115,7 +115,7 @@ export function useRegistro() {
       setter((prev) => prev.map((x) => (x.id === tempId ? created : x)));
       const aMin = attivitaA.reduce((sum, v) => sum + (v.durata_min || 0), 0) + (sez === 'a' ? (record.durata_min || 0) : 0);
       const bMin = attivitaB.reduce((sum, v) => sum + (v.durata_min || 0), 0) + (sez === 'b' ? (record.durata_min || 0) : 0);
-      controllaNotifiche(annoCorrente, aMin, bMin);
+      controllaNotifiche(annoCorrente, sez, aMin, bMin);
     } catch (e) {
       setter((prev) => prev.filter((x) => x.id !== tempId));
     } finally {
@@ -131,12 +131,17 @@ export function useRegistro() {
     setSaving(true);
     try {
       await base44.entities.Attivita.update(id, record);
+      const sez = inA ? 'a' : 'b';
+      const updated = (inA ? attivitaA : attivitaB).map((x) => (x.id === id ? { ...x, ...record } : x));
+      const aMin = (inA ? updated : attivitaA).reduce((s, v) => s + (v.durata_min || 0), 0);
+      const bMin = (inA ? attivitaB : updated).reduce((s, v) => s + (v.durata_min || 0), 0);
+      controllaNotifiche(annoCorrente, sez, aMin, bMin);
     } catch (e) {
       setter((p) => p.map((x) => (x.id === id ? prev : x)));
     } finally {
       setSaving(false);
     }
-  }, [attivitaA, attivitaB]);
+  }, [attivitaA, attivitaB, annoCorrente, controllaNotifiche]);
 
   const deleteAttivita = useCallback(async (id) => {
     const inA = attivitaA.some((x) => x.id === id);
@@ -146,12 +151,17 @@ export function useRegistro() {
     setSaving(true);
     try {
       await base44.entities.Attivita.delete(id);
+      const sez = inA ? 'a' : 'b';
+      const remaining = (inA ? attivitaA : attivitaB).filter((x) => x.id !== id);
+      const aMin = (inA ? remaining : attivitaA).reduce((s, v) => s + (v.durata_min || 0), 0);
+      const bMin = (inA ? attivitaB : remaining).reduce((s, v) => s + (v.durata_min || 0), 0);
+      controllaNotifiche(annoCorrente, sez, aMin, bMin);
     } catch (e) {
       setter((p) => [...p, prev]);
     } finally {
       setSaving(false);
     }
-  }, [attivitaA, attivitaB]);
+  }, [attivitaA, attivitaB, annoCorrente, controllaNotifiche]);
 
   const svuotaSezione = useCallback(async (sez) => {
     const setter = sez === 'a' ? setAttivitaA : setAttivitaB;
