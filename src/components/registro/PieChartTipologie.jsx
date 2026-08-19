@@ -46,8 +46,14 @@ export default function PieChartTipologie({ attivita, titolo }) {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value) => [`${m2h(value)} (${totale ? ((value / totale) * 100).toFixed(1) : 0}%)`, 'Ore']}
-                contentStyle={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #d0d5dd', maxWidth: '220px' }}
+                content={({ payload }) => {
+                  if (!payload || !payload.length) return null;
+                  return (
+                    <div style={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #d0d5dd', background: '#fff', padding: '4px 8px', maxWidth: '240px' }}>
+                      {payload[0].name}
+                    </div>
+                  );
+                }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -61,8 +67,8 @@ export default function PieChartTipologie({ attivita, titolo }) {
               const pct = totale ? ((d.value / totale) * 100).toFixed(1) : 0;
               return (
                 <div key={d.name} className="flex items-center gap-2 text-xs min-w-0">
-                  <span className="w-3 h-3 rounded-sm shrink-0 cursor-help" style={{ background: coloreTipologia(d.name) }} title={d.name} />
-                  <span className="flex-1" />
+                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ background: coloreTipologia(d.name) }} />
+                  <span className="flex-1 min-w-0 truncate text-foreground">{d.name}</span>
                   <span className="text-grigio whitespace-nowrap font-semibold shrink-0">{pct}%</span>
                   <span className="text-foreground whitespace-nowrap w-12 text-right shrink-0">{m2h(d.value)}</span>
                 </div>

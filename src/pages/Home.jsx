@@ -153,10 +153,6 @@ export default function Home() {
                   attivita={allAttivita}
                   titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
                 />
-                <PieChartTipologie
-                  attivita={allAttivita}
-                  titolo="Distribuzione ore per tipologia — Totale anno"
-                />
                 <div className="grid md:grid-cols-2 gap-4">
                   <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
                   <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — fino a 40 ore" />
