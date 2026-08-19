@@ -27,8 +27,8 @@ export default function BarChartTipologie({ attivita, titolo }) {
   return (
     <div className="border border-bordo rounded-[10px] bg-white p-4 shadow-sm overflow-hidden">
       {titolo && <h3 className="font-display text-sm font-semibold text-blu mb-3 border-b border-bordo pb-2">{titolo}</h3>}
-      <div className="text-xs text-grigio mb-3">
-        Totale ore: <strong className="text-foreground">{m2h(totale)}</strong> · {data.length} tipologie
+      <div className="text-sm font-semibold text-foreground mb-3">
+        Totale ore: <span className="text-blu font-bold">{m2h(totale)}</span> · {data.length} tipologie
       </div>
       <div className="space-y-2">
         {data.map((d, i) => {

@@ -155,7 +155,7 @@ export default function Home() {
                 />
                 <div className="grid md:grid-cols-2 gap-4">
                   <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
-                  <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — fino a 40 ore" />
+                  <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — 40 ore" />
                 </div>
               </div>
             </div>
