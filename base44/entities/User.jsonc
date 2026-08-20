@@ -7,6 +7,46 @@
         "admin",
         "user"
       ]
+    },
+    "profilo": {
+      "type": "string",
+      "enum": [
+        "docente",
+        "ata"
+      ],
+      "default": "docente",
+      "description": "Profilo utente: docente o ATA"
+    },
+    "nome_docente": {
+      "type": "string",
+      "description": "Nome e cognome del docente/operatore"
+    },
+    "piano": {
+      "type": "string",
+      "enum": [
+        "free",
+        "annuale",
+        "permanente"
+      ],
+      "default": "free",
+      "description": "Piano sottoscritto"
+    },
+    "anno_gratuito": {
+      "type": "string",
+      "description": "Anno scolastico gratuito (anno di installazione)"
+    },
+    "anni_licenza": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Anni scolastici sbloccati con rinnovo annuale"
+    },
+    "ads_removed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pubblicita rimossa"
     }
   },
   "required": [

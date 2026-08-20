@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Settings } from 'lucide-react';
+import { Pencil, Settings, Menu } from 'lucide-react';
 
-export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, onEditNome, onEditScuola, onOpenSettings }) {
+export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, onEditNome, onEditScuola, onOpenSettings, onOpenMenu }) {
   const [nome, setNome] = useState(nomeDocente);
 
   useEffect(() => {
@@ -15,7 +15,14 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, on
   }
 
   return (
-    <div className="text-center pt-7 pb-4 px-4 border-b-2 border-blu bg-white">
+    <div className="relative text-center pt-7 pb-4 px-4 border-b-2 border-blu bg-white">
+      <button
+        onClick={onOpenMenu}
+        className="absolute left-3 top-3 p-1.5 rounded-md text-grigio hover:bg-blu-light hover:text-blu transition-colors"
+        aria-label="Apri menu"
+      >
+        <Menu size={20} />
+      </button>
       <div className="text-[10px] uppercase tracking-[1.2px] text-grigio">
         A.S. {annoCorrente}
       </div>

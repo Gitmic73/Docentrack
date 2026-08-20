@@ -9,6 +9,9 @@ import ModalScuola from '@/components/registro/ModalScuola';
 import NuovoAnnoModal from '@/components/registro/NuovoAnnoModal';
 import ProfileSetup from '@/components/registro/ProfileSetup';
 import ProfileSettings from '@/components/registro/ProfileSettings';
+import SidebarMenu from '@/components/registro/SidebarMenu';
+import PannelloPiani from '@/components/registro/PannelloPiani';
+import PannelloDatiPersonali from '@/components/registro/PannelloDatiPersonali';
 import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
@@ -89,6 +92,7 @@ export default function Home() {
               onEditNome={r.updateNomeDocente}
               onEditScuola={() => openModal('scuola')}
               onOpenSettings={() => openModal('profilo')}
+              onOpenMenu={() => openModal('menu')}
             />
 
             <div className="h-3" />
@@ -187,7 +191,14 @@ export default function Home() {
         open={modal === 'nuovoanno'}
         suggerito={r.suggerisciProssimo()}
         onClose={closeModal}
-        onCrea={(nome) => { r.nuovoAnno(nome); closeModal(); }}
+        onCrea={(nome) => {
+          if (r.canCreateYear(nome)) {
+            r.nuovoAnno(nome);
+            closeModal();
+          } else {
+            patchParams({ modal: 'piano', id: nome });
+          }
+        }}
       />
       <ProfileSettings
         open={modal === 'profilo'}
@@ -196,6 +207,36 @@ export default function Home() {
         onClose={closeModal}
         onLogout={r.logout}
         onDeleteAccount={r.deleteAccount}
+        saving={r.saving}
+      />
+      <SidebarMenu
+        open={modal === 'menu'}
+        nomeDocente={r.nomeDocente}
+        piano={r.piano}
+        onClose={closeModal}
+        onNavigate={(m) => patchParams({ modal: m, id: null })}
+      />
+      <PannelloPiani
+        open={modal === 'piani' || modal === 'piano'}
+        piano={r.piano}
+        annoGratuito={r.annoGratuito}
+        anniLicenza={r.anniLicenza}
+        adsRemoved={r.adsRemoved}
+        targetAnno={modal === 'piano' ? editId : null}
+        prossimoAnno={r.suggerisciProssimo()}
+        onClose={closeModal}
+        onAcquistaAnno={r.acquistaAnno}
+        onAcquistaPermanente={r.acquistaPermanente}
+        onAcquistaRimozioneAds={r.acquistaRimozioneAds}
+        onAnnoSbloccato={(anno) => r.nuovoAnno(anno)}
+        saving={r.saving}
+      />
+      <PannelloDatiPersonali
+        open={modal === 'dati'}
+        nomeDocente={r.nomeDocente}
+        profilo={r.profilo}
+        onClose={closeModal}
+        onSave={(p, n) => { r.saveProfile(p, n); closeModal(); }}
         saving={r.saving}
       />
     </div>

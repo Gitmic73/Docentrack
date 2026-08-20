@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { suggerisciAnno } from '@/components/registro/registroConstants';
+import { schoolYearFromDate, canCreateYear as canCreateYearFn } from '@/lib/plans';
 
 export function useRegistro() {
   const [user, setUser] = useState(null);
@@ -16,6 +17,10 @@ export function useRegistro() {
   // Profilo utente
   const profilo = user?.data?.profilo || user?.profilo || null;
   const nomeDocente = user?.data?.nome_docente || user?.full_name || '';
+  const piano = user?.data?.piano || user?.piano || 'free';
+  const annoGratuito = user?.data?.anno_gratuito || user?.anno_gratuito || null;
+  const anniLicenza = user?.data?.anni_licenza || user?.anni_licenza || [];
+  const adsRemoved = !!(user?.data?.ads_removed || user?.ads_removed);
 
   const loadAnni = useCallback(async () => {
     const list = await base44.entities.AnnoScolastico.list('nome');
@@ -46,17 +51,25 @@ export function useRegistro() {
   // Init: utente + anni + dati
   useEffect(() => {
     (async () => {
-      try {
-        const u = await base44.auth.me();
+      let u = null;
+      try { u = await base44.auth.me(); } catch (e) { setUser(null); }
+      let freeYear = schoolYearFromDate();
+      if (u) {
+        const curPiano = u?.data?.piano || u?.piano;
+        const curAnno = u?.data?.anno_gratuito || u?.anno_gratuito;
+        if (!curPiano || !curAnno) {
+          try {
+            await base44.auth.updateMe({ piano: curPiano || 'free', anno_gratuito: curAnno || freeYear });
+            u = await base44.auth.me();
+          } catch (e) { /* ignore */ }
+        }
         setUser(u);
-      } catch (e) {
-        setUser(null);
+        freeYear = u?.data?.anno_gratuito || u?.anno_gratuito || freeYear;
       }
       let a = await loadAnni();
       if (a.length === 0) {
-        const def = '2025/2026';
-        await base44.entities.AnnoScolastico.create({ nome: def });
-        a = [def];
+        await base44.entities.AnnoScolastico.create({ nome: freeYear });
+        a = [freeYear];
       }
       setAnni(a);
       const ac = a[a.length - 1];
@@ -237,8 +250,43 @@ export function useRegistro() {
     base44.auth.logout();
   }, []);
 
+  const canCreateYear = useCallback(
+    (anno) => canCreateYearFn(anno, { piano, anno_gratuito: annoGratuito, anni_licenza: anniLicenza }),
+    [piano, annoGratuito, anniLicenza]
+  );
+
+  const acquistaAnno = useCallback(async (anno) => {
+    setSaving(true);
+    try {
+      const newLic = Array.from(new Set([...anniLicenza, anno]));
+      await base44.auth.updateMe({ anni_licenza: newLic });
+      const u = await base44.auth.me();
+      setUser(u);
+    } finally { setSaving(false); }
+  }, [anniLicenza]);
+
+  const acquistaPermanente = useCallback(async () => {
+    setSaving(true);
+    try {
+      await base44.auth.updateMe({ piano: 'permanente', ads_removed: true });
+      const u = await base44.auth.me();
+      setUser(u);
+    } finally { setSaving(false); }
+  }, []);
+
+  const acquistaRimozioneAds = useCallback(async () => {
+    setSaving(true);
+    try {
+      await base44.auth.updateMe({ ads_removed: true });
+      const u = await base44.auth.me();
+      setUser(u);
+    } finally { setSaving(false); }
+  }, []);
+
   return {
     user, profilo, nomeDocente,
+    piano, annoGratuito, anniLicenza, adsRemoved,
+    canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds,
     anni, annoCorrente, setAnnoCorrente,
     attivitaA, attivitaB, scuola,
     loading, saving,
