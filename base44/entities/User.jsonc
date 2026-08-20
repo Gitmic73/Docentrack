@@ -21,6 +21,14 @@
       "type": "string",
       "description": "Nome e cognome del docente/operatore"
     },
+    "telefono": {
+      "type": "string",
+      "description": "Recapito telefonico"
+    },
+    "docente_di": {
+      "type": "string",
+      "description": "Tipo di insegnamento (es. Matematica e Scienze)"
+    },
     "piano": {
       "type": "string",
       "enum": [

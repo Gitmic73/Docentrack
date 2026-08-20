@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CreditCard, User as UserIcon, School, Settings, Crown } from 'lucide-react';
+import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star } from 'lucide-react';
 import { PIANI } from '@/lib/plans';
 
 export default function SidebarMenu({ open, nomeDocente, piano, onClose, onNavigate }) {
   const pianoInfo = PIANI[piano] || PIANI.free;
   const items = [
     { k: 'piani', label: 'I miei piani', icon: CreditCard, desc: 'Piani, licenze e opzioni' },
-    { k: 'dati', label: 'Dati personali', icon: UserIcon, desc: 'Nome e profilo' },
+    { k: 'dati', label: 'Dati personali', icon: UserIcon, desc: 'Nome, telefono, password' },
     { k: 'scuola', label: 'Dati scuola', icon: School, desc: 'Istituto scolastico' },
+    { k: 'invita', label: 'Invita colleghi', icon: UserPlus, desc: 'Invita via email' },
+    { k: 'recensione', label: "Valuta l'app", icon: Star, desc: 'Lascia una recensione' },
     { k: 'profilo', label: 'Impostazioni profilo', icon: Settings, desc: 'Account, logout, elimina' },
   ];
 

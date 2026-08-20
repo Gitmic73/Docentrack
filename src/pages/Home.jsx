@@ -12,6 +12,8 @@ import ProfileSettings from '@/components/registro/ProfileSettings';
 import SidebarMenu from '@/components/registro/SidebarMenu';
 import PannelloPiani from '@/components/registro/PannelloPiani';
 import PannelloDatiPersonali from '@/components/registro/PannelloDatiPersonali';
+import PannelloInvita from '@/components/registro/PannelloInvita';
+import PannelloRecensione from '@/components/registro/PannelloRecensione';
 import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
@@ -233,12 +235,16 @@ export default function Home() {
       />
       <PannelloDatiPersonali
         open={modal === 'dati'}
+        email={r.email}
         nomeDocente={r.nomeDocente}
-        profilo={r.profilo}
+        telefono={r.telefono}
+        docenteDi={r.docenteDi}
         onClose={closeModal}
-        onSave={(p, n) => { r.saveProfile(p, n); closeModal(); }}
+        onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
         saving={r.saving}
       />
+      <PannelloInvita open={modal === 'invita'} onClose={closeModal} />
+      <PannelloRecensione open={modal === 'recensione'} onClose={closeModal} />
     </div>
   );
 }

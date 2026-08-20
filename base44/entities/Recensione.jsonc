@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "voto": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Valutazione da 1 a 5 stelle"
+    },
+    "testo": {
+      "type": "string",
+      "description": "Testo della recensione"
+    }
+  },
+  "required": [
+    "voto"
+  ],
+  "name": "Recensione",
+  "type": "object",
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

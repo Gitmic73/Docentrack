@@ -21,6 +21,9 @@ export function useRegistro() {
   const annoGratuito = user?.data?.anno_gratuito || user?.anno_gratuito || null;
   const anniLicenza = user?.data?.anni_licenza || user?.anni_licenza || [];
   const adsRemoved = !!(user?.data?.ads_removed || user?.ads_removed);
+  const email = user?.data?.email || user?.email || '';
+  const telefono = user?.data?.telefono || user?.telefono || '';
+  const docenteDi = user?.data?.docente_di || user?.docente_di || '';
 
   const loadAnni = useCallback(async () => {
     const list = await base44.entities.AnnoScolastico.list('nome');
@@ -283,10 +286,19 @@ export function useRegistro() {
     } finally { setSaving(false); }
   }, []);
 
+  const saveDatiPersonali = useCallback(async (data) => {
+    setSaving(true);
+    try {
+      await base44.auth.updateMe({ nome_docente: data.nome, telefono: data.telefono, docente_di: data.docente_di });
+      const u = await base44.auth.me();
+      setUser(u);
+    } finally { setSaving(false); }
+  }, []);
+
   return {
-    user, profilo, nomeDocente,
+    user, profilo, nomeDocente, email, telefono, docenteDi,
     piano, annoGratuito, anniLicenza, adsRemoved,
-    canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds,
+    canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds, saveDatiPersonali,
     anni, annoCorrente, setAnnoCorrente,
     attivitaA, attivitaB, scuola,
     loading, saving,
