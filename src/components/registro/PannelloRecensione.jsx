@@ -32,7 +32,7 @@ export default function PannelloRecensione({ open, onClose }) {
   return (
     <ModalShell open={open} onClose={onClose} maxWidth="max-w-[440px]">
       <h3 className="font-display text-[17px] text-blu mb-1 border-b border-bordo pb-2.5 flex items-center gap-2">
-        <Star size={18} /> Valuta DocentTrack
+        <Star size={18} /> Valuta DocenTrack
       </h3>
       <div className="text-xs text-grigio mb-4">
         La tua valutazione ci aiuta a migliorare. Sarà pubblicata sullo store.

@@ -41,7 +41,7 @@ export default async function(req) {
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: email,
           subject: 'Registro ore ' + anno + ' — limite 40 ore raggiunto (lett. ' + sez + ')',
-          body: 'Gentile ' + nome + ',\n\ncon l\'attività appena svolta hai raggiunto il limite massimo di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + '.\nL\'obbligo CCNL è assolto.\n\nGrazie per aver usato DocentTrack',
+          body: 'Gentile ' + nome + ',\n\ncon l\'attività appena svolta hai raggiunto il limite massimo di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + '.\nL\'obbligo CCNL è assolto.\n\nGrazie per aver usato DocenTrack',
         });
         flags[key100] = true;
         flags[keyApproach] = true;
@@ -52,7 +52,7 @@ export default async function(req) {
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: email,
             subject: 'Registro ore ' + anno + ' — vicino al limite 40 ore (lett. ' + sez + ')',
-            body: 'Gentile ' + nome + ',\n\nstai per raggiungere il limite di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + ' su 40 (' + pct(min) + '% / 100%). Mancano ' + fmtH(MAX_MIN - min) + ' al completamento.\n\nGrazie per aver scelto DocentTrack',
+            body: 'Gentile ' + nome + ',\n\nstai per raggiungere il limite di 40 ore per la sezione "' + sez + '" delle attività funzionali all\'insegnamento - a.s. ' + anno + '.\nOre svolte: ' + fmtH(min) + ' su 40 (' + pct(min) + '% / 100%). Mancano ' + fmtH(MAX_MIN - min) + ' al completamento.\n\nGrazie per aver scelto DocenTrack',
           });
           flags[keyApproach] = true;
           sent.push({ sez: sez, type: 'approach' });
@@ -75,7 +75,7 @@ export default async function(req) {
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: email,
           subject: 'Registro ore ' + anno + ' — scadenza anno scolastico vicina',
-          body: 'Gentile ' + nome + ',\n\nMancano circa ' + days + ' giorni alla fine dell\'anno scolastico ' + anno + ' (30 giugno).\nHai totalizzato ' + fmtH(totalBoth) + ' ore su 80 (40+40).\nTi invitiamo a completare le ore residue.\n\n— DocentTrack',
+          body: 'Gentile ' + nome + ',\n\nMancano circa ' + days + ' giorni alla fine dell\'anno scolastico ' + anno + ' (30 giugno).\nHai totalizzato ' + fmtH(totalBoth) + ' ore su 80 (40+40).\nTi invitiamo a completare le ore residue.\n\n— DocenTrack',
         });
         flags[key] = true;
         sent.push({ type: 'deadline', days: days });

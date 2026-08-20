@@ -37,7 +37,7 @@ export default function PannelloInvita({ open, onClose }) {
         <UserPlus size={18} /> Invita un collega
       </h3>
       <div className="text-xs text-grigio mb-4">
-        Invita docenti o amici a usare DocentTrack. Riceveranno un'email per registrarsi.
+        Invita docenti o amici a usare DocenTrack. Riceveranno un'email per registrarsi.
       </div>
       {done ? (
         <div className="text-center py-5">

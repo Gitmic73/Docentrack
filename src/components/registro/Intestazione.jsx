@@ -23,12 +23,12 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, on
       >
         <Menu size={20} />
       </button>
-      <div className="text-[10px] uppercase tracking-[1.2px] text-grigio">
-        A.S. {annoCorrente}
-      </div>
-      <h1 className="font-display text-xl font-semibold text-blu mt-1 mb-0.5">
-        Registro Attività Funzionali all'Insegnamento
+      <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-blu to-oro bg-clip-text text-transparent">
+        DocenTrack
       </h1>
+      <div className="text-[11px] text-grigio mt-0.5">
+        Registro Attività Funzionali all'Insegnamento
+      </div>
       <div className="flex items-center justify-center gap-2 mt-2.5">
         <label className="text-xs text-grigio">Ins.</label>
         <input
@@ -55,6 +55,9 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, on
         >
           <Settings size={12} /> profilo
         </button>
+      </div>
+      <div className="text-[10px] uppercase tracking-[1.2px] text-grigio mt-2">
+        A.S. {annoCorrente}
       </div>
     </div>
   );

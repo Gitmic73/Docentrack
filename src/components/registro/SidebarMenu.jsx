@@ -66,7 +66,7 @@ export default function SidebarMenu({ open, nomeDocente, piano, onClose, onNavig
                 </button>
               ))}
             </nav>
-            <div className="px-4 py-3 border-t border-bordo text-[10px] text-grigio">DocentTrack · v1.0</div>
+            <div className="px-4 py-3 border-t border-bordo text-[10px] text-grigio">DocenTrack · v1.0</div>
           </motion.aside>
         </>
       )}
