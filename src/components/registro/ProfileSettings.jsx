@@ -27,7 +27,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
       {step === 'menu' && (
         <>
           <h3 className="font-display text-[17px] text-blu mb-4 border-b border-bordo pb-2.5">Impostazioni profilo</h3>
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#f4f4f2] mb-4">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#FEF3C7] mb-4">
             <div className="w-10 h-10 rounded-full bg-blu-light flex items-center justify-center text-blu">
               <UserIcon size={20} />
             </div>
@@ -38,7 +38,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
           </div>
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-2 px-3 py-3 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#f4f4f2] transition-colors mb-2 select-none"
+            className="w-full flex items-center gap-2 px-3 py-3 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#FEF3C7] transition-colors mb-2 select-none"
           >
             <LogOut size={16} className="text-grigio" /> Esci dall&apos;account
           </button>
@@ -49,7 +49,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
             <Trash2 size={16} /> Elimina account
           </button>
           <div className="flex justify-end mt-5 select-none">
-            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee]">Chiudi</button>
+            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Chiudi</button>
           </div>
         </>
       )}
@@ -83,7 +83,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
             <button
               onClick={() => setStep('menu')}
               disabled={saving}
-              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee] disabled:opacity-50"
+              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7] disabled:opacity-50"
             >
               Annulla
             </button>

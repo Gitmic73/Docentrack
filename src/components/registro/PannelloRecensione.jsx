@@ -56,7 +56,7 @@ export default function PannelloRecensione({ open, onClose }) {
                 className="p-0.5"
                 aria-label={`${n} stelle`}
               >
-                <Star size={32} className={(hover || voto) >= n ? 'fill-oro text-oro' : 'text-bordo'} />
+                <Star size={32} className={(hover || voto) >= n ? 'fill-[#FCD34D] text-[#FCD34D]' : 'text-bordo'} />
               </button>
             ))}
           </div>
@@ -72,12 +72,12 @@ export default function PannelloRecensione({ open, onClose }) {
         </>
       )}
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee]">Chiudi</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Chiudi</button>
         {!done && (
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#12284d] disabled:opacity-50"
+            className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50"
           >
             {loading ? 'Invio…' : 'Invia recensione'}
           </button>

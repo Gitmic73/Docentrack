@@ -5,7 +5,7 @@ export default function ProfileSetup({ nomeIniziale, onSave, saving }) {
   const [nome, setNome] = useState(nomeIniziale || '');
 
   return (
-    <div className="fixed inset-0 bg-[#f7f6f2] z-[900] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#FFFBEB] z-[900] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl border border-bordo shadow-[0_8px_40px_rgba(0,0,0,0.12)] w-full max-w-[460px] overflow-hidden">
         <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
         <div className="p-7">
@@ -35,7 +35,7 @@ export default function ProfileSetup({ nomeIniziale, onSave, saving }) {
           <button
             onClick={() => nome.trim() && onSave('docente', nome.trim())}
             disabled={!nome.trim() || saving}
-            className="w-full mt-6 bg-blu text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-[#12284d] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full mt-6 bg-blu text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-[#B45309] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {saving ? 'Salvataggio…' : 'Inizia a registrare'}
           </button>

@@ -31,8 +31,8 @@ export default function NuovoAnnoModal({ open, suggerito, onClose, onCrea }) {
       />
       {err && <div className="mt-2 text-[11px] text-rosso">{err}</div>}
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee]">Annulla</button>
-        <button onClick={handleCrea} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#12284d]">Crea</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Annulla</button>
+        <button onClick={handleCrea} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309]">Crea</button>
       </div>
     </ModalShell>
   );

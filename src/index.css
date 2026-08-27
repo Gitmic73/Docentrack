@@ -10,8 +10,8 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 33 97% 44%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
@@ -22,16 +22,16 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 33 97% 44%;
+    --chart-1: 33 97% 44%;
+    --chart-2: 41 96% 64%;
+    --chart-3: 26 78% 26%;
+    --chart-4: 44 92% 95%;
+    --chart-5: 48 100% 96%;
     --radius: 0.5rem;
-    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-heading: 'Lora', Georgia, serif;
     --font-body: 'Source Sans 3', system-ui, sans-serif;
-    --font-display: 'Playfair Display', Georgia, serif;
+    --font-display: 'Lora', Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -50,8 +50,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 41 96% 58%;
+    --primary-foreground: 26 78% 26%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
@@ -62,12 +62,12 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --ring: 41 96% 58%;
+    --chart-1: 33 97% 55%;
+    --chart-2: 41 96% 70%;
+    --chart-3: 26 78% 40%;
+    --chart-4: 44 92% 95%;
+    --chart-5: 48 100% 97%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -95,20 +95,20 @@
 
 /* ===== Dark mode contrast overrides (mobile WebView) ===== */
 .dark .bg-white { background-color: #121212 !important; }
-.dark .bg-\[\#f7f6f2\] { background-color: #121212 !important; }
-.dark .bg-\[\#f4f4f2\] { background-color: #1a1a1a !important; }
-.dark .bg-\[\#fafaf8\] { background-color: #18181b !important; }
+.dark .bg-\[\#FFFBEB\] { background-color: #121212 !important; }
+.dark .bg-\[\#FEF3C7\] { background-color: #1a1a1a !important; }
 .dark .border-bordo { border-color: #27272a !important; }
+.dark .border-oro { border-color: #B45309 !important; }
 .dark .text-grigio { color: #a1a1aa !important; }
-.dark .text-blu { color: #7aa2ed !important; }
+.dark .text-blu { color: #FCD34D !important; }
+.dark .text-oro { color: #FCD34D !important; }
 .dark .text-rosso { color: #f87171 !important; }
 .dark .text-verde { color: #4ade80 !important; }
 .dark .text-\[\#7a5c00\] { color: #fbbf24 !important; }
-.dark .bg-blu-light { background-color: rgba(122,162,237,0.18) !important; }
-.dark .bg-oro-light { background-color: rgba(251,191,36,0.18) !important; }
+.dark .bg-blu-light { background-color: rgba(254,243,199,0.16) !important; }
+.dark .bg-oro-light { background-color: rgba(255,251,235,0.14) !important; }
 .dark .bg-rosso-light { background-color: rgba(248,113,113,0.18) !important; }
 .dark .bg-verde-light { background-color: rgba(74,222,128,0.18) !important; }
-.dark .hover\:bg-\[\#fafaf8\]:hover { background-color: #27272a !important; }
-.dark .hover\:bg-\[\#f0f0ee\]:hover { background-color: #27272a !important; }
-.dark .hover\:bg-\[\#f4f4f2\]:hover { background-color: #27272a !important; }
-.dark .hover\:bg-blu-light:hover { background-color: rgba(122,162,237,0.18) !important; }
+.dark .bg-oro { background-color: #92400e !important; }
+.dark .hover\:bg-\[\#FEF3C7\]:hover { background-color: #27272a !important; }
+.dark .hover\:bg-blu-light:hover { background-color: rgba(254,243,199,0.16) !important; }

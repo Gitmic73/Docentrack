@@ -39,7 +39,7 @@ export default function DrawerSelect({ value, onChange, options, placeholder, la
               <button
                 type="button"
                 onClick={() => { onChange(''); setOpen(false); }}
-                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 transition-colors ${!value ? 'bg-blu-light text-blu font-semibold' : 'text-grigio hover:bg-[#f4f4f2]'}`}
+                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 transition-colors ${!value ? 'bg-blu-light text-blu font-semibold' : 'text-grigio hover:bg-[#FEF3C7]'}`}
               >
                 {placeholder}
               </button>
@@ -49,7 +49,7 @@ export default function DrawerSelect({ value, onChange, options, placeholder, la
                 key={o}
                 type="button"
                 onClick={() => { onChange(o); setOpen(false); }}
-                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 flex items-center justify-between transition-colors ${value === o ? 'bg-blu-light text-blu font-semibold' : 'text-foreground hover:bg-[#f4f4f2]'}`}
+                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 flex items-center justify-between transition-colors ${value === o ? 'bg-blu-light text-blu font-semibold' : 'text-foreground hover:bg-[#FEF3C7]'}`}
               >
                 <span className="flex-1 min-w-0">{o}</span>
                 {value === o && <Check size={16} className="text-blu shrink-0 ml-2" />}

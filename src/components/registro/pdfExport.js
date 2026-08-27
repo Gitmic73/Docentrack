@@ -50,17 +50,21 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
   let y = 20;
 
   // Strip blu/oro
-  doc.setFillColor(26, 58, 107);
+  doc.setFillColor(217, 119, 6);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(201, 162, 39);
+  doc.setFillColor(120, 53, 15);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
 
   // Titolo
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(15);
-  doc.setTextColor(26, 58, 107);
+  doc.setFontSize(16);
+  doc.setTextColor(217, 119, 6);
+  doc.text('DocenTrack', W / 2, y, { align: 'center' });
+  y += 6;
+  doc.setFontSize(9);
+  doc.setTextColor(90, 90, 90);
   doc.text("Registro Attività Funzionali all'Insegnamento", W / 2, y, { align: 'center' });
-  y += 7;
+  y += 5;
   doc.setFontSize(9);
   doc.setTextColor(90, 90, 90);
   doc.text(`Anno Scolastico ${anno}`, W / 2, y, { align: 'center' });
@@ -141,7 +145,7 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
     const res = Math.max(0, MAX_ORE - tot);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(26, 58, 107);
+    doc.setTextColor(217, 119, 6);
     doc.text(`Totale ore svolte: ${m2h(tot)}`, M, y);
     if (ecc > 0) {
       doc.setTextColor(176, 58, 46);
@@ -152,8 +156,8 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
     y += 11;
   }
 
-  sezione('40 ore — Art. 29 CCNL/2007 (lett. a)', [26, 58, 107], attivitaA);
-  sezione('Fino a 40 ore — Art. 29 CCNL/2007 (lett. b)', [201, 162, 39], attivitaB);
+  sezione('40 ore — Art. 29 CCNL/2007 (lett. a)', [217, 119, 6], attivitaA);
+  sezione('Fino a 40 ore — Art. 29 CCNL/2007 (lett. b)', [120, 53, 15], attivitaB);
 
   if (y > 265) { doc.addPage(); y = 20; }
   doc.setFontSize(7);
@@ -169,13 +173,13 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
   // ===== Pagina 2: Report statistico con grafici a torta (in verticale) =====
   doc.addPage();
   y = 20;
-  doc.setFillColor(26, 58, 107);
+  doc.setFillColor(217, 119, 6);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(201, 162, 39);
+  doc.setFillColor(120, 53, 15);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.setTextColor(26, 58, 107);
+  doc.setTextColor(217, 119, 6);
   doc.text('Report Statistico', W / 2, y, { align: 'center' });
   y += 7;
   doc.setFontSize(9);
@@ -195,7 +199,7 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
     if (y + pieSize + 10 > H - M) { doc.addPage(); y = 20; }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(26, 58, 107);
+    doc.setTextColor(217, 119, 6);
     doc.text(titolo, M, y);
     doc.setFontSize(8);
     doc.setTextColor(90, 90, 90);
@@ -241,7 +245,7 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
   doc.setFont('helvetica', 'normal');
-  doc.text('Generato da DocentTrack', W / 2, H - 8, { align: 'center' });
+  doc.text('Generato da DocenTrack', W / 2, H - 8, { align: 'center' });
 
   doc.save(`Registro_Ore_${anno.replace('/', '-')}.pdf`);
 }

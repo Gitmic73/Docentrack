@@ -61,9 +61,9 @@ export default function ModalScuola({ open, annoCorrente, scuola, onClose, onSav
         </div>
       </div>
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee]">Annulla</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Annulla</button>
         <button onClick={handleSave} disabled={saving}
-          className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#12284d] disabled:opacity-50">Salva</button>
+          className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50">Salva</button>
       </div>
     </ModalShell>
   );

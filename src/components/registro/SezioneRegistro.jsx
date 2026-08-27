@@ -11,7 +11,7 @@ const CONF = {
     headerClass: 'bg-blu',
     barraClass: 'bg-oro',
     pillClass: 'bg-blu-light text-blu',
-    btnAddClass: 'bg-blu hover:bg-[#12284d]',
+    btnAddClass: 'bg-blu hover:bg-[#B45309]',
     noteLabel: 'Note',
     notePlaceholder: 'facoltativo',
     alertEccMsg: "Hai diritto al compenso (Tab. 5 CCNL) o all'esonero.",
@@ -23,7 +23,7 @@ const CONF = {
     headerClass: 'bg-oro',
     barraClass: 'bg-blu',
     pillClass: 'bg-oro-light text-[#7a5c00]',
-    btnAddClass: 'bg-oro hover:bg-[#a6841e]',
+    btnAddClass: 'bg-oro hover:bg-[#92400e]',
     noteLabel: 'Note / Classe',
     notePlaceholder: 'es. 3A',
     alertEccMsg: 'Il Collegio Docenti delibera la gestione.',
@@ -122,7 +122,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Stats */}
-      <div className="px-4 py-2 flex justify-between items-center border-b border-bordo bg-[#f4f4f2]">
+      <div className="px-4 py-2 flex justify-between items-center border-b border-bordo bg-[#FEF3C7]">
         <div className="flex gap-[18px] flex-wrap">
           <div className="stat">
             <span className="block text-lg font-semibold text-blu">{m2h(totMin)}</span>
@@ -142,7 +142,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Form inserimento */}
-      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end select-none">
+      <div className="px-4 py-2 bg-[#FEF3C7] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end select-none">
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
@@ -184,7 +184,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       {err && <div className="px-4 py-1.5 text-[11px] text-rosso bg-rosso-light">{err}</div>}
 
       {/* Ricerca e filtri */}
-      <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo flex items-center gap-2">
+      <div className="px-4 py-2 bg-[#FEF3C7] border-b border-bordo flex items-center gap-2">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
           <input
@@ -203,7 +203,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </button>
       </div>
       {showFiltri && (
-        <div className="px-4 py-2 bg-[#f4f4f2] border-b border-bordo grid grid-cols-2 sm:grid-cols-4 gap-2 items-end select-none">
+        <div className="px-4 py-2 bg-[#FEF3C7] border-b border-bordo grid grid-cols-2 sm:grid-cols-4 gap-2 items-end select-none">
           <div>
             <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Dal</label>
             <input type="date" value={filtDa} onChange={(e) => setFiltDa(e.target.value)}
@@ -266,16 +266,16 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               { k: 'dur', l: 'Durata' },
             ].map((h) => (
               <th key={h.k} onClick={() => toggleSort(h.k)}
-                className={`px-2.5 py-1.5 text-[10px] uppercase tracking-[0.5px] text-grigio font-semibold border-b border-bordo text-left bg-[#f4f4f2] cursor-pointer hover:text-blu whitespace-nowrap ${sort.col === h.k ? 'text-blu' : ''}`}>
+                className={`px-2.5 py-1.5 text-[10px] uppercase tracking-[0.5px] text-grigio font-semibold border-b border-bordo text-left bg-[#FEF3C7] cursor-pointer hover:text-blu whitespace-nowrap ${sort.col === h.k ? 'text-blu' : ''}`}>
                 {h.l} <ArrowUpDown size={9} className="inline opacity-50" />
               </th>
             ))}
-            <th className="px-2.5 py-1.5 border-b border-bordo bg-[#f4f4f2]"></th>
+            <th className="px-2.5 py-1.5 border-b border-bordo bg-[#FEF3C7]"></th>
           </tr>
         </thead>
         <tbody>
           {filtered.map((v) => (
-            <tr key={v.id} className="border-b border-bordo hover:bg-[#fafaf8]">
+            <tr key={v.id} className="border-b border-bordo hover:bg-[#FEF3C7]">
               <td className="px-2.5 py-1.5">{fmtD(v.data)}</td>
               <td className="px-2.5 py-1.5 whitespace-nowrap">{v.inizio}–{v.fine}</td>
               <td className="px-2.5 py-1.5">
@@ -302,7 +302,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       ) : null}
 
       {/* Footer sezione */}
-      <div className="px-4 py-2 border-t border-bordo bg-[#f4f4f2] flex items-center justify-between gap-2.5 flex-wrap">
+      <div className="px-4 py-2 border-t border-bordo bg-[#FEF3C7] flex items-center justify-between gap-2.5 flex-wrap">
         <div>
           {dati.length > 0 && (
             <div className="text-xs text-grigio">

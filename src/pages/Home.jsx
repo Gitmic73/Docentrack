@@ -47,7 +47,7 @@ export default function Home() {
 
   if (r.loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#f7f6f2]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#FFFBEB]">
         <div className="w-8 h-8 border-4 border-blu-light border-t-blu rounded-full animate-spin"></div>
       </div>
     );
@@ -82,7 +82,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f6f2] pb-24 md:pb-12 font-body text-foreground">
+    <div className="min-h-screen bg-[#FFFBEB] pb-24 md:pb-12 font-body text-foreground">
       <PullToRefresh onRefresh={r.refresh} disabled={!!modal}>
         <div className="pt-[env(safe-area-inset-top,16px)] md:pt-0">
           <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />

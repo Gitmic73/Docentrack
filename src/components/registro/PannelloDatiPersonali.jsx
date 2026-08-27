@@ -94,8 +94,8 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
         </div>
       </div>
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#f0f0ee]">Annulla</button>
-        <button onClick={handleSave} disabled={saving || !nome.trim()} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#12284d] disabled:opacity-50">Salva</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Annulla</button>
+        <button onClick={handleSave} disabled={saving || !nome.trim()} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50">Salva</button>
       </div>
     </ModalShell>
   );
