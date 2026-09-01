@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import { useRegistro } from '@/hooks/useRegistro';
 import { base44 } from '@/api/base44Client';
@@ -140,46 +141,51 @@ export default function Home() {
 
             <ExportToolbar onPDF={handleExport} onCSV={handleCSV} disabled={allAttivita.length === 0} />
 
-            {/* All tabs mounted concurrently; visibility toggled to preserve scroll/filter state */}
-            <div className={vista === 'registro' ? '' : 'hidden'}>
-              <SezioneRegistro
-                sezione="a"
-                annoCorrente={r.annoCorrente}
-                dati={r.attivitaA}
-                onAdd={(rec) => r.addAttivita('a', rec)}
-                onEdit={(v) => openModal('edit', v.id)}
-                onDelete={r.deleteAttivita}
-                onSvuota={() => r.svuotaSezione('a')}
-                saving={r.saving}
-              />
-              <SezioneRegistro
-                sezione="b"
-                annoCorrente={r.annoCorrente}
-                dati={r.attivitaB}
-                onAdd={(rec) => r.addAttivita('b', rec)}
-                onEdit={(v) => openModal('edit', v.id)}
-                onDelete={r.deleteAttivita}
-                onSvuota={() => r.svuotaSezione('b')}
-                saving={r.saving}
-              />
-            </div>
-
-            <div className={vista === 'calendario' ? '' : 'hidden'}>
-              <CalendarioMese attivita={allAttivita} />
-            </div>
-
-            <div className={vista === 'statistiche' ? '' : 'hidden'}>
-              <div className="space-y-4">
-                <BarChartTipologie
-                  attivita={allAttivita}
-                  titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
-                />
-                <div className="grid md:grid-cols-2 gap-4">
-                  <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
-                  <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — 40 ore" />
-                </div>
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              {vista === 'registro' && (
+                <motion.div key="registro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <SezioneRegistro
+                    sezione="a"
+                    annoCorrente={r.annoCorrente}
+                    dati={r.attivitaA}
+                    onAdd={(rec) => r.addAttivita('a', rec)}
+                    onEdit={(v) => openModal('edit', v.id)}
+                    onDelete={r.deleteAttivita}
+                    onSvuota={() => r.svuotaSezione('a')}
+                    saving={r.saving}
+                  />
+                  <SezioneRegistro
+                    sezione="b"
+                    annoCorrente={r.annoCorrente}
+                    dati={r.attivitaB}
+                    onAdd={(rec) => r.addAttivita('b', rec)}
+                    onEdit={(v) => openModal('edit', v.id)}
+                    onDelete={r.deleteAttivita}
+                    onSvuota={() => r.svuotaSezione('b')}
+                    saving={r.saving}
+                  />
+                </motion.div>
+              )}
+              {vista === 'calendario' && (
+                <motion.div key="calendario" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <CalendarioMese attivita={allAttivita} />
+                </motion.div>
+              )}
+              {vista === 'statistiche' && (
+                <motion.div key="statistiche" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <div className="space-y-4">
+                    <BarChartTipologie
+                      attivita={allAttivita}
+                      titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
+                    />
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <PieChartTipologie attivita={r.attivitaA} titolo="Lett. a — 40 ore" />
+                      <PieChartTipologie attivita={r.attivitaB} titolo="Lett. b — 40 ore" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <FooterLegale />
           </div>

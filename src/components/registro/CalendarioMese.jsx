@@ -115,7 +115,7 @@ export default function CalendarioMese({ attivita }) {
                   </span>
                   <span className="text-grigio whitespace-nowrap">{v.inizio}–{v.fine}</span>
                   <span className="flex-1 truncate text-foreground" title={v.tipo}>{v.tipo}</span>
-                  {v.note && <span className="text-grigio text-[10px] truncate hidden sm:inline">{v.note}</span>}
+                  {v.note && <span className="text-grigio text-[10px] truncate hidden sm:inline select-text">{v.note}</span>}
                   <span className="font-semibold text-foreground whitespace-nowrap">{m2h(v.durata_min)}</span>
                 </div>
               ))}

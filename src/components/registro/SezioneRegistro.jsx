@@ -248,7 +248,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               </div>
               <div className="mt-1 flex items-center gap-1.5 min-w-0">
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.pillClass} truncate max-w-full`} title={v.tipo}>{v.tipo}</span>
-                {v.note && <span className="text-grigio text-[10px] truncate">{v.note}</span>}
+                {v.note && <span className="text-grigio text-[10px] truncate select-text">{v.note}</span>}
               </div>
             </div>
             <div className="text-sm font-semibold text-blu whitespace-nowrap">{m2h(v.durata_min)}</div>
@@ -285,7 +285,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               <td className="px-2.5 py-1.5 whitespace-nowrap">{v.inizio}–{v.fine}</td>
               <td className="px-2.5 py-1.5">
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.pillClass}`} title={v.tipo}>{v.tipo}</span>
-                {v.note && <span className="text-grigio text-[10px] ml-1">{v.note}</span>}
+                {v.note && <span className="text-grigio text-[10px] ml-1 select-text">{v.note}</span>}
               </td>
               <td className="px-2.5 py-1.5 font-semibold">{m2h(v.durata_min)}</td>
               <td className="px-2.5 py-1.5 whitespace-nowrap">

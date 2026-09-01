@@ -90,6 +90,16 @@
     @apply bg-background text-foreground font-body;
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  button, nav, header, [role="tab"], [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  input, textarea, select, [contenteditable="true"], [contenteditable=""] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 
