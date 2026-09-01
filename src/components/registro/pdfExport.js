@@ -170,9 +170,8 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
     M, y, { maxWidth: W - 2 * M }
   );
 
-  // ===== Pagina 2: Report statistico con grafici a torta (in verticale) =====
+  // ===== Pagina 2: Report statistico con grafici a torta =====
   doc.addPage();
-  y = 20;
   doc.setFillColor(217, 119, 6);
   doc.rect(0, 0, W / 2, 2, 'F');
   doc.setFillColor(120, 53, 15);
@@ -180,67 +179,83 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(217, 119, 6);
-  doc.text('Report Statistico', W / 2, y, { align: 'center' });
-  y += 7;
+  doc.text('Report Statistico', W / 2, 18, { align: 'center' });
   doc.setFontSize(9);
   doc.setTextColor(90, 90, 90);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, y, { align: 'center' });
-  y += 12;
+  doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, 24, { align: 'center' });
 
   const pieA = buildPieData(attivitaA);
   const pieB = buildPieData(attivitaB);
   const imgA = pieToDataURL(pieA);
   const imgB = pieToDataURL(pieB);
-  const pieSize = 65;
-  const gap = 14;
+  const totA = attivitaA.reduce((s, v) => s + (v.durata_min || 0), 0);
+  const totB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
 
-  function drawPieBlock(titolo, totale, data, img) {
-    if (y + pieSize + 10 > H - M) { doc.addPage(); y = 20; }
+  // La pagina è divisa a metà in altezza: ogni blocco ha un limite fisso,
+  // così i due grafici non si sovrappongono mai a prescindere dal numero di voci.
+  const contentTop = 32;
+  const contentBottom = H - M - 6;
+  const blockH = (contentBottom - contentTop) / 2;
+
+  function drawPieBlock(top, titolo, totale, data, img) {
+    let yy = top;
+    // Titolo centrato
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
     doc.setTextColor(217, 119, 6);
-    doc.text(titolo, M, y);
+    doc.text(titolo, W / 2, yy, { align: 'center' });
+    yy += 5;
     doc.setFontSize(8);
     doc.setTextColor(90, 90, 90);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Totale: ${m2h(totale)}`, W - M, y, { align: 'right' });
-    y += 7;
-    const py = y;
+    doc.text(`Totale: ${m2h(totale)}`, W / 2, yy, { align: 'center' });
+    yy += 6;
+
+    // Torta centrata orizzontalmente; il diametro si adatta allo spazio per la legenda
+    // (più voci = torta più piccola, per restare entro il blocco)
+    const rowH = 5.5;
+    const rowsNeeded = Math.ceil(data.length / 2);
+    const legendH = rowsNeeded * rowH;
+    const pieD = Math.max(45, Math.min(82, blockH - 6 - legendH - 4));
+    const px = (W - pieD) / 2;
     if (img) {
-      doc.addImage(img, 'PNG', M, py, pieSize, pieSize);
+      doc.addImage(img, 'PNG', px, yy, pieD, pieD);
     } else {
       doc.setFontSize(9);
       doc.setTextColor(130, 130, 130);
-      doc.text('Nessuna attività registrata', M, py + 4);
+      doc.text('Nessuna attività registrata', W / 2, yy + pieD / 2, { align: 'center' });
     }
-    // legenda a destra della torta
-    const lx = M + pieSize + 8;
-    const lw = W - M - lx;
-    let lyy = py + 2;
+    yy += pieD + 4;
+
+    // Legenda sotto la torta, su due colonne, bloccata al limite inferiore del blocco
+    const colW = (W - 2 * M) / 2;
+    const legendMax = top + blockH - 3;
+    let col = 0, row = 0;
     doc.setFontSize(8);
     data.forEach((d) => {
-      if (lyy > py + pieSize) return;
+      const lyy = yy + row * rowH;
+      if (lyy > legendMax) return;
+      const lx = M + col * colW;
       const rgb = hexToRgb(d.color);
       doc.setFillColor(rgb[0], rgb[1], rgb[2]);
       doc.rect(lx, lyy - 2.5, 3, 3, 'F');
       doc.setTextColor(50, 50, 50);
       doc.setFont('helvetica', 'normal');
       let name = d.name;
-      if (name.length > 46) name = name.slice(0, 43) + '…';
+      const maxName = 36;
+      if (name.length > maxName) name = name.slice(0, maxName - 1) + '…';
       doc.text(name, lx + 4.5, lyy);
       const pct = totale ? ((d.value / totale) * 100).toFixed(0) : 0;
       doc.setFont('helvetica', 'bold');
-      doc.text(`${pct}%  ${m2h(d.value)}`, lx + lw, lyy, { align: 'right' });
-      lyy += 6;
+      doc.text(`${pct}%  ${m2h(d.value)}`, lx + colW - 2, lyy, { align: 'right' });
+      col++;
+      if (col >= 2) { col = 0; row++; }
     });
-    y = py + pieSize + gap;
   }
 
-  const totA = attivitaA.reduce((s, v) => s + (v.durata_min || 0), 0);
-  const totB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
-  drawPieBlock('Lett. a — 40 ore', totA, pieA, imgA);
-  drawPieBlock('Lett. b — fino a 40 ore', totB, pieB, imgB);
+  drawPieBlock(contentTop, 'Lett. a — 40 ore', totA, pieA, imgA);
+  drawPieBlock(contentTop + blockH, 'Lett. b — fino a 40 ore', totB, pieB, imgB);
 
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
