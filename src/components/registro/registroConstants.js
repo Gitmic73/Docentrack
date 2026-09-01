@@ -60,3 +60,20 @@ export function suggerisciAnno(anno) {
     return '2026/2027';
   }
 }
+
+// Anno scolastico (01/09 - 31/08) contenente la data in formato YYYY-MM-DD
+export function annoScolasticoDaData(date) {
+  if (!date) return null;
+  const y = parseInt(date.slice(0, 4), 10);
+  const m = parseInt(date.slice(5, 7), 10);
+  if (!y || isNaN(m)) return null;
+  return m >= 9 ? `${y}/${y + 1}` : `${y - 1}/${y}`;
+}
+
+// Verifica che la data rientri nel range dell'anno scolastico (01/09/XXX1 - 31/08/XXX2)
+export function dateInAnnoScolastico(date, anno) {
+  if (!date || !anno) return true;
+  const [y1, y2] = anno.split('/').map(Number);
+  if (!y1 || !y2) return true;
+  return date >= `${y1}-09-01` && date <= `${y2}-08-31`;
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { suggerisciAnno } from '@/components/registro/registroConstants';
+import { suggerisciAnno, annoScolasticoDaData } from '@/components/registro/registroConstants';
 import { schoolYearFromDate, canCreateYear as canCreateYearFn } from '@/lib/plans';
 
 export function useRegistro() {
@@ -36,6 +36,31 @@ export function useRegistro() {
     } catch (e) { /* notifiche non bloccanti */ }
   }, []);
 
+  // Migrazione una-tantum: ricolloca ogni attività nell'anno scolastico corretto in base alla data
+  const redistributeByDate = useCallback(async () => {
+    const all = await base44.entities.Attivita.list('-data', 1000);
+    const updates = [];
+    const yearsNeeded = new Set();
+    for (const a of all) {
+      const correct = annoScolasticoDaData(a.data);
+      if (!correct) continue;
+      yearsNeeded.add(correct);
+      if (correct !== a.anno_scolastico) {
+        updates.push({ id: a.id, anno_scolastico: correct });
+      }
+    }
+    if (updates.length) {
+      await base44.entities.Attivita.bulkUpdate(updates);
+    }
+    const existing = await base44.entities.AnnoScolastico.list();
+    const have = new Set(existing.map((x) => x.nome));
+    const toCreate = [...yearsNeeded].filter((y) => !have.has(y));
+    if (toCreate.length) {
+      await base44.entities.AnnoScolastico.bulkCreate(toCreate.map((y) => ({ nome: y })));
+    }
+    return updates.length;
+  }, []);
+
   const loadData = useCallback(async (anno) => {
     if (!anno) return;
     const [a, b, s] = await Promise.all([
@@ -68,8 +93,14 @@ export function useRegistro() {
         }
         setUser(u);
         freeYear = u?.data?.anno_gratuito || u?.anno_gratuito || freeYear;
-      }
-      let a = await loadAnni();
+        }
+        if (u && !u?.data?.mig_date_range_v1) {
+        try { await redistributeByDate(); } catch (e) { /* ignore */ }
+        try { await base44.auth.updateMe({ mig_date_range_v1: true }); } catch (e) { /* ignore */ }
+        u = await base44.auth.me();
+        setUser(u);
+        }
+        let a = await loadAnni();
       if (a.length === 0) {
         await base44.entities.AnnoScolastico.create({ nome: freeYear });
         a = [freeYear];

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { TIPI_A, TIPI_B, t2m } from './registroConstants';
+import { TIPI_A, TIPI_B, t2m, dateInAnnoScolastico } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 import ModalShell from './ModalShell';
 
-export default function ModalEdit({ open, record, sezione, onClose, onSave, saving }) {
+export default function ModalEdit({ open, record, sezione, onClose, onSave, saving, annoCorrente }) {
   const [form, setForm] = useState({ data: '', inizio: '', fine: '', tipo: '', note: '' });
   const [err, setErr] = useState('');
   const tipi = sezione === 'a' ? TIPI_A : TIPI_B;
@@ -18,6 +18,11 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
   function handleSave() {
     if (!form.data || !form.inizio || !form.fine || !form.tipo) {
       setErr('Tutti i campi sono obbligatori.');
+      return;
+    }
+    if (annoCorrente && !dateInAnnoScolastico(form.data, annoCorrente)) {
+      const [y1, y2] = annoCorrente.split('/');
+      setErr(`La data non rientra nell'anno scolastico ${annoCorrente} (valido dal 01/09/${y1} al 31/08/${y2}). Verifica la data.`);
       return;
     }
     if (form.tipo.startsWith('Altro') && !form.note.trim()) {

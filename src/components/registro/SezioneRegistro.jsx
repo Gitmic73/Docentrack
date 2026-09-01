@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Pencil, X, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
-import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m } from './registroConstants';
+import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m, dateInAnnoScolastico } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 
 const CONF = {
@@ -30,7 +30,7 @@ const CONF = {
   },
 };
 
-export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, saving }) {
+export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, saving, annoCorrente }) {
   const c = CONF[sezione];
   const [form, setForm] = useState({ data: oggi(), inizio: '', fine: '', tipo: '', note: '' });
   const [sort, setSort] = useState({ col: 'data', asc: false });
@@ -84,6 +84,11 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
   function handleAdd() {
     if (!form.data || !form.inizio || !form.fine || !form.tipo) {
       setErr('Compila data, orario di inizio, fine e tipologia.');
+      return;
+    }
+    if (annoCorrente && !dateInAnnoScolastico(form.data, annoCorrente)) {
+      const [y1, y2] = annoCorrente.split('/');
+      setErr(`La data non rientra nell'anno scolastico ${annoCorrente} (valido dal 01/09/${y1} al 31/08/${y2}). Verifica la data o seleziona l'anno scolastico corretto.`);
       return;
     }
     if (form.tipo.startsWith('Altro') && !form.note.trim()) {

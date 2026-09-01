@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRegistro } from '@/hooks/useRegistro';
+import { base44 } from '@/api/base44Client';
 import NavAnni from '@/components/registro/NavAnni';
 import Intestazione from '@/components/registro/Intestazione';
 import SezioneRegistro from '@/components/registro/SezioneRegistro';
@@ -81,6 +82,16 @@ export default function Home() {
     });
   }
 
+  async function handleExportAllCSV() {
+    const all = await base44.entities.Attivita.list('-data', 1000);
+    esportaCSV({
+      docente: r.nomeDocente,
+      anno: 'tutti',
+      attivitaA: all.filter((x) => x.sezione === 'a'),
+      attivitaB: all.filter((x) => x.sezione === 'b'),
+    });
+  }
+
   return (
     <div className="min-h-screen bg-[#FFFBEB] pb-24 md:pb-12 font-body text-foreground">
       <PullToRefresh onRefresh={r.refresh} disabled={!!modal}>
@@ -131,6 +142,7 @@ export default function Home() {
             <div className={vista === 'registro' ? '' : 'hidden'}>
               <SezioneRegistro
                 sezione="a"
+                annoCorrente={r.annoCorrente}
                 dati={r.attivitaA}
                 onAdd={(rec) => r.addAttivita('a', rec)}
                 onEdit={(v) => openModal('edit', v.id)}
@@ -140,6 +152,7 @@ export default function Home() {
               />
               <SezioneRegistro
                 sezione="b"
+                annoCorrente={r.annoCorrente}
                 dati={r.attivitaB}
                 onAdd={(rec) => r.addAttivita('b', rec)}
                 onEdit={(v) => openModal('edit', v.id)}
@@ -177,6 +190,7 @@ export default function Home() {
         open={modal === 'edit' && !!editRecord}
         record={editRecord}
         sezione={editSezione}
+        annoCorrente={r.annoCorrente}
         onClose={closeModal}
         onSave={(id, rec) => { r.updateAttivita(id, rec); closeModal(); }}
         saving={r.saving}
@@ -209,6 +223,7 @@ export default function Home() {
         onClose={closeModal}
         onLogout={r.logout}
         onDeleteAccount={r.deleteAccount}
+        onExportCSV={handleExportAllCSV}
         saving={r.saving}
       />
       <SidebarMenu

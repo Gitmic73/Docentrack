@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, AlertTriangle, LogOut, User as UserIcon } from 'lucide-react';
+import { Trash2, AlertTriangle, LogOut, User as UserIcon, FileDown } from 'lucide-react';
 import ModalShell from './ModalShell';
 
-export default function ProfileSettings({ open, profilo, nomeDocente, onClose, onLogout, onDeleteAccount, saving }) {
+export default function ProfileSettings({ open, profilo, nomeDocente, onClose, onLogout, onDeleteAccount, onExportCSV, saving }) {
   const [step, setStep] = useState('menu');
-  const [confirmText, setConfirmText] = useState('');
   const [err, setErr] = useState('');
 
   useEffect(() => {
-    if (open) { setStep('menu'); setConfirmText(''); setErr(''); }
+    if (open) { setStep('menu'); setErr(''); }
   }, [open]);
 
   const profiloLabel = profilo === 'ata' ? 'Personale ATA' : 'Docente';
@@ -59,27 +58,32 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
           <h3 className="font-display text-[17px] text-rosso mb-3 border-b border-bordo pb-2.5 flex items-center gap-2">
             <AlertTriangle size={18} /> Elimina account
           </h3>
-          <div className="text-sm text-foreground mb-3">
-            Questa operazione è <strong className="text-rosso">irreversibile</strong>. Verranno eliminati definitivamente:
+          <div className="rounded-lg border border-rosso bg-rosso-light p-3 mb-4">
+            <p className="text-sm text-foreground leading-relaxed">
+              <strong className="text-rosso">Attenzione:</strong> stai per eliminare l'account e tutti i dati presenti nell'applicazione. Il processo di eliminazione è <strong className="text-rosso">irreversibile</strong>. Sei sicuro di volerlo eliminare?
+            </p>
           </div>
+          <div className="text-xs text-grigio mb-2">Verranno eliminati definitivamente:</div>
           <ul className="text-xs text-grigio list-disc pl-5 mb-4 space-y-1">
             <li>Tutte le attività registrate (lett. a e lett. b)</li>
             <li>I dati dell&apos;istituto scolastico</li>
             <li>Gli anni scolastici creati</li>
             <li>Il tuo account utente e l&apos;accesso</li>
           </ul>
-          <label className="text-xs text-foreground block mb-1.5">
-            Per confermare digita <strong className="text-rosso">ELIMINA</strong>
-          </label>
-          <input
-            type="text"
-            value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
-            placeholder="ELIMINA"
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-rosso"
-          />
-          {err && <div className="mt-2 text-[11px] text-rosso bg-rosso-light rounded px-2 py-1.5">{err}</div>}
-          <div className="flex justify-between gap-2 mt-5 select-none">
+          <div className="rounded-lg border border-bordo bg-[#FEF3C7] p-3 mb-4 flex items-start gap-2">
+            <FileDown size={16} className="text-blu shrink-0 mt-0.5" />
+            <div className="text-xs text-foreground">
+              <strong>Prima di eliminare, salva i tuoi dati</strong> esportandoli in CSV.
+              <button
+                onClick={onExportCSV}
+                className="block mt-2 text-blu underline text-xs font-semibold"
+              >
+                Esporta CSV di tutti gli anni
+              </button>
+            </div>
+          </div>
+          {err && <div className="mt-2 text-[11px] text-rosso bg-rosso-light rounded px-2 py-1.5 mb-3">{err}</div>}
+          <div className="flex justify-between gap-2 select-none">
             <button
               onClick={() => setStep('menu')}
               disabled={saving}
@@ -89,7 +93,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
             </button>
             <button
               onClick={handleDelete}
-              disabled={confirmText !== 'ELIMINA' || saving}
+              disabled={saving}
               className="bg-rosso text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#8e2e25] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
             >
               {saving ? (
@@ -98,7 +102,7 @@ export default function ProfileSettings({ open, profilo, nomeDocente, onClose, o
                 </>
               ) : (
                 <>
-                  <Trash2 size={14} /> Elimina definitivamente
+                  <Trash2 size={14} /> Elimina
                 </>
               )}
             </button>
