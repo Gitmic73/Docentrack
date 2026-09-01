@@ -151,6 +151,23 @@ export function useRegistro() {
     }
   }, [anni, reloadAnni]);
 
+  const cancellaAnno = useCallback(async (anno) => {
+    setSaving(true);
+    try {
+      await base44.entities.Attivita.deleteMany({ anno_scolastico: anno });
+      await base44.entities.Scuola.deleteMany({ anno_scolastico: anno });
+      await base44.entities.AnnoScolastico.deleteMany({ nome: anno });
+    } catch (e) { /* ignore */ }
+    const a = await reloadAnni();
+    setAnni(a);
+    if (annoCorrente === anno) {
+      const nuovo = a[a.length - 1] || null;
+      setAnnoCorrente(nuovo);
+      if (!nuovo) { setAttivitaA([]); setAttivitaB([]); setScuola(null); }
+    }
+    setSaving(false);
+  }, [annoCorrente, reloadAnni]);
+
   const addAttivita = useCallback(async (sez, record) => {
     const tempId = 'temp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
     const tempRec = { ...record, sezione: sez, anno_scolastico: annoCorrente, id: tempId, created_date: new Date().toISOString() };
@@ -333,7 +350,7 @@ export function useRegistro() {
     anni, annoCorrente, setAnnoCorrente,
     attivitaA, attivitaB, scuola,
     loading, saving,
-    cambiaAnno, nuovoAnno,
+    cambiaAnno, nuovoAnno, cancellaAnno,
     addAttivita, updateAttivita, deleteAttivita, svuotaSezione,
     saveScuola, saveProfile, updateNomeDocente,
     deleteAccount, logout,

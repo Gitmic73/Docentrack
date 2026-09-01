@@ -1,7 +1,7 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2 } from 'lucide-react';
 
-export default function NavAnni({ anni, annoCorrente, onCambia, onNuovo, disabled }) {
+export default function NavAnni({ anni, annoCorrente, onCambia, onNuovo, onCancella, disabled }) {
   const idx = anni.indexOf(annoCorrente);
   return (
     <div className="flex items-center justify-center gap-2.5 px-4 py-2.5 bg-white border border-bordo rounded-lg mb-5 select-none">
@@ -30,6 +30,13 @@ export default function NavAnni({ anni, annoCorrente, onCambia, onNuovo, disable
         className="ml-1 text-xs bg-verde-light text-verde border border-[#9ed6b5] rounded-md px-2.5 py-1.5 hover:bg-verde hover:text-white transition-colors disabled:opacity-50 flex items-center gap-1"
       >
         <Plus size={13} /> Nuovo anno
+      </button>
+      <button
+        onClick={onCancella}
+        disabled={disabled || anni.length === 0}
+        className="ml-1 text-xs bg-rosso-light text-rosso border border-[#e6b3ae] rounded-md px-2.5 py-1.5 hover:bg-rosso hover:text-white transition-colors disabled:opacity-50 flex items-center gap-1"
+      >
+        <Trash2 size={13} /> Cancella anno
       </button>
     </div>
   );

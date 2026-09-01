@@ -8,6 +8,7 @@ import SezioneRegistro from '@/components/registro/SezioneRegistro';
 import ModalEdit from '@/components/registro/ModalEdit';
 import ModalScuola from '@/components/registro/ModalScuola';
 import NuovoAnnoModal from '@/components/registro/NuovoAnnoModal';
+import CancellaAnnoModal from '@/components/registro/CancellaAnnoModal';
 import ProfileSetup from '@/components/registro/ProfileSetup';
 import ProfileSettings from '@/components/registro/ProfileSettings';
 import SidebarMenu from '@/components/registro/SidebarMenu';
@@ -115,6 +116,7 @@ export default function Home() {
               annoCorrente={r.annoCorrente}
               onCambia={r.cambiaAnno}
               onNuovo={() => openModal('nuovoanno')}
+              onCancella={() => openModal('cancellaanno')}
               disabled={r.saving}
             />
 
@@ -215,6 +217,14 @@ export default function Home() {
             patchParams({ modal: 'piano', id: nome });
           }
         }}
+      />
+      <CancellaAnnoModal
+        open={modal === 'cancellaanno'}
+        anni={r.anni}
+        annoCorrente={r.annoCorrente}
+        onClose={closeModal}
+        onConferma={(anno) => r.cancellaAnno(anno).then(() => closeModal())}
+        saving={r.saving}
       />
       <ProfileSettings
         open={modal === 'profilo'}
