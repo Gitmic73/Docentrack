@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star, Shield } from 'lucide-react';
+import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star, Shield, FileText, FileSpreadsheet } from 'lucide-react';
 import { PIANI } from '@/lib/plans';
 
-export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose, onNavigate, onAdmin }) {
+export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose, onNavigate, onAdmin, onExportPDF, onExportCSV }) {
   const pianoInfo = PIANI[piano] || PIANI.free;
   const items = [
     { k: 'piani', label: 'I miei piani', icon: CreditCard, desc: 'Piani, licenze e opzioni' },
@@ -67,7 +67,23 @@ export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose
                 </button>
               ))}
             </nav>
-            <div className="px-4 py-3 border-t border-bordo text-[10px] text-grigio">DocenTrack · v1.0</div>
+            <div className="px-4 py-3 border-t border-bordo space-y-2">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { onExportPDF?.(); onClose(); }}
+                  className="flex-1 flex items-center justify-center gap-1.5 text-blu border border-blu rounded-lg py-2 text-xs font-semibold hover:bg-blu hover:text-white transition-colors"
+                >
+                  <FileText size={14} /> Esporta PDF
+                </button>
+                <button
+                  onClick={() => { onExportCSV?.(); onClose(); }}
+                  className="flex-1 flex items-center justify-center gap-1.5 text-verde border border-verde rounded-lg py-2 text-xs font-semibold hover:bg-verde hover:text-white transition-colors"
+                >
+                  <FileSpreadsheet size={14} /> Esporta CSV
+                </button>
+              </div>
+              <div className="text-[10px] text-grigio text-center">DocenTrack · v1.0</div>
+            </div>
           </motion.aside>
         </>
       )}

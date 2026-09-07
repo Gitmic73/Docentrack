@@ -27,6 +27,7 @@ import PullToRefresh from '@/components/registro/PullToRefresh';
 import { esportaPDF } from '@/components/registro/pdfExport';
 import { esportaCSV } from '@/components/registro/csvExport';
 import ExportToolbar from '@/components/registro/ExportToolbar';
+import { ClipboardList, Calendar, PieChart, ListChecks } from 'lucide-react';
 
 export default function Home() {
   const r = useRegistro();
@@ -127,21 +128,28 @@ export default function Home() {
 
             <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none">
               {[
-                { k: 'registro', l: 'Registro' },
-                { k: 'calendario', l: 'Calendario' },
-                { k: 'riepilogo', l: 'Riepilogo' },
-                { k: 'statistiche', l: 'Statistiche' },
-              ].map((t) => (
-                <button
-                  key={t.k}
-                  onClick={() => setVista(t.k)}
-                  className={`flex-1 text-sm font-semibold py-1.5 rounded-md transition-colors ${
-                    vista === t.k ? 'bg-blu text-white' : 'text-grigio hover:bg-blu-light'
-                  }`}
-                >
-                  {t.l}
-                </button>
-              ))}
+                { k: 'registro', l: 'Registro', icon: ClipboardList },
+                { k: 'calendario', l: 'Calendario', icon: Calendar },
+                { k: 'riepilogo', l: 'Riepilogo', icon: ListChecks, novita: true },
+                { k: 'statistiche', l: 'Statistiche', icon: PieChart },
+              ].map((t) => {
+                const Icon = t.icon;
+                return (
+                  <button
+                    key={t.k}
+                    onClick={() => setVista(t.k)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold py-1.5 rounded-md transition-colors relative ${
+                      vista === t.k ? 'bg-blu text-white' : 'text-grigio hover:bg-blu-light'
+                    }`}
+                  >
+                    <Icon size={15} />
+                    {t.l}
+                    {t.novita && (
+                      <span className="absolute -top-1.5 -right-1 bg-rosso text-white text-[8px] font-bold px-1 py-0.5 rounded-full leading-none">NEW</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             <ExportToolbar onPDF={handleExport} onCSV={handleCSV} disabled={allAttivita.length === 0} />
@@ -264,6 +272,8 @@ export default function Home() {
         onClose={closeModal}
         onNavigate={(m) => patchParams({ modal: m, id: null })}
         onAdmin={() => navigate('/admin')}
+        onExportPDF={handleExport}
+        onExportCSV={handleCSV}
       />
       <PannelloPiani
         open={modal === 'piani' || modal === 'piano'}
