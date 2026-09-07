@@ -21,6 +21,7 @@ import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
 import BarChartTipologie from '@/components/registro/BarChartTipologie';
+import RiepilogoTipologie from '@/components/registro/RiepilogoTipologie';
 import BottomTabs from '@/components/registro/BottomTabs';
 import PullToRefresh from '@/components/registro/PullToRefresh';
 import { esportaPDF } from '@/components/registro/pdfExport';
@@ -128,6 +129,7 @@ export default function Home() {
               {[
                 { k: 'registro', l: 'Registro' },
                 { k: 'calendario', l: 'Calendario' },
+                { k: 'riepilogo', l: 'Riepilogo' },
                 { k: 'statistiche', l: 'Statistiche' },
               ].map((t) => (
                 <button
@@ -174,6 +176,11 @@ export default function Home() {
               {vista === 'calendario' && (
                 <motion.div key="calendario" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
                   <CalendarioMese attivita={allAttivita} />
+                </motion.div>
+              )}
+              {vista === 'riepilogo' && (
+                <motion.div key="riepilogo" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
+                  <RiepilogoTipologie attivitaA={r.attivitaA} attivitaB={r.attivitaB} />
                 </motion.div>
               )}
               {vista === 'statistiche' && (

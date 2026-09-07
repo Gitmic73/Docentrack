@@ -1,9 +1,10 @@
 import React from 'react';
-import { ClipboardList, Calendar, PieChart } from 'lucide-react';
+import { ClipboardList, Calendar, PieChart, ListChecks } from 'lucide-react';
 
 const TABS = [
   { k: 'registro', l: 'Registro', icon: ClipboardList },
   { k: 'calendario', l: 'Calendario', icon: Calendar },
+  { k: 'riepilogo', l: 'Riepilogo', icon: ListChecks },
   { k: 'statistiche', l: 'Statistiche', icon: PieChart },
 ];
 

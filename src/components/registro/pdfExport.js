@@ -6,6 +6,14 @@ function hexToRgb(hex) {
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 }
 
+// Scrive un paragrafo wrappato e restituisce l'altezza occupata
+function wrappedText(doc, text, x, y, maxWidth, fontSize = 9) {
+  doc.setFontSize(fontSize);
+  const lines = doc.splitTextToSize(text, maxWidth);
+  doc.text(lines, x, y, { align: 'left' });
+  return lines.length * (fontSize * 0.35 + 1.2);
+}
+
 function buildPieData(attivita) {
   const map = {};
   attivita.forEach((v) => {
@@ -180,21 +188,7 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
     M, y, { maxWidth: W - 2 * M, align: 'left' }
   );
 
-  // ===== Pagina 2: Report statistico con grafici a torta =====
-  doc.addPage();
-  doc.setFillColor(217, 119, 6);
-  doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(120, 53, 15);
-  doc.rect(W / 2, 0, W / 2, 2, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
-  doc.setTextColor(217, 119, 6);
-  doc.text('Report Statistico', W / 2, 18, { align: 'center' });
-  doc.setFontSize(9);
-  doc.setTextColor(90, 90, 90);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, 24, { align: 'center' });
-
+  // ===== Pagine statistiche: un grafico a torta per pagina =====
   const pieA = buildPieData(attivitaA);
   const pieB = buildPieData(attivitaB);
   const imgA = pieToDataURL(pieA);
@@ -202,50 +196,56 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   const totA = attivitaA.reduce((s, v) => s + (v.durata_min || 0), 0);
   const totB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
 
-  // La pagina è divisa a metà in altezza: ogni blocco ha un limite fisso,
-  // così i due grafici non si sovrappongono mai a prescindere dal numero di voci.
-  const contentTop = 32;
-  const contentBottom = H - M - 6;
-  const blockH = (contentBottom - contentTop) / 2;
+  function drawPiePage(titolo, totale, data, img) {
+    doc.addPage();
+    doc.setFillColor(217, 119, 6);
+    doc.rect(0, 0, W / 2, 2, 'F');
+    doc.setFillColor(120, 53, 15);
+    doc.rect(W / 2, 0, W / 2, 2, 'F');
 
-  function drawPieBlock(top, titolo, totale, data, img) {
-    let yy = top;
-    // Titolo centrato
+    let yy = 20;
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(14);
+    doc.setTextColor(217, 119, 6);
+    doc.text('Report Statistico', W / 2, yy, { align: 'center' });
+    yy += 6;
+    doc.setFontSize(9);
+    doc.setTextColor(90, 90, 90);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, yy, { align: 'center' });
+    yy += 8;
+
+    // Titolo sezione
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
     doc.setTextColor(217, 119, 6);
     doc.text(titolo, W / 2, yy, { align: 'center' });
     yy += 5;
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setTextColor(90, 90, 90);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Totale: ${m2h(totale)}`, W / 2, yy, { align: 'center' });
-    yy += 6;
+    doc.text(`Totale: ${m2h(totale)} / 40 ore`, W / 2, yy, { align: 'center' });
+    yy += 8;
 
-    // Torta centrata orizzontalmente; il diametro si adatta allo spazio per la legenda
-    // (più voci = torta più piccola, per restare entro il blocco)
-    const rowH = 5.5;
-    const rowsNeeded = Math.ceil(data.length / 2);
-    const legendH = rowsNeeded * rowH;
-    const pieD = Math.max(45, Math.min(82, blockH - 6 - legendH - 4));
+    // Torta centrata, diametro fisso ampio
+    const pieD = 90;
     const px = (W - pieD) / 2;
     if (img) {
       doc.addImage(img, 'PNG', px, yy, pieD, pieD);
     } else {
-      doc.setFontSize(9);
+      doc.setFontSize(10);
       doc.setTextColor(130, 130, 130);
       doc.text('Nessuna attività registrata', W / 2, yy + pieD / 2, { align: 'center' });
     }
-    yy += pieD + 4;
+    yy += pieD + 10;
 
-    // Legenda sotto la torta, su due colonne, bloccata al limite inferiore del blocco
+    // Legenda su due colonne
     const colW = (W - 2 * M) / 2;
-    const legendMax = top + blockH - 3;
+    const rowH = 6;
     let col = 0, row = 0;
     doc.setFontSize(8);
     data.forEach((d) => {
       const lyy = yy + row * rowH;
-      if (lyy > legendMax) return;
       const lx = M + col * colW;
       const rgb = hexToRgb(d.color);
       doc.setFillColor(rgb[0], rgb[1], rgb[2]);
@@ -253,7 +253,7 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
       doc.setTextColor(50, 50, 50);
       doc.setFont('helvetica', 'normal');
       let name = d.name;
-      const maxName = 36;
+      const maxName = 38;
       if (name.length > maxName) name = name.slice(0, maxName - 1) + '…';
       doc.text(name, lx + 4.5, lyy);
       const pct = totale ? ((d.value / totale) * 100).toFixed(0) : 0;
@@ -262,10 +262,16 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
       col++;
       if (col >= 2) { col = 0; row++; }
     });
+
+    // Footer pagina
+    doc.setFontSize(7);
+    doc.setTextColor(120, 120, 120);
+    doc.setFont('helvetica', 'normal');
+    doc.text("Documento generato da DocenTrack — Registro Attività Funzionali all'Insegnamento", W / 2, H - 8, { align: 'center' });
   }
 
-  drawPieBlock(contentTop, 'Lett. a — 40 ore', totA, pieA, imgA);
-  drawPieBlock(contentTop + blockH, 'Lett. b — fino a 40 ore', totB, pieB, imgB);
+  drawPiePage('Lett. a — 40 ore', totA, pieA, imgA);
+  drawPiePage('Lett. b — fino a 40 ore', totB, pieB, imgB);
 
   // ===== Pagina informativa: calcolo 40+40 ore e riferimenti normativi =====
   doc.addPage();
@@ -278,7 +284,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.setFontSize(14);
   doc.setTextColor(217, 119, 6);
   doc.text('Riferimenti Normativi e Calcolo delle Ore', W / 2, y, { align: 'center' });
-  y += 10;
+  y += 12;
+
+  const maxW = W - 2 * M;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
@@ -286,10 +294,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.text('Art. 29 CCNL Comparto Scuola 29/11/2007', M, y);
   y += 7;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
   doc.setTextColor(50, 50, 50);
-  doc.text("Il CCNL del Comparto Scuola stabilisce che i docenti sono tenuti a svolgere attività funzionali all'insegnamento per un monte ore complessivo di 40+40 ore annue, distinte in due lettere:", M, y, { maxWidth: W - 2 * M, align: 'left' });
-  y += 14;
+  y += wrappedText(doc, "Il CCNL del Comparto Scuola stabilisce che i docenti sono tenuti a svolgere attività funzionali all'insegnamento per un monte ore complessivo di 40+40 ore annue, distinte in due lettere:", M, y, maxW, 9);
+  y += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
@@ -297,10 +304,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.text('Lett. a) — 40 ore', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
   doc.setTextColor(50, 50, 50);
-  doc.text("Collegio dei Docenti e sue articolazioni, attività di programmazione, formazione e aggiornamento, informazione alle famiglie e ricevimenti collettivi, consegna pagelle. Le 40 ore sono obbligatorie: eventuali eccedenze danno diritto al compenso (Tab. 5 CCNL) o all'esonero da altre attività.", M, y, { maxWidth: W - 2 * M, align: 'left' });
-  y += 20;
+  y += wrappedText(doc, "Collegio dei Docenti e sue articolazioni, attività di programmazione, formazione e aggiornamento, informazione alle famiglie e ricevimenti collettivi, consegna pagelle. Le 40 ore sono obbligatorie: eventuali eccedenze danno diritto al compenso (Tab. 5 CCNL) o all'esonero da altre attività.", M, y, maxW, 9);
+  y += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
@@ -308,10 +314,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.text('Lett. b) — fino a 40 ore', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
   doc.setTextColor(50, 50, 50);
-  doc.text("Consigli di classe, interclasse e intersezione, GLO con genitori. Le ore sono fino a un massimo di 40 annue; il Collegio Docenti delibera la gestione delle eventuali eccedenze.", M, y, { maxWidth: W - 2 * M, align: 'left' });
-  y += 16;
+  y += wrappedText(doc, "Consigli di classe, interclasse e intersezione, GLO con genitori. Le ore sono fino a un massimo di 40 annue; il Collegio Docenti delibera la gestione delle eventuali eccedenze.", M, y, maxW, 9);
+  y += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
@@ -319,10 +324,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.text('Modalità di calcolo', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
   doc.setTextColor(50, 50, 50);
-  doc.text("La durata di ciascuna attività è calcolata come differenza tra orario di fine e orario di inizio. Le ore vengono sommate separatamente per le due sezioni (lett. a e lett. b) e per ogni anno scolastico (01/09 → 31/08). Il totale di ciascuna sezione non deve superare le 40 ore.", M, y, { maxWidth: W - 2 * M, align: 'left' });
-  y += 18;
+  y += wrappedText(doc, "La durata di ciascuna attività è calcolata come differenza tra orario di fine e orario di inizio. Le ore vengono sommate separatamente per le due sezioni (lett. a e lett. b) e per ogni anno scolastico (01/09 → 31/08). Il totale di ciascuna sezione non deve superare le 40 ore.", M, y, maxW, 9);
+  y += 8;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
@@ -330,10 +334,9 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.text('Formazione obbligatoria — D.Lgs. n. 81/2008', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
   doc.setTextColor(50, 50, 50);
-  doc.text("L'art. 37, c. 12 del D.Lgs. 81/2008 stabilisce l'obbligo di formazione in materia di salute e sicurezza per tutti i lavoratori, docenti compresi. Tali ore rientrano nel monte ore della lett. a.", M, y, { maxWidth: W - 2 * M, align: 'left' });
-  y += 14;
+  y += wrappedText(doc, "L'art. 37, c. 12 del D.Lgs. 81/2008 stabilisce l'obbligo di formazione in materia di salute e sicurezza per tutti i lavoratori, docenti compresi. Tali ore rientrano nel monte ore della lett. a.", M, y, maxW, 9);
+  y += 8;
 
   if (scuolaSeconda && scuolaSeconda.nome) {
     doc.setFont('helvetica', 'bold');
@@ -342,10 +345,8 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
     doc.text('Docenti con doppia sede', M, y);
     y += 6;
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
     doc.setTextColor(50, 50, 50);
-    doc.text("Le attività con il valore 2 nella colonna Sc. sono state svolte presso la seconda sede. Le ore complessive (prima + seconda sede) concorrono al raggiungimento del monte ore annuo.", M, y, { maxWidth: W - 2 * M, align: 'left' });
-    y += 14;
+    y += wrappedText(doc, "Le attività con il valore 2 nella colonna Sc. sono state svolte presso la seconda sede. Le ore complessive (prima + seconda sede) concorrono al raggiungimento del monte ore annuo.", M, y, maxW, 9);
   }
 
   doc.setFontSize(7);
