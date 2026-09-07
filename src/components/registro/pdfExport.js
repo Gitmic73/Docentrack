@@ -188,7 +188,7 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
     M, y, { maxWidth: W - 2 * M, align: 'left' }
   );
 
-  // ===== Pagine statistiche: un grafico a torta per pagina =====
+  // ===== Pagina statistica: due torte affiancate + tabella riepilogo =====
   const pieA = buildPieData(attivitaA);
   const pieB = buildPieData(attivitaB);
   const imgA = pieToDataURL(pieA);
@@ -196,82 +196,159 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   const totA = attivitaA.reduce((s, v) => s + (v.durata_min || 0), 0);
   const totB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
 
-  function drawPiePage(titolo, totale, data, img) {
-    doc.addPage();
-    doc.setFillColor(217, 119, 6);
-    doc.rect(0, 0, W / 2, 2, 'F');
-    doc.setFillColor(120, 53, 15);
-    doc.rect(W / 2, 0, W / 2, 2, 'F');
+  doc.addPage();
+  doc.setFillColor(217, 119, 6);
+  doc.rect(0, 0, W / 2, 2, 'F');
+  doc.setFillColor(120, 53, 15);
+  doc.rect(W / 2, 0, W / 2, 2, 'F');
 
-    let yy = 20;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(217, 119, 6);
-    doc.text('Report Statistico', W / 2, yy, { align: 'center' });
-    yy += 6;
+  // Intestazione pagina
+  let sy = 18;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Report Statistico', W / 2, sy, { align: 'center' });
+  sy += 5;
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, sy, { align: 'center' });
+  sy += 7;
+
+  // Layout: due colonne, ciascuna larga metà pagina
+  const colW = (W - 2 * M) / 2;
+  const pieD = 72; // diametro torta
+  const halfL = M;
+  const halfR = M + colW;
+
+  // --- Torta sinistra: Lett. a ---
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Lett. a — 40 ore', halfL + colW / 2, sy, { align: 'center' });
+  sy += 4;
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Totale: ${m2h(totA)} / 40 ore`, halfL + colW / 2, sy, { align: 'center' });
+  sy += 3;
+
+  const pieL_y = sy;
+  const pieL_x = halfL + (colW - pieD) / 2;
+  if (imgA) {
+    doc.addImage(imgA, 'PNG', pieL_x, pieL_y, pieD, pieD);
+  } else {
     doc.setFontSize(9);
-    doc.setTextColor(90, 90, 90);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Anno Scolastico ${anno} — ${docente || '—'}`, W / 2, yy, { align: 'center' });
-    yy += 8;
+    doc.setTextColor(130, 130, 130);
+    doc.text('Nessuna attività', halfL + colW / 2, pieL_y + pieD / 2, { align: 'center' });
+  }
 
-    // Titolo sezione
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(217, 119, 6);
-    doc.text(titolo, W / 2, yy, { align: 'center' });
-    yy += 5;
+  // --- Torta destra: Lett. b ---
+  let syR = sy;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(120, 53, 15);
+  doc.text('Lett. b — fino a 40 ore', halfR + colW / 2, syR, { align: 'center' });
+  syR += 4;
+  doc.setFontSize(8);
+  doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Totale: ${m2h(totB)} / 40 ore`, halfR + colW / 2, syR, { align: 'center' });
+  syR += 3;
+
+  const pieR_y = syR;
+  const pieR_x = halfR + (colW - pieD) / 2;
+  if (imgB) {
+    doc.addImage(imgB, 'PNG', pieR_x, pieR_y, pieD, pieD);
+  } else {
     doc.setFontSize(9);
-    doc.setTextColor(90, 90, 90);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Totale: ${m2h(totale)} / 40 ore`, W / 2, yy, { align: 'center' });
-    yy += 8;
+    doc.setTextColor(130, 130, 130);
+    doc.text('Nessuna attività', halfR + colW / 2, pieR_y + pieD / 2, { align: 'center' });
+  }
 
-    // Torta centrata, diametro fisso ampio
-    const pieD = 90;
-    const px = (W - pieD) / 2;
-    if (img) {
-      doc.addImage(img, 'PNG', px, yy, pieD, pieD);
-    } else {
-      doc.setFontSize(10);
-      doc.setTextColor(130, 130, 130);
-      doc.text('Nessuna attività registrata', W / 2, yy + pieD / 2, { align: 'center' });
-    }
-    yy += pieD + 10;
+  // --- Legende sotto le torte, una per colonna ---
+  let legY = Math.max(pieL_y + pieD + 6, pieR_y + pieD + 6);
 
-    // Legenda su due colonne
-    const colW = (W - 2 * M) / 2;
-    const rowH = 6;
-    let col = 0, row = 0;
-    doc.setFontSize(8);
-    data.forEach((d) => {
-      const lyy = yy + row * rowH;
-      const lx = M + col * colW;
+  function drawLegend(x, colWidth, data, totale) {
+    let yy = legY;
+    const rowH = 5;
+    doc.setFontSize(7);
+    data.forEach((d, i) => {
       const rgb = hexToRgb(d.color);
       doc.setFillColor(rgb[0], rgb[1], rgb[2]);
-      doc.rect(lx, lyy - 2.5, 3, 3, 'F');
+      doc.rect(x, yy - 2, 2.5, 2.5, 'F');
       doc.setTextColor(50, 50, 50);
       doc.setFont('helvetica', 'normal');
       let name = d.name;
-      const maxName = 38;
-      if (name.length > maxName) name = name.slice(0, maxName - 1) + '…';
-      doc.text(name, lx + 4.5, lyy);
+      if (name.length > 32) name = name.slice(0, 31) + '…';
+      doc.text(name, x + 4, yy);
       const pct = totale ? ((d.value / totale) * 100).toFixed(0) : 0;
       doc.setFont('helvetica', 'bold');
-      doc.text(`${pct}%  ${m2h(d.value)}`, lx + colW - 2, lyy, { align: 'right' });
-      col++;
-      if (col >= 2) { col = 0; row++; }
+      doc.text(`${pct}% ${m2h(d.value)}`, x + colWidth - 1, yy, { align: 'right' });
+      yy += rowH;
     });
-
-    // Footer pagina
-    doc.setFontSize(7);
-    doc.setTextColor(120, 120, 120);
-    doc.setFont('helvetica', 'normal');
-    doc.text("Documento generato da DocenTrack — Registro Attività Funzionali all'Insegnamento", W / 2, H - 8, { align: 'center' });
   }
 
-  drawPiePage('Lett. a — 40 ore', totA, pieA, imgA);
-  drawPiePage('Lett. b — fino a 40 ore', totB, pieB, imgB);
+  drawLegend(halfL, colW, pieA, totA);
+  drawLegend(halfR, colW, pieB, totB);
+
+  // --- Tabella riepilogo tipologie (sotto le legende) ---
+  const maxLegendRows = Math.max(pieA.length, pieB.length);
+  let tableY = legY + maxLegendRows * 5 + 8;
+
+  if (tableY > H - M - 40) { tableY = H - M - 40; }
+
+  // Intestazione tabella
+  doc.setFillColor(217, 119, 6);
+  doc.rect(M, tableY, W - 2 * M, 7, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text('Riepilogo ore per tipologia', M + 2, tableY + 5);
+  doc.text('Totale generale: ' + m2h(totA + totB), W - M - 2, tableY + 5, { align: 'right' });
+  tableY += 9;
+
+  // Colonne: Tipologia | Sez. | Ore | % 40h
+  doc.setFontSize(7);
+  doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Tipologia', M + 1, tableY);
+  doc.text('Sez.', M + 120, tableY);
+  doc.text('Ore', M + 140, tableY);
+  doc.text('% 40h', W - M - 1, tableY, { align: 'right' });
+  tableY += 3;
+  doc.setDrawColor(208, 213, 221);
+  doc.line(M, tableY, W - M, tableY);
+  tableY += 4;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(40, 40, 40);
+  doc.setFontSize(7);
+
+  function drawRigaRiepilogo(d, sez, totale) {
+    if (tableY > H - M - 5) { doc.addPage(); tableY = 20; }
+    const rgb = hexToRgb(d.color);
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.rect(M + 1, tableY - 1.8, 2, 2, 'F');
+    let name = d.name;
+    if (name.length > 60) name = name.slice(0, 59) + '…';
+    doc.text(name, M + 5, tableY);
+    doc.text(sez, M + 120, tableY);
+    doc.text(m2h(d.value), M + 140, tableY);
+    const pct = ((d.value / MAX_ORE) * 100).toFixed(1);
+    doc.text(pct + '%', W - M - 1, tableY, { align: 'right' });
+    tableY += 4.5;
+  }
+
+  pieA.forEach((d) => drawRigaRiepilogo(d, 'a', totA));
+  if (pieA.length > 0 && pieB.length > 0) { tableY += 2; }
+  pieB.forEach((d) => drawRigaRiepilogo(d, 'b', totB));
+
+  // Footer
+  doc.setFontSize(7);
+  doc.setTextColor(120, 120, 120);
+  doc.setFont('helvetica', 'normal');
+  doc.text("Documento generato da DocenTrack — Registro Attività Funzionali all'Insegnamento", W / 2, H - 8, { align: 'center' });
 
   // ===== Pagina informativa: calcolo 40+40 ore e riferimenti normativi =====
   doc.addPage();
