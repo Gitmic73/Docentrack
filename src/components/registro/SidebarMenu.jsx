@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star } from 'lucide-react';
+import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star, Shield } from 'lucide-react';
 import { PIANI } from '@/lib/plans';
 
-export default function SidebarMenu({ open, nomeDocente, piano, onClose, onNavigate }) {
+export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose, onNavigate, onAdmin }) {
   const pianoInfo = PIANI[piano] || PIANI.free;
   const items = [
     { k: 'piani', label: 'I miei piani', icon: CreditCard, desc: 'Piani, licenze e opzioni' },
@@ -12,6 +12,7 @@ export default function SidebarMenu({ open, nomeDocente, piano, onClose, onNavig
     { k: 'invita', label: 'Invita colleghi', icon: UserPlus, desc: 'Invita via email' },
     { k: 'recensione', label: "Valuta l'app", icon: Star, desc: 'Lascia una recensione' },
     { k: 'profilo', label: 'Impostazioni profilo', icon: Settings, desc: 'Account, logout, elimina' },
+    ...(isAdmin ? [{ k: 'admin', label: 'Pannello Admin', icon: Shield, desc: 'Utenti e disinstallazioni' }] : []),
   ];
 
   return (
@@ -55,7 +56,7 @@ export default function SidebarMenu({ open, nomeDocente, piano, onClose, onNavig
               {items.map((it) => (
                 <button
                   key={it.k}
-                  onClick={() => onNavigate(it.k)}
+                  onClick={() => it.k === 'admin' ? onAdmin() : onNavigate(it.k)}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blu-light transition-colors text-left"
                 >
                   <it.icon size={18} className="text-blu shrink-0" />

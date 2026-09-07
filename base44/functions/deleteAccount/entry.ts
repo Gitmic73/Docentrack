@@ -6,6 +6,14 @@ export default async function (req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // Log the uninstallation (service role bypasses RLS on the audit entity)
+    await base44.asServiceRole.entities.AuditDisinstallazione.create({
+      email: user.email,
+      nome: user.data?.nome_docente || user.full_name || '',
+      user_id: user.id,
+      data_disinstallazione: new Date().toISOString(),
+    });
+
     // Delete all user-scoped data (RLS restricts to the caller's own records).
     // We pass created_by_id explicitly to keep the query bounded and intentional.
     await base44.entities.Attivita.deleteMany({ created_by_id: user.id });

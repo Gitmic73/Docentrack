@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRegistro } from '@/hooks/useRegistro';
 import { base44 } from '@/api/base44Client';
 import NavAnni from '@/components/registro/NavAnni';
@@ -29,6 +29,7 @@ import ExportToolbar from '@/components/registro/ExportToolbar';
 
 export default function Home() {
   const r = useRegistro();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const vista = searchParams.get('tab') || 'registro';
@@ -252,8 +253,10 @@ export default function Home() {
         open={modal === 'menu'}
         nomeDocente={r.nomeDocente}
         piano={r.piano}
+        isAdmin={r.user?.role === 'admin'}
         onClose={closeModal}
         onNavigate={(m) => patchParams({ modal: m, id: null })}
+        onAdmin={() => navigate('/admin')}
       />
       <PannelloPiani
         open={modal === 'piani' || modal === 'piano'}

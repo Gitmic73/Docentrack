@@ -1,0 +1,48 @@
+{
+  "name": "AuditDisinstallazione",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "description": "Email dell'utente disinstallato"
+    },
+    "nome": {
+      "type": "string",
+      "description": "Nome docente"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "ID dell'utente"
+    },
+    "data_disinstallazione": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e ora della disinstallazione"
+    }
+  },
+  "required": [
+    "email"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
