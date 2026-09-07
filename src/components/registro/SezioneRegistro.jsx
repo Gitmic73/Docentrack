@@ -39,6 +39,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
   const [filtDa, setFiltDa] = useState('');
   const [filtA, setFiltA] = useState('');
   const [filtTipo, setFiltTipo] = useState('');
+  const [filtScuola, setFiltScuola] = useState('');
   const [showFiltri, setShowFiltri] = useState(false);
 
   const isAltro = form.tipo.startsWith('Altro');
@@ -69,12 +70,13 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
     if (filtDa && v.data < filtDa) return false;
     if (filtA && v.data > filtA) return false;
     if (filtTipo && v.tipo !== filtTipo) return false;
+    if (filtScuola && v.scuola_tipo !== filtScuola) return false;
     return true;
   });
 
-  const filtriAttivi = search || filtDa || filtA || filtTipo;
+  const filtriAttivi = search || filtDa || filtA || filtTipo || filtScuola;
   function resetFiltri() {
-    setSearch(''); setFiltDa(''); setFiltA(''); setFiltTipo('');
+    setSearch(''); setFiltDa(''); setFiltA(''); setFiltTipo(''); setFiltScuola('');
   }
 
   function toggleSort(col) {
@@ -219,7 +221,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </button>
       </div>
       {showFiltri && (
-        <div className="px-4 py-2 bg-[#FEF3C7] border-b border-bordo grid grid-cols-2 sm:grid-cols-4 gap-2 items-end select-none">
+        <div className={`px-4 py-2 bg-[#FEF3C7] border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-2 items-end select-none`}>
           <div>
             <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Dal</label>
             <input type="date" value={filtDa} onChange={(e) => setFiltDa(e.target.value)}
@@ -241,6 +243,21 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
             />
           </div>
+          {hasSeconda && (
+            <div className="select-none">
+              <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Scuola</label>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setFiltScuola(filtScuola === 'prima' ? '' : 'prima')}
+                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'prima' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light bg-white'}`}
+                >1ª</button>
+                <button
+                  onClick={() => setFiltScuola(filtScuola === 'seconda' ? '' : 'seconda')}
+                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'seconda' ? 'bg-teal-600 text-white border-teal-600' : 'border-bordo text-grigio hover:bg-teal-50 bg-white'}`}
+                >2ª</button>
+              </div>
+            </div>
+          )}
           <button onClick={resetFiltri} disabled={!filtriAttivi}
             className="text-xs px-2 py-1.5 rounded border border-bordo text-grigio hover:bg-blu-light disabled:opacity-40">
             Reset
