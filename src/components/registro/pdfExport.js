@@ -6,6 +6,21 @@ function hexToRgb(hex) {
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 }
 
+async function loadImageAsDataURL(url) {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 // Scrive un paragrafo wrappato e restituisce l'altezza occupata
 function wrappedText(doc, text, x, y, maxWidth, fontSize = 9) {
   doc.setFontSize(fontSize);
@@ -50,12 +65,18 @@ function pieToDataURL(data, size = 500) {
   return canvas.toDataURL('image/png');
 }
 
-export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, attivitaA, attivitaB }) {
+export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, attivitaA, attivitaB }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
   const M = 15;
   let y = 20;
+
+  // Carica logo scuola se presente
+  let logoDataUrl = null;
+  if (scuola?.logo_url) {
+    logoDataUrl = await loadImageAsDataURL(scuola.logo_url);
+  }
 
   // Strip blu/oro
   doc.setFillColor(217, 119, 6);
@@ -63,34 +84,61 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
   doc.setFillColor(120, 53, 15);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
 
-  // Titolo
+  // Intestazione formale: logo + dati scuola
+  const logoSize = 22;
+  if (logoDataUrl) {
+    try {
+      doc.addImage(logoDataUrl, 'PNG', M, 10, logoSize, logoSize);
+    } catch (e) {
+      try { doc.addImage(logoDataUrl, 'JPEG', M, 10, logoSize, logoSize); } catch (e2) { /* skip */ }
+    }
+  }
+  const textX = logoDataUrl ? M + logoSize + 4 : M;
+  let yInfo = 14;
+  if (scuola && scuola.nome) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(34, 34, 34);
+    doc.text(scuola.nome, textX, yInfo);
+    yInfo += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(90, 90, 90);
+    if (scuola.indirizzo) { doc.text(scuola.indirizzo, textX, yInfo); yInfo += 4; }
+    if (scuola.codice) { doc.text(`Cod. mecc. ${scuola.codice}`, textX, yInfo); yInfo += 4; }
+    if (scuola.tel) { doc.text(`Tel. ${scuola.tel}`, textX, yInfo); yInfo += 4; }
+    if (scuola.mail) { doc.text(`Email: ${scuola.mail}`, textX, yInfo); yInfo += 4; }
+    if (scuola.ds) { doc.text(`Dirigente Scolastico: ${scuola.ds}`, textX, yInfo); yInfo += 4; }
+  }
+  y = Math.max(10 + logoSize + 4, yInfo + 2);
+
+  // Linea separatrice
+  doc.setDrawColor(208, 213, 221);
+  doc.setLineWidth(0.3);
+  doc.line(M, y, W - M, y);
+  y += 6;
+
+  // Branding DocenTrack
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
+  doc.setFontSize(13);
   doc.setTextColor(217, 119, 6);
   doc.text('DocenTrack', W / 2, y, { align: 'center' });
-  y += 6;
-  doc.setFontSize(9);
-  doc.setTextColor(90, 90, 90);
-  doc.text("Registro Attività Funzionali all'Insegnamento", W / 2, y, { align: 'center' });
   y += 5;
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setTextColor(90, 90, 90);
+  doc.setFont('helvetica', 'normal');
+  doc.text("Registro Attività Funzionali all'Insegnamento", W / 2, y, { align: 'center' });
+  y += 4;
+  doc.setFontSize(9);
   doc.text(`Anno Scolastico ${anno}`, W / 2, y, { align: 'center' });
-  y += 9;
+  y += 7;
 
+  // Docente
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(34, 34, 34);
   doc.text(`Docente: ${docente || '—'}   (${profilo === 'ata' ? 'ATA' : 'Docente'})`, M, y);
   y += 6;
-  if (scuola && scuola.nome) {
-    doc.text(`Istituto: ${scuola.nome}${scuola.codice ? '  —  cod. ' + scuola.codice : ''}`, M, y);
-    y += 6;
-    if (scuola.ds) {
-      doc.text(`Dirigente Scolastico: ${scuola.ds}`, M, y);
-      y += 6;
-    }
-  }
   if (scuolaSeconda && scuolaSeconda.nome) {
     doc.text(`Seconda sede: ${scuolaSeconda.nome}${scuolaSeconda.codice ? '  —  cod. ' + scuolaSeconda.codice : ''}`, M, y);
     y += 6;
@@ -426,6 +474,72 @@ export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, atti
     y += wrappedText(doc, "Le attività con il valore 2 nella colonna Sc. sono state svolte presso la seconda sede. Le ore complessive (prima + seconda sede) concorrono al raggiungimento del monte ore annuo.", M, y, maxW, 9);
   }
 
+  doc.setFontSize(7);
+  doc.setTextColor(120, 120, 120);
+  doc.setFont('helvetica', 'normal');
+  doc.text("Documento generato da DocenTrack — Registro Attività Funzionali all'Insegnamento", W / 2, H - 8, { align: 'center' });
+
+  // ===== Pagina firma: dichiarazione e spazio per firme =====
+  doc.addPage();
+  doc.setFillColor(217, 119, 6);
+  doc.rect(0, 0, W / 2, 2, 'F');
+  doc.setFillColor(120, 53, 15);
+  doc.rect(W / 2, 0, W / 2, 2, 'F');
+
+  y = 25;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Dichiarazione delle Attività Svolte', W / 2, y, { align: 'center' });
+  y += 10;
+
+  const sigTotA = attivitaA.reduce((s, v) => s + (v.durata_min || 0), 0);
+  const sigTotB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
+  const sigMaxW = W - 2 * M;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
+  y += wrappedText(doc, `Il sottoscritto/a ${docente || '___'}, ${profilo === 'ata' ? 'ATA' : 'docente'}${scuola?.nome ? ' presso ' + scuola.nome : ''},`, M, y, sigMaxW, 10);
+  y += 4;
+  y += wrappedText(doc, `dichiara di aver svolto nell'anno scolastico ${anno} le attività funzionali all'insegnamento di cui all'Art. 29 CCNL Comparto Scuola 29/11/2007, per i seguenti monte ore:`, M, y, sigMaxW, 10);
+  y += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text(`• Lett. a) — 40 ore: ${m2h(sigTotA)} su 40 ore`, M, y);
+  y += 6;
+  doc.text(`• Lett. b) — fino a 40 ore: ${m2h(sigTotB)} su 40 ore`, M, y);
+  y += 8;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(50, 50, 50);
+  y += wrappedText(doc, "Si allega alla presente dichiarazione il dettaglio delle singole attività registrate, suddivise per le sezioni di cui all'Art. 29 CCNL.", M, y, sigMaxW, 10);
+  y += 15;
+
+  // Luogo e data
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
+  doc.text('Luogo e data: _______________________________', M, y);
+  y += 25;
+
+  // Firme
+  const firmW = (W - 2 * M) / 2 - 5;
+  const firmY = y;
+
+  doc.setDrawColor(50, 50, 50);
+  doc.setLineWidth(0.4);
+  doc.line(M, firmY, M + firmW, firmY);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(90, 90, 90);
+  doc.text('Firma del docente', M, firmY + 5);
+
+  const firmX2 = M + firmW + 10;
+  doc.line(firmX2, firmY, firmX2 + firmW, firmY);
+  doc.text('Firma del Dirigente Scolastico', firmX2, firmY + 5);
+
+  // Footer
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
   doc.setFont('helvetica', 'normal');

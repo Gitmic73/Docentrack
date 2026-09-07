@@ -1,31 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ModalShell from './ModalShell';
+import { base44 } from '@/api/base44Client';
+import { ImagePlus, Trash2, Loader2 } from 'lucide-react';
 
-const EMPTY = { nome: '', indirizzo: '', tel: '', mail: '', codice: '', ds: '' };
+const EMPTY = { nome: '', indirizzo: '', tel: '', mail: '', codice: '', ds: '', logo_url: '' };
 
 export default function ModalScuola({ open, annoCorrente, scuolaPrima, scuolaSeconda, onClose, onSave, saving }) {
   const [tab, setTab] = useState('prima');
   const [prima, setPrima] = useState(EMPTY);
   const [seconda, setSeconda] = useState(EMPTY);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     setPrima(scuolaPrima
-      ? { nome: scuolaPrima.nome || '', indirizzo: scuolaPrima.indirizzo || '', tel: scuolaPrima.tel || '', mail: scuolaPrima.mail || '', codice: scuolaPrima.codice || '', ds: scuolaPrima.ds || '' }
+      ? { nome: scuolaPrima.nome || '', indirizzo: scuolaPrima.indirizzo || '', tel: scuolaPrima.tel || '', mail: scuolaPrima.mail || '', codice: scuolaPrima.codice || '', ds: scuolaPrima.ds || '', logo_url: scuolaPrima.logo_url || '' }
       : EMPTY);
     setSeconda(scuolaSeconda
-      ? { nome: scuolaSeconda.nome || '', indirizzo: scuolaSeconda.indirizzo || '', tel: scuolaSeconda.tel || '', mail: scuolaSeconda.mail || '', codice: scuolaSeconda.codice || '', ds: scuolaSeconda.ds || '' }
+      ? { nome: scuolaSeconda.nome || '', indirizzo: scuolaSeconda.indirizzo || '', tel: scuolaSeconda.tel || '', mail: scuolaSeconda.mail || '', codice: scuolaSeconda.codice || '', ds: scuolaSeconda.ds || '', logo_url: scuolaSeconda.logo_url || '' }
       : EMPTY);
   }, [scuolaPrima, scuolaSeconda, open]);
 
+  const form = tab === 'prima' ? prima : seconda;
+  const setForm = tab === 'prima' ? setPrima : setSeconda;
+
   function handleSave() {
     onSave(
-      { nome: prima.nome.trim(), indirizzo: prima.indirizzo.trim(), tel: prima.tel.trim(), mail: prima.mail.trim(), codice: prima.codice.trim(), ds: prima.ds.trim() },
-      { nome: seconda.nome.trim(), indirizzo: seconda.indirizzo.trim(), tel: seconda.tel.trim(), mail: seconda.mail.trim(), codice: seconda.codice.trim(), ds: seconda.ds.trim() }
+      { nome: prima.nome.trim(), indirizzo: prima.indirizzo.trim(), tel: prima.tel.trim(), mail: prima.mail.trim(), codice: prima.codice.trim(), ds: prima.ds.trim(), logo_url: prima.logo_url },
+      { nome: seconda.nome.trim(), indirizzo: seconda.indirizzo.trim(), tel: seconda.tel.trim(), mail: seconda.mail.trim(), codice: seconda.codice.trim(), ds: seconda.ds.trim(), logo_url: seconda.logo_url }
     );
   }
 
-  const form = tab === 'prima' ? prima : seconda;
-  const setForm = tab === 'prima' ? setPrima : setSeconda;
+  async function handleLogoUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setForm({ ...form, logo_url: file_url });
+    } catch (err) {
+      /* ignore */
+    } finally {
+      setLogoUploading(false);
+      e.target.value = '';
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} maxWidth="max-w-[500px]">
@@ -42,6 +61,32 @@ export default function ModalScuola({ open, annoCorrente, scuolaPrima, scuolaSec
           Seconda scuola
         </button>
       </div>
+
+      {/* Logo upload */}
+      <div className="mb-3 flex items-center gap-3">
+        {form.logo_url ? (
+          <div className="relative shrink-0">
+            <img src={form.logo_url} alt="Logo scuola" className="w-16 h-16 object-contain rounded-lg border border-bordo bg-white p-1" />
+            <button onClick={() => setForm({ ...form, logo_url: '' })} className="absolute -top-1.5 -right-1.5 bg-rosso text-white rounded-full p-1 shadow-sm hover:bg-red-700 transition-colors" aria-label="Rimuovi logo">
+              <Trash2 size={11} />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={logoUploading}
+            className="w-16 h-16 border-2 border-dashed border-bordo rounded-lg flex items-center justify-center text-grigio hover:bg-blu-light hover:border-blu hover:text-blu transition-colors disabled:opacity-50 shrink-0"
+          >
+            {logoUploading ? <Loader2 size={20} className="animate-spin" /> : <ImagePlus size={20} />}
+          </button>
+        )}
+        <div>
+          <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block">Logo scuola</label>
+          <p className="text-[11px] text-grigio mt-0.5">Facoltativo — apparirà nell'intestazione del PDF ufficiale</p>
+        </div>
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+      </div>
+
       <div className="grid grid-cols-2 gap-2.5">
         <div className="col-span-2">
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Denominazione</label>

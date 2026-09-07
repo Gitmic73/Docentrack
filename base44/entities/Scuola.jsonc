@@ -35,6 +35,10 @@
     "ds": {
       "type": "string",
       "description": "Dirigente Scolastico"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "URL del logo della scuola (per intestazione PDF)"
     }
   },
   "required": [
