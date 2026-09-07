@@ -37,6 +37,15 @@
     "anno_scolastico": {
       "type": "string",
       "description": "es. 2025/2026"
+    },
+    "scuola_tipo": {
+      "type": "string",
+      "enum": [
+        "prima",
+        "seconda"
+      ],
+      "default": "prima",
+      "description": "Scuola a cui \u00e8 associata l'attivit\u00e0 (per docenti con doppia sede)"
     }
   },
   "required": [

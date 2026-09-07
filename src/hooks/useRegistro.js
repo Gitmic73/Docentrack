@@ -10,6 +10,7 @@ export function useRegistro() {
   const [attivitaA, setAttivitaA] = useState([]);
   const [attivitaB, setAttivitaB] = useState([]);
   const [scuola, setScuola] = useState(null);
+  const [scuolaSeconda, setScuolaSeconda] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const initialized = useRef(false);
@@ -70,7 +71,8 @@ export function useRegistro() {
     ]);
     setAttivitaA(a);
     setAttivitaB(b);
-    setScuola(s[0] || null);
+    setScuola(s.find(x => (x.tipo || 'prima') === 'prima') || null);
+    setScuolaSeconda(s.find(x => x.tipo === 'seconda') || null);
     const aMin = a.reduce((sum, v) => sum + (v.durata_min || 0), 0);
     const bMin = b.reduce((sum, v) => sum + (v.durata_min || 0), 0);
     controllaNotifiche(anno, null, aMin, bMin);
@@ -241,31 +243,34 @@ export function useRegistro() {
     }
   }, [attivitaA, attivitaB, annoCorrente]);
 
-  const saveScuola = useCallback(async (data) => {
-    const backup = scuola;
+  const saveScuolaBoth = useCallback(async (primaData, secondaData) => {
     setSaving(true);
-    if (scuola?.id) {
-      setScuola({ ...scuola, ...data });
-      try {
-        await base44.entities.Scuola.update(scuola.id, data);
-      } catch (e) {
-        setScuola(backup);
-      } finally {
-        setSaving(false);
+    try {
+      // Prima scuola
+      if (primaData && primaData.nome && primaData.nome.trim()) {
+        if (scuola?.id) {
+          await base44.entities.Scuola.update(scuola.id, { ...primaData, tipo: 'prima' });
+        } else {
+          await base44.entities.Scuola.create({ ...primaData, tipo: 'prima', anno_scolastico: annoCorrente });
+        }
       }
-    } else {
-      const temp = { ...data, anno_scolastico: annoCorrente, id: 'temp-' + Date.now() };
-      setScuola(temp);
-      try {
-        const created = await base44.entities.Scuola.create({ ...data, anno_scolastico: annoCorrente });
-        setScuola(created);
-      } catch (e) {
-        setScuola(backup);
-      } finally {
-        setSaving(false);
+      // Seconda scuola
+      const hasSeconda = secondaData && secondaData.nome && secondaData.nome.trim();
+      if (hasSeconda) {
+        if (scuolaSeconda?.id) {
+          await base44.entities.Scuola.update(scuolaSeconda.id, { ...secondaData, tipo: 'seconda' });
+        } else {
+          await base44.entities.Scuola.create({ ...secondaData, tipo: 'seconda', anno_scolastico: annoCorrente });
+        }
+      } else if (scuolaSeconda?.id) {
+        await base44.entities.Scuola.delete(scuolaSeconda.id);
       }
-    }
-  }, [scuola, annoCorrente]);
+      // Reload both
+      const s = await base44.entities.Scuola.filter({ anno_scolastico: annoCorrente });
+      setScuola(s.find(x => (x.tipo || 'prima') === 'prima') || null);
+      setScuolaSeconda(s.find(x => x.tipo === 'seconda') || null);
+    } finally { setSaving(false); }
+  }, [scuola, scuolaSeconda, annoCorrente]);
 
   const saveProfile = useCallback(async (p, nome) => {
     setSaving(true);
@@ -348,11 +353,11 @@ export function useRegistro() {
     piano, annoGratuito, anniLicenza, adsRemoved,
     canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds, saveDatiPersonali,
     anni, annoCorrente, setAnnoCorrente,
-    attivitaA, attivitaB, scuola,
+    attivitaA, attivitaB, scuola, scuolaSeconda,
     loading, saving,
     cambiaAnno, nuovoAnno, cancellaAnno,
     addAttivita, updateAttivita, deleteAttivita, svuotaSezione,
-    saveScuola, saveProfile, updateNomeDocente,
+    saveScuolaBoth, saveProfile, updateNomeDocente,
     deleteAccount, logout,
     refresh: () => loadData(annoCorrente),
     suggerisciProssimo: () => (anni.length ? suggerisciAnno(anni[anni.length - 1]) : '2026/2027'),

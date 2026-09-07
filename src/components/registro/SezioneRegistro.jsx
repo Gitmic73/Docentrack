@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Pencil, X, ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
-import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m, dateInAnnoScolastico } from './registroConstants';
+import { TIPI_A, TIPI_B, MAX_ORE, m2h, fmtD, oggi, t2m, dateInAnnoScolastico, SCUOLA_BADGE_SECONDA, SCUOLA_ROW_SECONDA } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 
 const CONF = {
@@ -30,9 +30,9 @@ const CONF = {
   },
 };
 
-export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, saving, annoCorrente }) {
+export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete, onSvuota, saving, annoCorrente, hasSeconda }) {
   const c = CONF[sezione];
-  const [form, setForm] = useState({ data: oggi(), inizio: '', fine: '', tipo: '', note: '' });
+  const [form, setForm] = useState({ data: oggi(), inizio: '', fine: '', tipo: '', note: '', scuola_tipo: 'prima' });
   const [sort, setSort] = useState({ col: 'data', asc: false });
   const [err, setErr] = useState('');
   const [search, setSearch] = useState('');
@@ -101,8 +101,8 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       return;
     }
     setErr('');
-    onAdd({ data: form.data, inizio: form.inizio, fine: form.fine, tipo: form.tipo, note: form.note, durata_min: dur });
-    setForm({ data: form.data, inizio: '', fine: '', tipo: '', note: '' });
+    onAdd({ data: form.data, inizio: form.inizio, fine: form.fine, tipo: form.tipo, note: form.note, durata_min: dur, scuola_tipo: form.scuola_tipo });
+    setForm({ data: form.data, inizio: '', fine: '', tipo: '', note: '', scuola_tipo: form.scuola_tipo });
   }
 
   return (
@@ -145,6 +145,17 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
           )}
         </div>
       </div>
+
+      {/* Selettore scuola (solo se seconda scuola configurata) */}
+      {hasSeconda && (
+        <div className="px-4 py-1.5 bg-[#FEF3C7] border-b border-bordo flex items-center gap-2 select-none">
+          <span className="text-[10px] uppercase tracking-[0.3px] text-grigio">Scuola:</span>
+          <button onClick={() => setForm(f => ({ ...f, scuola_tipo: 'prima' }))}
+            className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}>1ª</button>
+          <button onClick={() => setForm(f => ({ ...f, scuola_tipo: 'seconda' }))}
+            className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio hover:bg-teal-50'}`}>2ª</button>
+        </div>
+      )}
 
       {/* Form inserimento */}
       <div className="px-4 py-2 bg-[#FEF3C7] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end select-none">
@@ -240,7 +251,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       {/* Mobile cards */}
       <div className="md:hidden divide-y divide-bordo">
         {filtered.map((v) => (
-          <div key={v.id} className="px-3 py-2.5 flex items-center gap-2">
+          <div key={v.id} className={`px-3 py-2.5 flex items-center gap-2 ${v.scuola_tipo === 'seconda' ? SCUOLA_ROW_SECONDA : ''}`}>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-semibold text-foreground">{fmtD(v.data)}</span>
@@ -248,6 +259,9 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               </div>
               <div className="mt-1 flex items-center gap-1.5 min-w-0">
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.pillClass} truncate max-w-full`} title={v.tipo}>{v.tipo}</span>
+                {v.scuola_tipo === 'seconda' && (
+                  <span className={`inline-block px-1.5 py-0.5 rounded-full text-[9px] font-bold ${SCUOLA_BADGE_SECONDA}`}>2ª</span>
+                )}
                 {v.note && <span className="text-grigio text-[10px] truncate select-text">{v.note}</span>}
               </div>
             </div>
@@ -280,11 +294,14 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </thead>
         <tbody>
           {filtered.map((v) => (
-            <tr key={v.id} className="border-b border-bordo hover:bg-[#FEF3C7]">
+            <tr key={v.id} className={`border-b border-bordo hover:bg-[#FEF3C7] ${v.scuola_tipo === 'seconda' ? SCUOLA_ROW_SECONDA : ''}`}>
               <td className="px-2.5 py-1.5">{fmtD(v.data)}</td>
               <td className="px-2.5 py-1.5 whitespace-nowrap">{v.inizio}–{v.fine}</td>
               <td className="px-2.5 py-1.5">
                 <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${c.pillClass}`} title={v.tipo}>{v.tipo}</span>
+                {v.scuola_tipo === 'seconda' && (
+                  <span className={`inline-block px-1.5 py-0.5 rounded-full text-[9px] font-bold ml-1 ${SCUOLA_BADGE_SECONDA}`}>2ª</span>
+                )}
                 {v.note && <span className="text-grigio text-[10px] ml-1 select-text">{v.note}</span>}
               </td>
               <td className="px-2.5 py-1.5 font-semibold">{m2h(v.durata_min)}</td>

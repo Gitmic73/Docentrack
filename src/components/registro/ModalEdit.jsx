@@ -3,14 +3,14 @@ import { TIPI_A, TIPI_B, t2m, dateInAnnoScolastico } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 import ModalShell from './ModalShell';
 
-export default function ModalEdit({ open, record, sezione, onClose, onSave, saving, annoCorrente }) {
-  const [form, setForm] = useState({ data: '', inizio: '', fine: '', tipo: '', note: '' });
+export default function ModalEdit({ open, record, sezione, onClose, onSave, saving, annoCorrente, hasSeconda }) {
+  const [form, setForm] = useState({ data: '', inizio: '', fine: '', tipo: '', note: '', scuola_tipo: 'prima' });
   const [err, setErr] = useState('');
   const tipi = sezione === 'a' ? TIPI_A : TIPI_B;
 
   useEffect(() => {
     if (record) {
-      setForm({ data: record.data || '', inizio: record.inizio || '', fine: record.fine || '', tipo: record.tipo || '', note: record.note || '' });
+      setForm({ data: record.data || '', inizio: record.inizio || '', fine: record.fine || '', tipo: record.tipo || '', note: record.note || '', scuola_tipo: record.scuola_tipo || 'prima' });
       setErr('');
     }
   }, [record]);
@@ -34,7 +34,7 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
       setErr("Fine deve essere dopo l'inizio.");
       return;
     }
-    onSave(record.id, { data: form.data, inizio: form.inizio, fine: form.fine, tipo: form.tipo, note: form.note, durata_min: dur });
+    onSave(record.id, { data: form.data, inizio: form.inizio, fine: form.fine, tipo: form.tipo, note: form.note, durata_min: dur, scuola_tipo: form.scuola_tipo });
   }
 
   return (
@@ -56,6 +56,15 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
           <input type="time" value={form.fine} onChange={(e) => setForm({ ...form, fine: e.target.value })}
             className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
+        {hasSeconda && (
+          <div className="col-span-2 flex items-center gap-2 select-none">
+            <span className="text-[10px] text-grigio uppercase tracking-[0.4px]">Scuola:</span>
+            <button onClick={() => setForm({ ...form, scuola_tipo: 'prima' })}
+              className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}>1ª scuola</button>
+            <button onClick={() => setForm({ ...form, scuola_tipo: 'seconda' })}
+              className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio hover:bg-teal-50'}`}>2ª scuola</button>
+          </div>
+        )}
         <div className="col-span-2">
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Tipologia</label>
           <DrawerSelect

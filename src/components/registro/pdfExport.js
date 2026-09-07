@@ -42,7 +42,7 @@ function pieToDataURL(data, size = 500) {
   return canvas.toDataURL('image/png');
 }
 
-export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivitaB }) {
+export function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, attivitaA, attivitaB }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
@@ -80,6 +80,14 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
     y += 6;
     if (scuola.ds) {
       doc.text(`Dirigente Scolastico: ${scuola.ds}`, M, y);
+      y += 6;
+    }
+  }
+  if (scuolaSeconda && scuolaSeconda.nome) {
+    doc.text(`Seconda sede: ${scuolaSeconda.nome}${scuolaSeconda.codice ? '  —  cod. ' + scuolaSeconda.codice : ''}`, M, y);
+    y += 6;
+    if (scuolaSeconda.ds) {
+      doc.text(`Dirigente Scolastico (2ª sede): ${scuolaSeconda.ds}`, M, y);
       y += 6;
     }
   }
@@ -125,6 +133,7 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
         doc.text(fmtD(v.data), M + 1, y);
         doc.text(`${v.inizio}-${v.fine}`, M + 30, y);
         let tipo = v.tipo || '';
+        if (v.scuola_tipo === 'seconda') tipo = '② ' + tipo;
         if (tipo.length > 58) tipo = tipo.slice(0, 55) + '…';
         doc.text(tipo, M + 55, y);
         doc.text(m2h(v.durata_min), W - M - 1, y, { align: 'right' });
@@ -257,10 +266,91 @@ export function esportaPDF({ docente, profilo, scuola, anno, attivitaA, attivita
   drawPieBlock(contentTop, 'Lett. a — 40 ore', totA, pieA, imgA);
   drawPieBlock(contentTop + blockH, 'Lett. b — fino a 40 ore', totB, pieB, imgB);
 
+  // ===== Pagina informativa: calcolo 40+40 ore e riferimenti normativi =====
+  doc.addPage();
+  doc.setFillColor(217, 119, 6);
+  doc.rect(0, 0, W / 2, 2, 'F');
+  doc.setFillColor(120, 53, 15);
+  doc.rect(W / 2, 0, W / 2, 2, 'F');
+  y = 20;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Riferimenti Normativi e Calcolo delle Ore', W / 2, y, { align: 'center' });
+  y += 10;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(120, 53, 15);
+  doc.text('Art. 29 CCNL Comparto Scuola 29/11/2007', M, y);
+  y += 7;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Il CCNL del Comparto Scuola stabilisce che i docenti sono tenuti a svolgere attività funzionali all'insegnamento per un monte ore complessivo di 40+40 ore annue, distinte in due lettere:", M, y, { maxWidth: W - 2 * M });
+  y += 14;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Lett. a) — 40 ore', M, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Collegio dei Docenti e sue articolazioni, attività di programmazione, formazione e aggiornamento, informazione alle famiglie e ricevimenti collettivi, consegna pagelle. Le 40 ore sono obbligatorie: eventuali eccedenze danno diritto al compenso (Tab. 5 CCNL) o all'esonero da altre attività.", M, y, { maxWidth: W - 2 * M });
+  y += 20;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(120, 53, 15);
+  doc.text('Lett. b) — fino a 40 ore', M, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Consigli di classe, interclasse e intersezione, GLO con genitori. Le ore sono fino a un massimo di 40 annue; il Collegio Docenti delibera la gestione delle eventuali eccedenze.", M, y, { maxWidth: W - 2 * M });
+  y += 16;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(217, 119, 6);
+  doc.text('Modalità di calcolo', M, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("La durata di ciascuna attività è calcolata come differenza tra orario di fine e orario di inizio. Le ore vengono sommate separatamente per le due sezioni (lett. a e lett. b) e per ogni anno scolastico (01/09 → 31/08). Il totale di ciascuna sezione non deve superare le 40 ore.", M, y, { maxWidth: W - 2 * M });
+  y += 18;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(120, 53, 15);
+  doc.text('Formazione obbligatoria — D.Lgs. n. 81/2008', M, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("L'art. 37, c. 12 del D.Lgs. 81/2008 stabilisce l'obbligo di formazione in materia di salute e sicurezza per tutti i lavoratori, docenti compresi. Tali ore rientrano nel monte ore della lett. a.", M, y, { maxWidth: W - 2 * M });
+  y += 14;
+
+  if (scuolaSeconda && scuolaSeconda.nome) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(217, 119, 6);
+    doc.text('Docenti con doppia sede', M, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(50, 50, 50);
+    doc.text("Le attività contrassegnate con il simbolo ② sono state svolte presso la seconda sede. Le ore complessive (prima + seconda sede) concorrono al raggiungimento del monte ore annuo.", M, y, { maxWidth: W - 2 * M });
+    y += 14;
+  }
+
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
   doc.setFont('helvetica', 'normal');
-  doc.text('Generato da DocenTrack', W / 2, H - 8, { align: 'center' });
+  doc.text("Documento generato da DocenTrack — Registro Attività Funzionali all'Insegnamento", W / 2, H - 8, { align: 'center' });
 
   doc.save(`Registro_Ore_${anno.replace('/', '-')}.pdf`);
 }

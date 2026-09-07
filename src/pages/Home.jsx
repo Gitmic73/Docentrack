@@ -69,6 +69,7 @@ export default function Home() {
       docente: r.nomeDocente,
       profilo: r.profilo,
       scuola: r.scuola,
+      scuolaSeconda: r.scuolaSeconda,
       anno: r.annoCorrente,
       attivitaA: r.attivitaA,
       attivitaB: r.attivitaB,
@@ -104,6 +105,7 @@ export default function Home() {
               annoCorrente={r.annoCorrente}
               nomeDocente={r.nomeDocente}
               scuolaNome={r.scuola?.nome}
+          scuolaSecondaNome={r.scuolaSeconda?.nome}
               onEditNome={r.updateNomeDocente}
               onEditScuola={() => openModal('scuola')}
               onOpenSettings={() => openModal('profilo')}
@@ -153,6 +155,7 @@ export default function Home() {
                     onDelete={r.deleteAttivita}
                     onSvuota={() => r.svuotaSezione('a')}
                     saving={r.saving}
+                    hasSeconda={!!r.scuolaSeconda}
                   />
                   <SezioneRegistro
                     sezione="b"
@@ -163,6 +166,7 @@ export default function Home() {
                     onDelete={r.deleteAttivita}
                     onSvuota={() => r.svuotaSezione('b')}
                     saving={r.saving}
+                    hasSeconda={!!r.scuolaSeconda}
                   />
                 </motion.div>
               )}
@@ -202,13 +206,15 @@ export default function Home() {
         onClose={closeModal}
         onSave={(id, rec) => { r.updateAttivita(id, rec); closeModal(); }}
         saving={r.saving}
+        hasSeconda={!!r.scuolaSeconda}
       />
       <ModalScuola
         open={modal === 'scuola'}
         annoCorrente={r.annoCorrente}
-        scuola={r.scuola}
+        scuolaPrima={r.scuola}
+        scuolaSeconda={r.scuolaSeconda}
         onClose={closeModal}
-        onSave={(data) => { r.saveScuola(data); closeModal(); }}
+        onSave={(prima, seconda) => { r.saveScuolaBoth(prima, seconda); closeModal(); }}
         saving={r.saving}
       />
       <NuovoAnnoModal

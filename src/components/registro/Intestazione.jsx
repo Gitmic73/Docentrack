@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pencil, Settings, Menu } from 'lucide-react';
 
-export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, onEditNome, onEditScuola, onOpenSettings, onOpenMenu }) {
+export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, scuolaSecondaNome, onEditNome, onEditScuola, onOpenSettings, onOpenMenu }) {
   const [nome, setNome] = useState(nomeDocente);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, on
         />
       </div>
       <div className="flex items-center justify-center gap-2 mt-1.5 text-xs text-grigio">
-        <strong className="text-blu">{scuolaNome || '—'}</strong>
+        <strong className="text-blu">{scuolaNome || '—'}{scuolaSecondaNome ? ` · ${scuolaSecondaNome}` : ''}</strong>
         <button
           onClick={onEditScuola}
           className="bg-none border-none text-blu text-[11px] underline cursor-pointer flex items-center gap-1"

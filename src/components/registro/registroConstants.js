@@ -77,3 +77,7 @@ export function dateInAnnoScolastico(date, anno) {
   if (!y1 || !y2) return true;
   return date >= `${y1}-09-01` && date <= `${y2}-08-31`;
 }
+
+// Badge per attività associate alla seconda scuola (colore leggermente diverso: teal)
+export const SCUOLA_BADGE_SECONDA = 'bg-teal-100 text-teal-700 border border-teal-300 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-700';
+export const SCUOLA_ROW_SECONDA = 'border-l-[3px] border-teal-400 dark:border-teal-600';
