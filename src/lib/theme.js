@@ -2,7 +2,7 @@ const STORAGE_KEY = 'docentrack-theme';
 
 export function getStoredTheme() {
   try {
-    return localStorage.getItem(STORAGE_KEY) || 'system';
+    return localStorage.getItem(STORAGE_KEY) || 'light';
   } catch {
     return 'system';
   }

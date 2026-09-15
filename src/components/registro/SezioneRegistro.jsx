@@ -167,12 +167,12 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         )}
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Inizio</label>
-          <input type="time" value={form.inizio} onChange={(e) => setForm({ ...form, inizio: e.target.value })}
+          <input type="text" placeholder="HH:MM" maxLength={5} value={form.inizio} onChange={(e) => setForm({ ...form, inizio: e.target.value })}
             className="w-full text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Fine</label>
-          <input type="time" value={form.fine} onChange={(e) => setForm({ ...form, fine: e.target.value })}
+          <input type="text" placeholder="HH:MM" maxLength={5} value={form.fine} onChange={(e) => setForm({ ...form, fine: e.target.value })}
             className="w-full text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div className="min-w-0">
