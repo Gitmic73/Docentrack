@@ -47,7 +47,7 @@ export default function Home() {
     setSearchParams(next, { replace });
   }
 
-  const setVista = (v) => patchParams({ tab: v });
+  const setVista = (v) => patchParams({ tab: v, modal: null, id: null });
   const openModal = (name, id) => patchParams({ modal: name, id: id || null });
   const closeModal = () => patchParams({ modal: null, id: null }, true);
 

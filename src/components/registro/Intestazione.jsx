@@ -18,7 +18,8 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, sc
     <div className="relative text-center pt-7 pb-4 px-4 border-b-2 border-blu bg-white">
       <button
         onClick={onOpenMenu}
-        className="absolute left-3 top-3 p-1.5 rounded-md text-grigio hover:bg-blu-light hover:text-blu transition-colors"
+        className="absolute left-3 top-3 rounded-md text-grigio hover:bg-blu-light hover:text-blu transition-colors flex items-center justify-center"
+        style={{ minWidth: 44, minHeight: 44, padding: 10 }}
         aria-label="Apri menu"
       >
         <Menu size={20} />
@@ -44,13 +45,15 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, sc
         <strong className="text-blu">{scuolaNome || '—'}{scuolaSecondaNome ? ` · ${scuolaSecondaNome}` : ''}</strong>
         <button
           onClick={onEditScuola}
-          className="bg-none border-none text-blu text-[11px] underline cursor-pointer flex items-center gap-1"
+          className="bg-none border-none text-blu text-[11px] underline cursor-pointer flex items-center gap-1 justify-center"
+          style={{ minHeight: 44, padding: '10px 6px' }}
         >
           <Pencil size={11} /> dati scuola
         </button>
         <button
           onClick={onOpenSettings}
-          className="bg-none border-none text-grigio text-[11px] cursor-pointer flex items-center gap-1 ml-1"
+          className="bg-none border-none text-grigio text-[11px] cursor-pointer flex items-center gap-1 justify-center"
+          style={{ minHeight: 44, padding: '10px 6px' }}
           aria-label="Impostazioni profilo"
         >
           <Settings size={12} /> profilo

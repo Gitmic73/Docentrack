@@ -29,8 +29,33 @@ export default function PullToRefresh({ onRefresh, disabled, children }) {
   }, [onRefresh]);
 
   useEffect(() => {
+    function isInsideScrollableOrOverlay(el) {
+      let node = el;
+      while (node && node !== document.body) {
+        const cls = node.className || '';
+        const clsStr = typeof cls === 'string' ? cls : '';
+        const tag = node.tagName;
+        const role = node.getAttribute && node.getAttribute('role');
+        if (
+          (typeof clsStr === 'string' && /overflow-y-auto|overflow-auto/.test(clsStr)) ||
+          tag === 'ASIDE' ||
+          role === 'dialog' ||
+          /drawer|sidebar|modal/i.test(clsStr) ||
+          (node.hasAttribute && node.hasAttribute('data-overlay'))
+        ) {
+          return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    }
+
     function onTouchStart(e) {
       if (disabledRef.current || refreshingRef.current) return;
+      if (isInsideScrollableOrOverlay(e.target)) {
+        pulling.current = false;
+        return;
+      }
       if (window.scrollY <= 0) {
         startY.current = e.touches[0].clientY;
         pulling.current = true;
