@@ -46,8 +46,13 @@ export default async function(req) {
 
     const activeUsers = users.map((u) => {
       const count = countByUser[u.id] || 0;
-      const lastAccess = lastAccessByUser[u.id] || u.created_date;
-      const inactive = lastAccess ? (now - new Date(lastAccess).getTime()) > THIRTY_DAYS : true;
+      // "Ultimo accesso" = il più recente tra updated_date del profilo
+      // (riflette interazioni/accessi reali all'app) e ultima attività registrata
+      const candidates = [u.updated_date, u.created_date, lastAccessByUser[u.id]].filter(Boolean);
+      const lastAccess = candidates.length
+        ? candidates.map((d) => new Date(d).getTime()).reduce((a, b) => Math.max(a, b), 0)
+        : 0;
+      const inactive = lastAccess ? (now - lastAccess) > THIRTY_DAYS : true;
       let stato;
       if (count === 0) stato = 'mai_usata';
       else if (inactive) stato = 'inattivo';
