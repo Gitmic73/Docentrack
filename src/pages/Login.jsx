@@ -34,7 +34,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FFFBEB] px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAF4EA] px-4 py-10">
       <div className="w-full max-w-md">
         {/* Brand header */}
         <div className="text-center mb-8">
@@ -117,7 +117,7 @@ export default function Login() {
             </div>
             <Button
               type="submit"
-              className="w-full h-12 font-medium bg-blu hover:bg-[#B45309]"
+              className="w-full h-12 font-medium bg-blu hover:bg-[#A57635]"
               disabled={loading}
             >
               {loading ? (

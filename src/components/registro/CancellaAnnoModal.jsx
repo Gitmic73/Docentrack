@@ -25,7 +25,7 @@ export default function CancellaAnnoModal({ open, anni, annoCorrente, onClose, o
               <button
                 key={a}
                 onClick={() => { setSel(a); setStep('conferma'); }}
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-left hover:bg-[#FEF3C7] transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-left hover:bg-[#F4E8D0] transition-colors"
               >
                 <span className="font-display text-sm font-semibold text-foreground flex-1">A.S. {a}</span>
                 {a === annoCorrente && (
@@ -36,7 +36,7 @@ export default function CancellaAnnoModal({ open, anni, annoCorrente, onClose, o
             ))}
           </div>
           <div className="flex justify-end mt-5 select-none">
-            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Annulla</button>
+            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0]">Annulla</button>
           </div>
         </>
       )}
@@ -58,7 +58,7 @@ export default function CancellaAnnoModal({ open, anni, annoCorrente, onClose, o
             <button
               onClick={() => setStep('scelta')}
               disabled={saving}
-              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7] disabled:opacity-50"
+              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0] disabled:opacity-50"
             >
               Annulla
             </button>

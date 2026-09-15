@@ -29,7 +29,7 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FFFBEB]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF4EA]">
         <div className="w-8 h-8 border-4 border-blu-light border-t-blu rounded-full animate-spin"></div>
       </div>
     );
@@ -37,7 +37,7 @@ export default function Admin() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#FFFBEB] flex items-center justify-center font-body">
+      <div className="min-h-screen bg-[#FAF4EA] flex items-center justify-center font-body">
         <div className="text-center">
           <p className="text-rosso mb-4 text-sm">{error}</p>
           <button onClick={() => navigate('/')} className="bg-blu text-white px-4 py-2 rounded text-sm">Torna alla home</button>
@@ -50,7 +50,7 @@ export default function Admin() {
   const attivi = activeUsers.filter((u) => u.attivita_count > 0).length;
 
   return (
-    <div className="min-h-screen bg-[#FFFBEB] font-body pb-12">
+    <div className="min-h-screen bg-[#FAF4EA] font-body pb-12">
       <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
       <div className="max-w-[900px] mx-auto px-4">
         <div className="flex items-center gap-3 pt-6 pb-4">
@@ -91,7 +91,7 @@ export default function Admin() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-bordo bg-[#FEF3C7]">
+                <tr className="border-b border-bordo bg-[#F4E8D0]">
                   <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Email</th>
                   <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Nome</th>
                   <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Registrato il</th>
@@ -101,7 +101,7 @@ export default function Admin() {
               </thead>
               <tbody>
                 {activeUsers.map((u) => (
-                  <tr key={u.id} className="border-b border-bordo hover:bg-[#FEF3C7]">
+                  <tr key={u.id} className="border-b border-bordo hover:bg-[#F4E8D0]">
                     <td className="px-3 py-2 select-text">{u.email}</td>
                     <td className="px-3 py-2 select-text">{u.full_name || '—'}</td>
                     <td className="px-3 py-2 whitespace-nowrap">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</td>
@@ -110,7 +110,7 @@ export default function Admin() {
                       {u.attivita_count > 0 ? (
                         <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-verde-light text-verde">Attivo</span>
                       ) : (
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEF3C7] text-grigio">Mai usata</span>
+                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F4E8D0] text-grigio">Mai usata</span>
                       )}
                     </td>
                   </tr>

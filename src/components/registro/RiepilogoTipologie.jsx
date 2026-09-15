@@ -65,7 +65,7 @@ function TabellaRiepilogo({ attivita, tipi, titolo, colore }) {
         })}
       </div>
 
-      <div className="px-4 py-2.5 border-t border-bordo bg-[#FEF3C7] flex items-center justify-between flex-wrap gap-2">
+      <div className="px-4 py-2.5 border-t border-bordo bg-[#F4E8D0] flex items-center justify-between flex-wrap gap-2">
         <div className="text-xs text-grigio">
           Totale: <strong className="text-foreground">{m2h(totMin)}</strong>
           {eccedenza > 0
@@ -85,13 +85,13 @@ export default function RiepilogoTipologie({ attivitaA, attivitaB }) {
         attivita={attivitaA}
         tipi={TIPI_A}
         titolo="Riepilogo per tipologia — Lett. a (40 ore)"
-        colore="#D97706"
+        colore="#C28D43"
       />
       <TabellaRiepilogo
         attivita={attivitaB}
         tipi={TIPI_B}
         titolo="Riepilogo per tipologia — Lett. b (fino a 40 ore)"
-        colore="#78350F"
+        colore="#6F5536"
       />
     </div>
   );

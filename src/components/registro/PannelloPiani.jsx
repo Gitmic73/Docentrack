@@ -44,7 +44,7 @@ export default function PannelloPiani({
           </h3>
           <div className="text-xs text-grigio mb-3">Gestisci la tua licenza e gli anni scolastici sbloccati.</div>
 
-          <div className="rounded-lg border border-bordo bg-[#FEF3C7] p-3 mb-4">
+          <div className="rounded-lg border border-bordo bg-[#F4E8D0] p-3 mb-4">
             <div className="text-[10px] text-grigio uppercase tracking-wide">Piano attuale</div>
             <div className="font-display text-base font-semibold text-blu mt-0.5">{(PIANI[piano] || PIANI.free).label}</div>
             <div className="text-[11px] text-grigio mt-1">
@@ -57,7 +57,7 @@ export default function PannelloPiani({
 
           {targetAnno && !annoSbloccato && (
             <div className="rounded-lg border border-oro bg-oro-light p-3 mb-4 flex items-start gap-2">
-              <AlertCircle size={16} className="text-[#7a5c00] shrink-0 mt-0.5" />
+              <AlertCircle size={16} className="text-[#6F5536] shrink-0 mt-0.5" />
               <div className="text-xs text-foreground">
                 Per creare l'anno <strong>{targetAnno}</strong> è necessario sbloccarlo. Scegli un'opzione qui sotto.
               </div>
@@ -76,7 +76,7 @@ export default function PannelloPiani({
                 <button
                   onClick={() => seleziona('annuale', 'Rinnovo annuale', PIANI.annuale.prezzo, annoTarget)}
                   disabled={annoSbloccato || !annoTarget}
-                  className="text-[11px] bg-blu text-white rounded px-2.5 py-1 mt-1 hover:bg-[#B45309] disabled:opacity-40"
+                  className="text-[11px] bg-blu text-white rounded px-2.5 py-1 mt-1 hover:bg-[#A57635] disabled:opacity-40"
                 >
                   {annoSbloccato ? 'Già sbloccato' : `Sblocca ${annoTarget || '…'}`}
                 </button>
@@ -94,7 +94,7 @@ export default function PannelloPiani({
                 {piano === 'permanente' ? (
                   <span className="text-[11px] text-verde font-semibold inline-flex items-center gap-1 mt-1"><Check size={12} /> Attiva</span>
                 ) : (
-                  <button onClick={() => seleziona('permanente', 'Licenza permanente', PIANI.permanente.prezzo)} className="text-[11px] bg-oro text-white rounded px-2.5 py-1 mt-1 hover:bg-[#92400e]">Acquista</button>
+                  <button onClick={() => seleziona('permanente', 'Licenza permanente', PIANI.permanente.prezzo)} className="text-[11px] bg-oro text-white rounded px-2.5 py-1 mt-1 hover:bg-[#56442A]">Acquista</button>
                 )}
               </div>
             </div>
@@ -113,7 +113,7 @@ export default function PannelloPiani({
                 ) : (
                   <>
                     <div className="text-sm font-bold text-blu">{fmtPrezzo(PREZZO_RIMOZIONE_ADS)}</div>
-                    <button onClick={() => seleziona('ads', 'Rimozione pubblicità', PREZZO_RIMOZIONE_ADS)} className="text-[11px] bg-blu text-white rounded px-2.5 py-1 mt-1 hover:bg-[#B45309]">Acquista</button>
+                    <button onClick={() => seleziona('ads', 'Rimozione pubblicità', PREZZO_RIMOZIONE_ADS)} className="text-[11px] bg-blu text-white rounded px-2.5 py-1 mt-1 hover:bg-[#A57635]">Acquista</button>
                   </>
                 )}
               </div>
@@ -121,7 +121,7 @@ export default function PannelloPiani({
           </div>
 
           <div className="flex justify-end mt-5 select-none">
-            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Chiudi</button>
+            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0]">Chiudi</button>
           </div>
         </>
       )}
@@ -129,7 +129,7 @@ export default function PannelloPiani({
       {step === 'checkout' && item && (
         <>
           <h3 className="font-display text-[17px] text-blu mb-3 border-b border-bordo pb-2.5">Conferma acquisto</h3>
-          <div className="rounded-lg border border-bordo bg-[#FEF3C7] p-3 mb-3">
+          <div className="rounded-lg border border-bordo bg-[#F4E8D0] p-3 mb-3">
             <div className="text-sm font-semibold text-foreground">{item.label}</div>
             {item.anno && <div className="text-xs text-grigio mt-0.5">Anno scolastico: {item.anno}</div>}
             <div className="flex justify-between items-center mt-2 pt-2 border-t border-bordo">
@@ -138,14 +138,14 @@ export default function PannelloPiani({
             </div>
           </div>
           <div className="rounded-lg border border-oro bg-oro-light/50 p-2.5 mb-3 flex items-start gap-2">
-            <AlertCircle size={14} className="text-[#7a5c00] shrink-0 mt-0.5" />
+            <AlertCircle size={14} className="text-[#6F5536] shrink-0 mt-0.5" />
             <div className="text-[11px] text-foreground">
               <strong>Modalità demo:</strong> i pagamenti non sono ancora attivi. L'attivazione è gratuita a scopo di test. Abiliterai il pagamento reale in seguito.
             </div>
           </div>
           <div className="flex justify-between gap-2 mt-2 select-none">
-            <button onClick={() => setStep('lista')} disabled={saving} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7] disabled:opacity-50">Indietro</button>
-            <button onClick={paga} disabled={saving} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50 flex items-center gap-1.5">
+            <button onClick={() => setStep('lista')} disabled={saving} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0] disabled:opacity-50">Indietro</button>
+            <button onClick={paga} disabled={saving} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A57635] disabled:opacity-50 flex items-center gap-1.5">
               {saving ? (
                 <><span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Elaborazione…</>
               ) : (
@@ -168,7 +168,7 @@ export default function PannelloPiani({
             </div>
           </div>
           <div className="flex justify-end select-none">
-            <button onClick={onClose} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309]">Chiudi</button>
+            <button onClick={onClose} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A57635]">Chiudi</button>
           </div>
         </>
       )}

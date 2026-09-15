@@ -74,7 +74,7 @@ export default function Register() {
   // ===== OTP step =====
   if (showOtp) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FFFBEB] px-4 py-10">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF4EA] px-4 py-10">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blu mb-4">
@@ -106,7 +106,7 @@ export default function Register() {
               </InputOTP>
             </div>
             <Button
-              className="w-full h-12 font-medium bg-blu hover:bg-[#B45309]"
+              className="w-full h-12 font-medium bg-blu hover:bg-[#A57635]"
               onClick={handleVerify}
               disabled={loading || otpCode.length < 6}
             >
@@ -133,9 +133,9 @@ export default function Register() {
 
   // ===== Registration form =====
   return (
-    <div className="min-h-screen flex bg-[#FFFBEB]">
+    <div className="min-h-screen flex bg-[#FAF4EA]">
       {/* Left: welcome / feature preview (desktop only) */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#FFFBEB] to-[#FEF3C7] border-r border-bordo">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#FAF4EA] to-[#F4E8D0] border-r border-bordo">
         <div className="w-full max-w-lg mx-auto">
           <RegisterWelcome />
         </div>
@@ -238,7 +238,7 @@ export default function Register() {
               </div>
               <Button
                 type="submit"
-                className="w-full h-12 font-medium bg-blu hover:bg-[#B45309]"
+                className="w-full h-12 font-medium bg-blu hover:bg-[#A57635]"
                 disabled={loading}
               >
                 {loading ? (

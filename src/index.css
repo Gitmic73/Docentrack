@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 33 97% 44%;
+    --primary: 35 51% 51%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -22,10 +22,10 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 33 97% 44%;
-    --chart-1: 33 97% 44%;
-    --chart-2: 41 96% 64%;
-    --chart-3: 26 78% 26%;
+    --ring: 35 51% 51%;
+    --chart-1: 35 51% 51%;
+    --chart-2: 38 58% 60%;
+    --chart-3: 30 35% 32%;
     --chart-4: 44 92% 95%;
     --chart-5: 48 100% 96%;
     --radius: 0.5rem;
@@ -50,8 +50,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 41 96% 58%;
-    --primary-foreground: 26 78% 26%;
+    --primary: 36 58% 60%;
+    --primary-foreground: 30 35% 32%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
@@ -62,10 +62,10 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 41 96% 58%;
-    --chart-1: 33 97% 55%;
-    --chart-2: 41 96% 70%;
-    --chart-3: 26 78% 40%;
+    --ring: 36 58% 60%;
+    --chart-1: 35 51% 55%;
+    --chart-2: 38 58% 70%;
+    --chart-3: 30 35% 45%;
     --chart-4: 44 92% 95%;
     --chart-5: 48 100% 97%;
     --sidebar-background: 240 5.9% 10%;
@@ -105,20 +105,20 @@
 
 /* ===== Dark mode contrast overrides (mobile WebView) ===== */
 .dark .bg-white { background-color: #121212 !important; }
-.dark .bg-\[\#FFFBEB\] { background-color: #121212 !important; }
-.dark .bg-\[\#FEF3C7\] { background-color: #1a1a1a !important; }
+.dark .bg-\[\#FAF4EA\] { background-color: #121212 !important; }
+.dark .bg-\[\#F4E8D0\] { background-color: #1a1a1a !important; }
 .dark .border-bordo { border-color: #27272a !important; }
 .dark .border-oro { border-color: #B45309 !important; }
 .dark .text-grigio { color: #a1a1aa !important; }
-.dark .text-blu { color: #FCD34D !important; }
-.dark .text-oro { color: #FCD34D !important; }
+.dark .text-blu { color: #E0B865 !important; }
+.dark .text-oro { color: #E0B865 !important; }
 .dark .text-rosso { color: #f87171 !important; }
 .dark .text-verde { color: #4ade80 !important; }
-.dark .text-\[\#7a5c00\] { color: #fbbf24 !important; }
+.dark .text-\[\#6F5536\] { color: #fbbf24 !important; }
 .dark .bg-blu-light { background-color: rgba(254,243,199,0.16) !important; }
 .dark .bg-oro-light { background-color: rgba(255,251,235,0.14) !important; }
 .dark .bg-rosso-light { background-color: rgba(248,113,113,0.18) !important; }
 .dark .bg-verde-light { background-color: rgba(74,222,128,0.18) !important; }
 .dark .bg-oro { background-color: #92400e !important; }
-.dark .hover\:bg-\[\#FEF3C7\]:hover { background-color: #27272a !important; }
+.dark .hover\:bg-\[\#F4E8D0\]:hover { background-color: #27272a !important; }
 .dark .hover\:bg-blu-light:hover { background-color: rgba(254,243,199,0.16) !important; }

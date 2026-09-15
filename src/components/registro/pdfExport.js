@@ -79,9 +79,9 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   }
 
   // Strip blu/oro
-  doc.setFillColor(217, 119, 6);
+  doc.setFillColor(194, 141, 67);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(120, 53, 15);
+  doc.setFillColor(111, 85, 54);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
 
   // Intestazione formale: logo + dati scuola
@@ -121,7 +121,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   // Branding DocenTrack
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('DocenTrack', W / 2, y, { align: 'center' });
   y += 5;
   doc.setFontSize(8);
@@ -211,7 +211,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
     const res = Math.max(0, MAX_ORE - tot);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(217, 119, 6);
+    doc.setTextColor(194, 141, 67);
     doc.text(`Totale ore svolte: ${m2h(tot)}`, M, y);
     if (ecc > 0) {
       doc.setTextColor(176, 58, 46);
@@ -222,8 +222,8 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
     y += 11;
   }
 
-  sezione('40 ore — Art. 29 CCNL/2007 (lett. a)', [217, 119, 6], attivitaA);
-  sezione('Fino a 40 ore — Art. 29 CCNL/2007 (lett. b)', [120, 53, 15], attivitaB);
+  sezione('40 ore — Art. 29 CCNL/2007 (lett. a)', [194, 141, 67], attivitaA);
+  sezione('Fino a 40 ore — Art. 29 CCNL/2007 (lett. b)', [111, 85, 54], attivitaB);
 
   if (y > 265) { doc.addPage(); y = 20; }
   doc.setFontSize(7);
@@ -245,16 +245,16 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   const totB = attivitaB.reduce((s, v) => s + (v.durata_min || 0), 0);
 
   doc.addPage();
-  doc.setFillColor(217, 119, 6);
+  doc.setFillColor(194, 141, 67);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(120, 53, 15);
+  doc.setFillColor(111, 85, 54);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
 
   // Intestazione pagina
   let sy = 18;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Report Statistico', W / 2, sy, { align: 'center' });
   sy += 5;
   doc.setFontSize(8);
@@ -272,7 +272,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   // --- Torta sinistra: Lett. a ---
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Lett. a — 40 ore', halfL + colW / 2, sy, { align: 'center' });
   sy += 4;
   doc.setFontSize(8);
@@ -295,7 +295,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   let syR = sy;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(120, 53, 15);
+  doc.setTextColor(111, 85, 54);
   doc.text('Lett. b — fino a 40 ore', halfR + colW / 2, syR, { align: 'center' });
   syR += 4;
   doc.setFontSize(8);
@@ -347,7 +347,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   if (tableY > H - M - 40) { tableY = H - M - 40; }
 
   // Intestazione tabella
-  doc.setFillColor(217, 119, 6);
+  doc.setFillColor(194, 141, 67);
   doc.rect(M, tableY, W - 2 * M, 7, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
@@ -400,14 +400,14 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   // ===== Pagina informativa: calcolo 40+40 ore e riferimenti normativi =====
   doc.addPage();
-  doc.setFillColor(217, 119, 6);
+  doc.setFillColor(194, 141, 67);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(120, 53, 15);
+  doc.setFillColor(111, 85, 54);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
   y = 20;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Riferimenti Normativi e Calcolo delle Ore', W / 2, y, { align: 'center' });
   y += 12;
 
@@ -415,7 +415,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.setTextColor(120, 53, 15);
+  doc.setTextColor(111, 85, 54);
   doc.text('Art. 29 CCNL Comparto Scuola 29/11/2007', M, y);
   y += 7;
   doc.setFont('helvetica', 'normal');
@@ -425,7 +425,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Lett. a) — 40 ore', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
@@ -435,7 +435,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(120, 53, 15);
+  doc.setTextColor(111, 85, 54);
   doc.text('Lett. b) — fino a 40 ore', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
@@ -445,7 +445,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Modalità di calcolo', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
@@ -455,7 +455,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(120, 53, 15);
+  doc.setTextColor(111, 85, 54);
   doc.text('Formazione obbligatoria — D.Lgs. n. 81/2008', M, y);
   y += 6;
   doc.setFont('helvetica', 'normal');
@@ -466,7 +466,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   if (scuolaSeconda && scuolaSeconda.nome) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.setTextColor(217, 119, 6);
+    doc.setTextColor(194, 141, 67);
     doc.text('Docenti con doppia sede', M, y);
     y += 6;
     doc.setFont('helvetica', 'normal');
@@ -481,15 +481,15 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
 
   // ===== Pagina firma: dichiarazione e spazio per firme =====
   doc.addPage();
-  doc.setFillColor(217, 119, 6);
+  doc.setFillColor(194, 141, 67);
   doc.rect(0, 0, W / 2, 2, 'F');
-  doc.setFillColor(120, 53, 15);
+  doc.setFillColor(111, 85, 54);
   doc.rect(W / 2, 0, W / 2, 2, 'F');
 
   y = 25;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.setTextColor(217, 119, 6);
+  doc.setTextColor(194, 141, 67);
   doc.text('Dichiarazione delle Attività Svolte', W / 2, y, { align: 'center' });
   y += 10;
 

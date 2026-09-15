@@ -60,12 +60,12 @@ export default function PannelloInvita({ open, onClose }) {
         </>
       )}
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Chiudi</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0]">Chiudi</button>
         {!done && (
           <button
             onClick={handleInvite}
             disabled={loading || !email.trim()}
-            className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50"
+            className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A57635] disabled:opacity-50"
           >
             {loading ? 'Invio…' : 'Invia invito'}
           </button>

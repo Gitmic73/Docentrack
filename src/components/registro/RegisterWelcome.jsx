@@ -76,7 +76,7 @@ export default function RegisterWelcome() {
       </div>
 
       {/* Quick steps */}
-      <div className="bg-[#FEF3C7] border border-bordo rounded-xl p-4">
+      <div className="bg-[#F4E8D0] border border-bordo rounded-xl p-4">
         <h3 className="font-display text-sm font-semibold text-blu mb-3 flex items-center gap-1.5">
           <Clock size={15} /> Come funziona
         </h3>

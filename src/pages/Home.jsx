@@ -53,7 +53,7 @@ export default function Home() {
 
   if (r.loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FFFBEB]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF4EA]">
         <div className="w-8 h-8 border-4 border-blu-light border-t-blu rounded-full animate-spin"></div>
       </div>
     );
@@ -99,7 +99,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBEB] pb-24 md:pb-12 font-body text-foreground">
+    <div className="min-h-screen bg-[#FAF4EA] pb-24 md:pb-12 font-body text-foreground">
       <PullToRefresh onRefresh={r.refresh} disabled={!!modal}>
         <div className="pt-[env(safe-area-inset-top,16px)] md:pt-0">
           <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
@@ -256,12 +256,12 @@ export default function Home() {
       />
       <ProfileSettings
         open={modal === 'profilo'}
-        profilo={r.profilo}
+        email={r.email}
         nomeDocente={r.nomeDocente}
+        telefono={r.telefono}
+        docenteDi={r.docenteDi}
         onClose={closeModal}
-        onLogout={r.logout}
-        onDeleteAccount={r.deleteAccount}
-        onExportCSV={handleExportAllCSV}
+        onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
         saving={r.saving}
       />
       <SidebarMenu
@@ -298,6 +298,9 @@ export default function Home() {
         docenteDi={r.docenteDi}
         onClose={closeModal}
         onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
+        onLogout={r.logout}
+        onDeleteAccount={r.deleteAccount}
+        onExportCSV={handleExportAllCSV}
         saving={r.saving}
       />
       <PannelloInvita open={modal === 'invita'} onClose={closeModal} />

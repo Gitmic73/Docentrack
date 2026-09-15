@@ -86,9 +86,9 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
       </div>
       {err && <div className="mt-2 text-[11px] text-rosso">{err}</div>}
       <div className="flex justify-end gap-2 mt-5 select-none">
-        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#FEF3C7]">Annulla</button>
+        <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0]">Annulla</button>
         <button onClick={handleSave} disabled={saving}
-          className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#B45309] disabled:opacity-50">Salva modifiche</button>
+          className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A57635] disabled:opacity-50">Salva modifiche</button>
       </div>
     </ModalShell>
   );
