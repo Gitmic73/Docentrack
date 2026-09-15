@@ -132,7 +132,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       <div className="px-4 py-2 flex justify-between items-center border-b border-bordo bg-[#F4E8D0]">
         <div className="flex gap-[18px] flex-wrap">
           <div className="stat">
-            <span className="block text-lg font-semibold text-blu">{m2h(totMin)}</span>
+            <span className="block text-lg font-semibold text-verde">{m2h(totMin)}</span>
             <span className="text-[10px] uppercase tracking-[0.5px] text-grigio">Ore svolte</span>
           </div>
           <div className="stat">
@@ -196,6 +196,18 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       {/* Ricerca, note e filtri */}
       <div className="px-4 py-2 bg-[#F4E8D0] border-b border-bordo flex items-end gap-2">
         <div className="flex-1 min-w-0">
+          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
+            {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
+          </label>
+          <input
+            type="text"
+            value={form.note}
+            placeholder={isAltro ? 'obbligatorio' : c.notePlaceholder}
+            onChange={(e) => setForm({ ...form, note: e.target.value })}
+            className={`w-full text-xs px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${isAltro ? 'border-rosso' : 'border-bordo'}`}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Cerca</label>
           <div className="relative">
             <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
@@ -207,18 +219,6 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               className="w-full text-xs pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
             />
           </div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
-            {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
-          </label>
-          <input
-            type="text"
-            value={form.note}
-            placeholder={isAltro ? 'obbligatorio' : c.notePlaceholder}
-            onChange={(e) => setForm({ ...form, note: e.target.value })}
-            className={`w-full text-xs px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${isAltro ? 'border-rosso' : 'border-bordo'}`}
-          />
         </div>
         <button
           onClick={() => setShowFiltri((s) => !s)}
