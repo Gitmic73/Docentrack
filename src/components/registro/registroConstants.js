@@ -36,6 +36,14 @@ export function t2m(t) {
   return h * 60 + m;
 }
 
+// Formatta l'input orario inserendo automaticamente i ":" tra HH e MM.
+// "0830" -> "08:30", "08:30" -> "08:30", "08" -> "08"
+export function formatTimeInput(val) {
+  const digits = (val || '').replace(/\D/g, '');
+  if (digits.length <= 2) return digits;
+  return digits.slice(0, 2) + ':' + digits.slice(2, 4);
+}
+
 export function m2h(m) {
   const s = m < 0 ? '-' : '';
   const a = Math.abs(m);

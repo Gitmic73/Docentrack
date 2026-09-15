@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TIPI_A, TIPI_B, t2m, dateInAnnoScolastico } from './registroConstants';
+import { TIPI_A, TIPI_B, t2m, formatTimeInput, dateInAnnoScolastico } from './registroConstants';
 import DrawerSelect from './DrawerSelect';
 import ModalShell from './ModalShell';
 
@@ -48,12 +48,12 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Inizio</label>
-          <input type="text" placeholder="HH:MM" maxLength={5} value={form.inizio} onChange={(e) => setForm({ ...form, inizio: e.target.value })}
+          <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.inizio} onChange={(e) => setForm({ ...form, inizio: formatTimeInput(e.target.value) })}
             className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Fine</label>
-          <input type="text" placeholder="HH:MM" maxLength={5} value={form.fine} onChange={(e) => setForm({ ...form, fine: e.target.value })}
+          <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.fine} onChange={(e) => setForm({ ...form, fine: formatTimeInput(e.target.value) })}
             className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         {hasSeconda && (
