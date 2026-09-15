@@ -148,24 +148,23 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </div>
       </div>
 
-      {/* Selettore scuola (solo se seconda scuola configurata) */}
-      {hasSeconda && (
-        <div className="px-4 py-1.5 bg-[#F4E8D0] border-b border-bordo flex items-center gap-2 select-none">
-          <span className="text-[10px] uppercase tracking-[0.3px] text-grigio">Scuola:</span>
-          <button onClick={() => setForm(f => ({ ...f, scuola_tipo: 'prima' }))}
-            className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}>1ª</button>
-          <button onClick={() => setForm(f => ({ ...f, scuola_tipo: 'seconda' }))}
-            className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio hover:bg-teal-50'}`}>2ª</button>
-        </div>
-      )}
-
       {/* Form inserimento */}
-      <div className="px-4 py-2 bg-[#F4E8D0] border-b border-bordo grid grid-cols-2 sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_82px_auto] gap-1.5 items-end select-none">
+      <div className={`px-4 py-2 bg-[#F4E8D0] border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-[104px_72px_100px_100px_minmax(115px,1fr)_auto]' : 'sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_auto]'} gap-1.5 items-end select-none`}>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
             className="w-full text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
+        {hasSeconda && (
+          <div>
+            <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Scuola</label>
+            <select value={form.scuola_tipo} onChange={(e) => setForm({ ...form, scuola_tipo: e.target.value })}
+              className="w-full text-xs px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu">
+              <option value="prima">1ª</option>
+              <option value="seconda">2ª</option>
+            </select>
+          </div>
+        )}
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Inizio</label>
           <input type="time" value={form.inizio} onChange={(e) => setForm({ ...form, inizio: e.target.value })}
@@ -187,13 +186,6 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
             className="w-full text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
           />
         </div>
-        <div>
-          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
-            {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
-          </label>
-          <input type="text" value={form.note} placeholder={isAltro ? 'obbligatorio' : c.notePlaceholder} onChange={(e) => setForm({ ...form, note: e.target.value })}
-            className={`w-full text-xs px-1.5 py-1 border rounded bg-white outline-none focus:border-blu ${isAltro ? 'border-rosso' : 'border-bordo'}`} />
-        </div>
         <button onClick={handleAdd} disabled={saving}
           className={`text-white rounded px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-colors disabled:opacity-50 ${c.btnAddClass}`}>
           <Plus size={13} className="inline -mt-0.5" /> Aggiungi
@@ -201,16 +193,31 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
       {err && <div className="px-4 py-1.5 text-[11px] text-rosso bg-rosso-light">{err}</div>}
 
-      {/* Ricerca e filtri */}
-      <div className="px-4 py-2 bg-[#F4E8D0] border-b border-bordo flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
+      {/* Ricerca, note e filtri */}
+      <div className="px-4 py-2 bg-[#F4E8D0] border-b border-bordo flex items-end gap-2">
+        <div className="flex-1 min-w-0">
+          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Cerca</label>
+          <div className="relative">
+            <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Parola chiave…"
+              className="w-full text-xs pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+            />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
+            {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
+          </label>
           <input
             type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cerca per parola chiave…"
-            className="w-full text-xs pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+            value={form.note}
+            placeholder={isAltro ? 'obbligatorio' : c.notePlaceholder}
+            onChange={(e) => setForm({ ...form, note: e.target.value })}
+            className={`w-full text-xs px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${isAltro ? 'border-rosso' : 'border-bordo'}`}
           />
         </div>
         <button
@@ -248,11 +255,15 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Scuola</label>
               <div className="flex gap-1">
                 <button
-                  onClick={() => setFiltScuola(filtScuola === 'prima' ? '' : 'prima')}
+                  onClick={() => setFiltScuola('')}
+                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === '' ? 'bg-oro text-white border-oro' : 'border-bordo text-grigio hover:bg-oro-light bg-white'}`}
+                >Tutte</button>
+                <button
+                  onClick={() => setFiltScuola('prima')}
                   className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'prima' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light bg-white'}`}
                 >1ª</button>
                 <button
-                  onClick={() => setFiltScuola(filtScuola === 'seconda' ? '' : 'seconda')}
+                  onClick={() => setFiltScuola('seconda')}
                   className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'seconda' ? 'bg-teal-600 text-white border-teal-600' : 'border-bordo text-grigio hover:bg-teal-50 bg-white'}`}
                 >2ª</button>
               </div>
