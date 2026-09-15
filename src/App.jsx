@@ -15,6 +15,7 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Home from '@/pages/Home';
 import Admin from '@/pages/Admin';
+import { applyTheme, getStoredTheme } from '@/lib/theme';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,14 +59,15 @@ const AuthenticatedApp = () => {
 
 function App() {
   useEffect(() => {
+    applyTheme(getStoredTheme());
     const mql = window.matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => {
-      if (mql.matches) document.documentElement.classList.add('dark');
-      else document.documentElement.classList.remove('dark');
+    const handler = () => applyTheme(getStoredTheme());
+    mql.addEventListener('change', handler);
+    window.addEventListener('themechange', handler);
+    return () => {
+      mql.removeEventListener('change', handler);
+      window.removeEventListener('themechange', handler);
     };
-    apply();
-    mql.addEventListener('change', apply);
-    return () => mql.removeEventListener('change', apply);
   }, []);
 
   return (

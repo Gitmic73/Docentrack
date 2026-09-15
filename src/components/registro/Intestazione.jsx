@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Settings, Menu } from 'lucide-react';
+import { Pencil, Settings, Menu, Sun, Moon } from 'lucide-react';
+import { setStoredTheme } from '@/lib/theme';
 
 export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, scuolaSecondaNome, onEditNome, onEditScuola, onOpenSettings, onOpenMenu }) {
   const [nome, setNome] = useState(nomeDocente);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     setNome(nomeDocente);
   }, [nomeDocente]);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+    const handler = () => setIsDark(document.documentElement.classList.contains('dark'));
+    window.addEventListener('themechange', handler);
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    const sysHandler = () => setIsDark(document.documentElement.classList.contains('dark'));
+    mql.addEventListener('change', sysHandler);
+    return () => {
+      window.removeEventListener('themechange', handler);
+      mql.removeEventListener('change', sysHandler);
+    };
+  }, []);
+
+  function toggleTheme() {
+    const currentlyDark = document.documentElement.classList.contains('dark');
+    setStoredTheme(currentlyDark ? 'light' : 'dark');
+  }
 
   function handleBlur() {
     if (nome.trim() && nome !== nomeDocente) {
@@ -23,6 +43,14 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, sc
         aria-label="Apri menu"
       >
         <Menu size={20} />
+      </button>
+      <button
+        onClick={toggleTheme}
+        className="absolute right-3 top-3 rounded-md text-grigio hover:bg-blu-light hover:text-blu transition-colors flex items-center justify-center"
+        style={{ minWidth: 44, minHeight: 44, padding: 10 }}
+        aria-label="Cambia tema chiaro/scuro"
+      >
+        {isDark ? <Sun size={20} /> : <Moon size={20} />}
       </button>
       <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-blu to-oro bg-clip-text text-transparent">
         DocenTrack
