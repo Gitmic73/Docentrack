@@ -1,13 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Users, UserX, Activity } from 'lucide-react';
+import { ArrowLeft, Users, UserX, Activity, ChevronUp, ChevronDown, ChevronsUpDown, Clock, Pause, CircleSlash } from 'lucide-react';
+
+const STATO_LABEL = {
+  attivo: 'Attivo',
+  inattivo: 'Inattivo',
+  mai_usata: 'Mai usata',
+};
+const STATO_BADGE = {
+  attivo: 'bg-verde-light text-verde',
+  inattivo: 'bg-[#F4E8D0] text-oro',
+  mai_usata: 'bg-[#F4E8D0] text-grigio',
+};
 
 export default function Admin() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sortKey, setSortKey] = useState('created_date');
+  const [sortDir, setSortDir] = useState('desc');
 
   useEffect(() => {
     (async () => {
@@ -26,6 +39,63 @@ export default function Admin() {
       }
     })();
   }, []);
+
+  const { activeUsers = [], deletedUsers = [] } = data || {};
+
+  const conteggiStato = useMemo(() => {
+    const c = { attivo: 0, inattivo: 0, mai_usata: 0 };
+    activeUsers.forEach((u) => { if (c[u.stato] != null) c[u.stato]++; });
+    return c;
+  }, [activeUsers]);
+
+  const sortedUsers = useMemo(() => {
+    const arr = [...activeUsers];
+    arr.sort((a, b) => {
+      let va, vb;
+      if (sortKey === 'attivita_count') {
+        va = a.attivita_count; vb = b.attivita_count;
+      } else if (sortKey === 'stato') {
+        va = a.stato; vb = b.stato;
+      } else if (['scadenza', 'last_access', 'created_date'].includes(sortKey)) {
+        va = a[sortKey] ? new Date(a[sortKey]).getTime() : 0;
+        vb = b[sortKey] ? new Date(b[sortKey]).getTime() : 0;
+      } else {
+        va = (a[sortKey] || '').toString().toLowerCase();
+        vb = (b[sortKey] || '').toString().toLowerCase();
+      }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return arr;
+  }, [activeUsers, sortKey, sortDir]);
+
+  function handleSort(key) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir(['attivita_count', 'created_date', 'last_access', 'scadenza'].includes(key) ? 'desc' : 'asc');
+    }
+  }
+
+  function SortIcon({ col }) {
+    if (sortKey !== col) return <ChevronsUpDown size={11} className="inline ml-0.5 opacity-40" />;
+    return sortDir === 'asc'
+      ? <ChevronUp size={12} className="inline ml-0.5 text-blu" />
+      : <ChevronDown size={12} className="inline ml-0.5 text-blu" />;
+  }
+
+  function Th({ col, label, align = 'left' }) {
+    return (
+      <th
+        onClick={() => handleSort(col)}
+        className={`px-3 py-2 text-[10px] uppercase tracking-wide text-grigio font-semibold cursor-pointer select-none hover:text-blu transition-colors ${align === 'center' ? 'text-center' : 'text-left'}`}
+      >
+        {label} <SortIcon col={col} />
+      </th>
+    );
+  }
 
   if (loading) {
     return (
@@ -46,7 +116,6 @@ export default function Admin() {
     );
   }
 
-  const { activeUsers = [], deletedUsers = [] } = data || {};
   const attivi = activeUsers.filter((u) => u.attivita_count > 0).length;
 
   return (
@@ -60,7 +129,7 @@ export default function Admin() {
           <h1 className="font-display text-xl font-bold text-blu">Pannello Admin</h1>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-white border border-bordo rounded-lg p-4">
             <div className="flex items-center gap-2 text-blu mb-1">
               <Users size={16} />
@@ -84,6 +153,40 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Riepilogo tipologie di stato */}
+        <div className="bg-white border border-bordo rounded-lg p-4 mb-6">
+          <h2 className="text-[11px] uppercase tracking-wide text-grigio font-semibold mb-3">Riepilogo stati</h2>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-verde-light flex items-center justify-center shrink-0">
+                <Activity size={16} className="text-verde" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-foreground leading-none">{conteggiStato.attivo}</div>
+                <div className="text-[10px] text-grigio uppercase tracking-wide mt-0.5">Attivi</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-[#F4E8D0] flex items-center justify-center shrink-0">
+                <Pause size={16} className="text-oro" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-foreground leading-none">{conteggiStato.inattivo}</div>
+                <div className="text-[10px] text-grigio uppercase tracking-wide mt-0.5">Inattivi (30+ gg)</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-[#F4E8D0] flex items-center justify-center shrink-0">
+                <CircleSlash size={16} className="text-grigio" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-foreground leading-none">{conteggiStato.mai_usata}</div>
+                <div className="text-[10px] text-grigio uppercase tracking-wide mt-0.5">Mai usata</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white border border-bordo rounded-lg overflow-hidden mb-6">
           <div className="bg-blu px-4 py-2.5">
             <h2 className="font-display text-sm font-semibold text-white">Utenti Registrati</h2>
@@ -92,31 +195,41 @@ export default function Admin() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-bordo bg-[#F4E8D0]">
-                  <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Email</th>
-                  <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Nome</th>
-                  <th className="px-3 py-2 text-left text-[10px] uppercase tracking-wide text-grigio font-semibold">Registrato il</th>
-                  <th className="px-3 py-2 text-center text-[10px] uppercase tracking-wide text-grigio font-semibold">N. attività</th>
-                  <th className="px-3 py-2 text-center text-[10px] uppercase tracking-wide text-grigio font-semibold">Stato</th>
+                  <Th col="email" label="Email" />
+                  <Th col="full_name" label="Nome" />
+                  <Th col="created_date" label="Registrato il" />
+                  <Th col="scadenza" label="Scadenza" />
+                  <Th col="attivita_count" label="N. attività" align="center" />
+                  <Th col="stato" label="Stato" align="center" />
                 </tr>
               </thead>
               <tbody>
-                {activeUsers.map((u) => (
-                  <tr key={u.id} className="border-b border-bordo hover:bg-[#F4E8D0]">
-                    <td className="px-3 py-2 select-text">{u.email}</td>
-                    <td className="px-3 py-2 select-text">{u.full_name || '—'}</td>
-                    <td className="px-3 py-2 whitespace-nowrap">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</td>
-                    <td className="px-3 py-2 text-center font-semibold">{u.attivita_count}</td>
-                    <td className="px-3 py-2 text-center">
-                      {u.attivita_count > 0 ? (
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-verde-light text-verde">Attivo</span>
-                      ) : (
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F4E8D0] text-grigio">Mai usata</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {sortedUsers.map((u) => {
+                  const scad = u.scadenza ? new Date(u.scadenza) : null;
+                  const scaduta = scad && scad.getTime() < Date.now();
+                  return (
+                    <tr key={u.id} className="border-b border-bordo hover:bg-[#F4E8D0]">
+                      <td className="px-3 py-2 select-text">{u.email}</td>
+                      <td className="px-3 py-2 select-text">{u.full_name || '—'}</td>
+                      <td className="px-3 py-2 whitespace-nowrap">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        {scad ? (
+                          <span className={scaduta ? 'text-rosso font-semibold' : 'text-foreground'}>
+                            {scad.toLocaleDateString('it-IT')}
+                          </span>
+                        ) : '—'}
+                      </td>
+                      <td className="px-3 py-2 text-center font-semibold">{u.attivita_count}</td>
+                      <td className="px-3 py-2 text-center">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATO_BADGE[u.stato]}`}>
+                          {STATO_LABEL[u.stato]}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
                 {activeUsers.length === 0 && (
-                  <tr><td colSpan={5} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
+                  <tr><td colSpan={6} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
                 )}
               </tbody>
             </table>

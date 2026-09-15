@@ -1,5 +1,26 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
+// Calcola la data di scadenza del primo anno gratuito.
+// L'a.s. va dal 01/09 al 31/08. Registrazioni di agosto non scadono a fine
+// dello stesso agosto ma al 31/08 dell'anno successivo (durata 13 mesi).
+function computeScadenza(createdDate) {
+  const d = new Date(createdDate);
+  const month = d.getMonth() + 1; // 1-12
+  const year = d.getFullYear();
+  let endYear;
+  if (month >= 9) {
+    // set-dic: a.s. YYYY/YYYY+1 → scade 31/08/YYYY+1
+    endYear = year + 1;
+  } else if (month <= 7) {
+    // gen-lug: a.s. YYYY-1/YYYY → scade 31/08/YYYY
+    endYear = year;
+  } else {
+    // agosto: appartiene al a.s. successivo → scade 31/08/YYYY+1 (13 mesi)
+    endYear = year + 1;
+  }
+  return new Date(endYear, 7, 31, 23, 59, 59).toISOString();
+}
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -7,25 +28,42 @@ export default async function(req) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
 
-    // List all users (service role bypasses built-in User permissions)
     const users = await base44.asServiceRole.entities.User.list('-created_date', 500);
 
-    // Count activities per user in a single query
     const allActivities = await base44.asServiceRole.entities.Attivita.list('-created_date', 2000);
     const countByUser = {};
+    const lastAccessByUser = {};
     for (const a of allActivities) {
       countByUser[a.created_by_id] = (countByUser[a.created_by_id] || 0) + 1;
+      const ad = a.created_date;
+      if (ad && (!lastAccessByUser[a.created_by_id] || new Date(ad) > new Date(lastAccessByUser[a.created_by_id]))) {
+        lastAccessByUser[a.created_by_id] = ad;
+      }
     }
 
-    const activeUsers = users.map((u) => ({
-      id: u.id,
-      email: u.email,
-      full_name: u.data?.nome_docente || u.full_name || '',
-      created_date: u.created_date,
-      attivita_count: countByUser[u.id] || 0,
-    }));
+    const now = Date.now();
+    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
-    // List deletion audit records
+    const activeUsers = users.map((u) => {
+      const count = countByUser[u.id] || 0;
+      const lastAccess = lastAccessByUser[u.id] || u.created_date;
+      const inactive = lastAccess ? (now - new Date(lastAccess).getTime()) > THIRTY_DAYS : true;
+      let stato;
+      if (count === 0) stato = 'mai_usata';
+      else if (inactive) stato = 'inattivo';
+      else stato = 'attivo';
+      return {
+        id: u.id,
+        email: u.email,
+        full_name: u.data?.nome_docente || u.full_name || '',
+        created_date: u.created_date,
+        attivita_count: count,
+        last_access: lastAccess,
+        scadenza: computeScadenza(u.created_date),
+        stato,
+      };
+    });
+
     const deletedUsers = await base44.asServiceRole.entities.AuditDisinstallazione.list('-created_date', 500);
 
     return Response.json({ activeUsers, deletedUsers });
