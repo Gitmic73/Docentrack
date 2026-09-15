@@ -11,7 +11,6 @@ import ModalScuola from '@/components/registro/ModalScuola';
 import NuovoAnnoModal from '@/components/registro/NuovoAnnoModal';
 import CancellaAnnoModal from '@/components/registro/CancellaAnnoModal';
 import ProfileSetup from '@/components/registro/ProfileSetup';
-import ProfileSettings from '@/components/registro/ProfileSettings';
 import SidebarMenu from '@/components/registro/SidebarMenu';
 import PannelloPiani from '@/components/registro/PannelloPiani';
 import PannelloDatiPersonali from '@/components/registro/PannelloDatiPersonali';
@@ -254,7 +253,7 @@ export default function Home() {
         onConferma={(anno) => r.cancellaAnno(anno).then(() => closeModal())}
         saving={r.saving}
       />
-      <ProfileSettings
+      <PannelloDatiPersonali
         open={modal === 'profilo'}
         email={r.email}
         nomeDocente={r.nomeDocente}
@@ -262,6 +261,9 @@ export default function Home() {
         docenteDi={r.docenteDi}
         onClose={closeModal}
         onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
+        onLogout={r.logout}
+        onDeleteAccount={r.deleteAccount}
+        onExportCSV={handleExportAllCSV}
         saving={r.saving}
       />
       <SidebarMenu
@@ -288,19 +290,6 @@ export default function Home() {
         onAcquistaPermanente={r.acquistaPermanente}
         onAcquistaRimozioneAds={r.acquistaRimozioneAds}
         onAnnoSbloccato={(anno) => r.nuovoAnno(anno)}
-        saving={r.saving}
-      />
-      <PannelloDatiPersonali
-        open={modal === 'dati'}
-        email={r.email}
-        nomeDocente={r.nomeDocente}
-        telefono={r.telefono}
-        docenteDi={r.docenteDi}
-        onClose={closeModal}
-        onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
-        onLogout={r.logout}
-        onDeleteAccount={r.deleteAccount}
-        onExportCSV={handleExportAllCSV}
         saving={r.saving}
       />
       <PannelloInvita open={modal === 'invita'} onClose={closeModal} />

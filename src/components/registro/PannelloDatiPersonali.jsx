@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, KeyRound, Trash2, AlertTriangle, LogOut, FileDown } from 'lucide-react';
+import { Mail, Phone, KeyRound, Trash2, AlertTriangle, LogOut, FileDown, User as UserIcon } from 'lucide-react';
 import ModalShell from './ModalShell';
 import { base44 } from '@/api/base44Client';
 
@@ -50,7 +50,16 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
     <ModalShell open={open} onClose={onClose} maxWidth="max-w-[440px]">
       {step === 'dati' && (
         <>
-          <h3 className="font-display text-[17px] text-blu mb-4 border-b border-bordo pb-2.5">Dati personali</h3>
+          <h3 className="font-display text-[17px] text-blu mb-4 border-b border-bordo pb-2.5">Impostazioni profilo</h3>
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#F4E8D0] mb-4">
+            <div className="w-10 h-10 rounded-full bg-blu-light flex items-center justify-center text-blu">
+              <UserIcon size={20} />
+            </div>
+            <div className="min-w-0">
+              <div className="font-display text-sm font-semibold text-foreground truncate">{nomeDocente || '—'}</div>
+              <div className="text-xs text-grigio">{email || ''}</div>
+            </div>
+          </div>
           <div className="space-y-3">
             <div>
               <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Email di registrazione</label>

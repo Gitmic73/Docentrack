@@ -7,7 +7,6 @@ export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose
   const pianoInfo = PIANI[piano] || PIANI.free;
   const items = [
     { k: 'piani', label: 'I miei piani', icon: CreditCard, desc: 'Piani, licenze e opzioni' },
-    { k: 'dati', label: 'Dati personali', icon: UserIcon, desc: 'Nome, telefono, password' },
     { k: 'scuola', label: 'Dati scuola', icon: School, desc: 'Istituto scolastico' },
     { k: 'invita', label: 'Invita colleghi', icon: UserPlus, desc: 'Invita via email' },
     { k: 'recensione', label: "Valuta l'app", icon: Star, desc: 'Lascia una recensione' },
