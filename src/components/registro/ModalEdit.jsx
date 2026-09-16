@@ -60,9 +60,9 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
           <div className="col-span-2 flex items-center gap-2 select-none">
             <span className="text-[10px] text-grigio uppercase tracking-[0.4px]">Scuola:</span>
             <button onClick={() => setForm({ ...form, scuola_tipo: 'prima' })}
-              className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}>1ª scuola</button>
+              className={`text-sm px-4 py-2.5 rounded-lg border-2 transition-colors min-h-[44px] ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light'}`}>1ª scuola</button>
             <button onClick={() => setForm({ ...form, scuola_tipo: 'seconda' })}
-              className={`text-xs px-2.5 py-1 rounded border transition-colors ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio hover:bg-teal-50'}`}>2ª scuola</button>
+              className={`text-sm px-4 py-2.5 rounded-lg border-2 transition-colors min-h-[44px] ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio hover:bg-teal-50'}`}>2ª scuola</button>
           </div>
         )}
         <div className="col-span-2">

@@ -256,15 +256,15 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               <div className="flex gap-1">
                 <button
                   onClick={() => setFiltScuola('')}
-                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === '' ? 'bg-oro text-white border-oro' : 'border-bordo text-grigio hover:bg-oro-light bg-white'}`}
+                  className={`flex-1 text-sm px-3 py-2.5 rounded-lg border-2 transition-colors min-h-[44px] ${filtScuola === '' ? 'bg-oro text-white border-oro' : 'border-bordo text-grigio hover:bg-oro-light bg-white'}`}
                 >Tutte</button>
                 <button
                   onClick={() => setFiltScuola('prima')}
-                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'prima' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light bg-white'}`}
+                  className={`flex-1 text-sm px-3 py-2.5 rounded-lg border-2 transition-colors min-h-[44px] ${filtScuola === 'prima' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio hover:bg-blu-light bg-white'}`}
                 >1ª</button>
                 <button
                   onClick={() => setFiltScuola('seconda')}
-                  className={`flex-1 text-xs px-1.5 py-1 rounded border transition-colors ${filtScuola === 'seconda' ? 'bg-teal-600 text-white border-teal-600' : 'border-bordo text-grigio hover:bg-teal-50 bg-white'}`}
+                  className={`flex-1 text-sm px-3 py-2.5 rounded-lg border-2 transition-colors min-h-[44px] ${filtScuola === 'seconda' ? 'bg-teal-600 text-white border-teal-600' : 'border-bordo text-grigio hover:bg-teal-50 bg-white'}`}
                 >2ª</button>
               </div>
             </div>

@@ -125,7 +125,7 @@ export default function Home() {
               disabled={r.saving}
             />
 
-            <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none">
+            <div className="hidden md:flex gap-1.5 mb-4 bg-white border border-bordo rounded-lg p-1 select-none sticky top-0 z-30 shadow-sm">
               {[
                 { k: 'registro', l: 'Registro', icon: ClipboardList },
                 { k: 'calendario', l: 'Calendario', icon: Calendar },
