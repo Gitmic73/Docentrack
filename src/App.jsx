@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { Navigate } from 'react-router-dom';
+import { Ban } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -37,6 +38,21 @@ const AuthenticatedApp = () => {
       // Redirect to login automatically
       navigateToLogin();
       return null;
+    } else if (authError.type === 'account_disabled') {
+      return (
+        <div className="min-h-screen bg-[#FAF4EA] flex items-center justify-center font-body p-4">
+          <div className="max-w-md text-center">
+            <div className="w-16 h-16 rounded-full bg-rosso-light flex items-center justify-center mx-auto mb-4">
+              <Ban size={28} className="text-rosso" />
+            </div>
+            <h1 className="font-display text-xl font-bold text-foreground mb-2">Account disabilitato</h1>
+            <p className="text-sm text-grigio mb-6">{authError.message}</p>
+            <button onClick={() => navigateToLogin()} className="bg-blu text-white px-5 py-2 rounded text-sm font-semibold">
+              Torna al login
+            </button>
+          </div>
+        </div>
+      );
     }
   }
 

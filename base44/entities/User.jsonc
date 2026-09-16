@@ -55,6 +55,11 @@
       "type": "boolean",
       "default": false,
       "description": "Pubblicita rimossa"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Account disabilitato dall'amministratore"
     }
   },
   "required": [

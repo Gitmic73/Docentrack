@@ -94,6 +94,17 @@ export const AuthProvider = ({ children }) => {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
+      // Blocca gli account disabilitati dall'amministratore
+      if (currentUser?.data?.disabled || currentUser?.disabled) {
+        base44.auth.logout();
+        setAuthError({
+          type: 'account_disabled',
+          message: "Il tuo account è stato disabilitato dall'amministratore."
+        });
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+        return;
+      }
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);

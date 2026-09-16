@@ -66,6 +66,7 @@ export default async function(req) {
         last_access: lastAccess,
         scadenza: computeScadenza(u.created_date),
         stato,
+        disabled: !!u.data?.disabled,
       };
     });
 

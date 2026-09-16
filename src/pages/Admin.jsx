@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Users, UserX, Activity, ChevronUp, ChevronDown, ChevronsUpDown, Clock, Pause, CircleSlash } from 'lucide-react';
+import { ArrowLeft, Users, UserX, Activity, ChevronUp, ChevronDown, ChevronsUpDown, Clock, Pause, CircleSlash, Ban, CircleCheck, Trash2, AlertTriangle } from 'lucide-react';
 
 const STATO_LABEL = {
   attivo: 'Attivo',
@@ -21,6 +21,26 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [sortKey, setSortKey] = useState('created_date');
   const [sortDir, setSortDir] = useState('desc');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [actionMsg, setActionMsg] = useState('');
+
+  async function handleAction(action, userId) {
+    setActionLoading(userId + action);
+    setActionMsg('');
+    try {
+      await base44.functions.invoke('adminManageUser', { action, userId });
+      const res = await base44.functions.invoke('getAdminStats', {});
+      setData(res.data);
+      setConfirmDelete(null);
+      setActionMsg(action === 'delete' ? 'Account eliminato definitivamente' : action === 'disable' ? 'Account disabilitato' : 'Account riattivato');
+      setTimeout(() => setActionMsg(''), 4000);
+    } catch (e) {
+      setActionMsg(e.message || 'Errore durante l\'operazione');
+    } finally {
+      setActionLoading(null);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -122,12 +142,18 @@ export default function Admin() {
     <div className="min-h-screen bg-[#FAF4EA] font-body pb-12">
       <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
       <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex items-center gap-3 pt-6 pb-4">
-          <button onClick={() => navigate('/')} className="p-2 rounded-md border border-bordo text-foreground hover:bg-blu-light transition-colors">
-            <ArrowLeft size={18} />
-          </button>
-          <h1 className="font-display text-xl font-bold text-blu">Pannello Admin</h1>
-        </div>
+      <div className="flex items-center gap-3 pt-6 pb-4">
+      <button onClick={() => navigate('/')} className="p-2 rounded-md border border-bordo text-foreground hover:bg-blu-light transition-colors">
+        <ArrowLeft size={18} />
+      </button>
+      <h1 className="font-display text-xl font-bold text-blu">Pannello Admin</h1>
+      </div>
+
+      {actionMsg && (
+      <div className={`mb-4 px-4 py-2.5 rounded-lg text-sm font-medium ${actionMsg.includes('eliminato') || actionMsg.includes('disabilitato') || actionMsg.includes('riattivato') ? 'bg-verde-light text-verde' : 'bg-rosso-light text-rosso'}`}>
+        {actionMsg}
+      </div>
+      )}
 
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-white border border-bordo rounded-lg p-4">
@@ -201,6 +227,7 @@ export default function Admin() {
                   <Th col="scadenza" label="Scadenza" />
                   <Th col="attivita_count" label="N. attività" align="center" />
                   <Th col="stato" label="Stato" align="center" />
+                  <th className="px-3 py-2 text-[10px] uppercase tracking-wide text-grigio font-semibold text-center">Azioni</th>
                 </tr>
               </thead>
               <tbody>
@@ -221,15 +248,39 @@ export default function Admin() {
                       </td>
                       <td className="px-3 py-2 text-center font-semibold">{u.attivita_count}</td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATO_BADGE[u.stato]}`}>
-                          {STATO_LABEL[u.stato]}
-                        </span>
+                        {u.disabled ? (
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rosso-light text-rosso">Disabilitato</span>
+                        ) : (
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATO_BADGE[u.stato]}`}>
+                            {STATO_LABEL[u.stato]}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => handleAction(u.disabled ? 'enable' : 'disable', u.id)}
+                            disabled={!!actionLoading}
+                            className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#F4E8D0]'}`}
+                            title={u.disabled ? 'Riattiva account' : 'Disabilita account'}
+                          >
+                            {u.disabled ? <CircleCheck size={15} /> : <Ban size={15} />}
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete(u)}
+                            disabled={!!actionLoading}
+                            className="p-1.5 rounded text-rosso hover:bg-rosso-light transition-colors disabled:opacity-50"
+                            title="Elimina account"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
                 })}
                 {activeUsers.length === 0 && (
-                  <tr><td colSpan={6} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
                 )}
               </tbody>
             </table>
@@ -260,6 +311,29 @@ export default function Admin() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+        {confirmDelete && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDelete(null)}>
+            <div className="bg-white rounded-lg max-w-sm w-full p-5" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2 text-rosso mb-3">
+                <AlertTriangle size={20} />
+                <h3 className="font-display text-base font-semibold">Elimina account</h3>
+              </div>
+              <p className="text-sm text-grigio mb-4">
+                Confermi l'eliminazione definitiva dell'account di <strong className="text-foreground">{confirmDelete.email}</strong>? Tutti i dati associati (attività, scuole, anni scolastici) verranno cancellati.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button onClick={() => setConfirmDelete(null)} className="text-grigio border border-bordo rounded px-4 py-1.5 text-sm hover:bg-[#F4E8D0]">Annulla</button>
+                <button
+                  onClick={() => handleAction('delete', confirmDelete.id)}
+                  disabled={!!actionLoading}
+                  className="bg-rosso text-white rounded px-4 py-1.5 text-sm font-semibold hover:bg-[#8e2e26] disabled:opacity-50"
+                >
+                  {actionLoading ? 'Eliminazione…' : 'Elimina definitivamente'}
+                </button>
+              </div>
             </div>
           </div>
         )}
