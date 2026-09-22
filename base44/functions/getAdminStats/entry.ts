@@ -64,6 +64,7 @@ export default async function(req) {
         created_date: u.created_date,
         attivita_count: count,
         last_access: lastAccess,
+        last_activity_date: lastAccessByUser[u.id] || null,
         scadenza: computeScadenza(u.created_date),
         stato,
         disabled: !!u.data?.disabled,

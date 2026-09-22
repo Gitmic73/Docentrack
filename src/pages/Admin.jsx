@@ -76,7 +76,7 @@ export default function Admin() {
         va = a.attivita_count; vb = b.attivita_count;
       } else if (sortKey === 'stato') {
         va = a.stato; vb = b.stato;
-      } else if (['scadenza', 'last_access', 'created_date'].includes(sortKey)) {
+      } else if (['scadenza', 'last_access', 'last_activity_date', 'created_date'].includes(sortKey)) {
         va = a[sortKey] ? new Date(a[sortKey]).getTime() : 0;
         vb = b[sortKey] ? new Date(b[sortKey]).getTime() : 0;
       } else {
@@ -95,7 +95,7 @@ export default function Admin() {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
-      setSortDir(['attivita_count', 'created_date', 'last_access', 'scadenza'].includes(key) ? 'desc' : 'asc');
+      setSortDir(['attivita_count', 'created_date', 'last_access', 'last_activity_date', 'scadenza'].includes(key) ? 'desc' : 'asc');
     }
   }
 
@@ -226,6 +226,7 @@ export default function Admin() {
                   <Th col="created_date" label="Registrato il" />
                   <Th col="scadenza" label="Scadenza" />
                   <Th col="attivita_count" label="N. attività" align="center" />
+                  <Th col="last_activity_date" label="Ultima attività" />
                   <Th col="stato" label="Stato" align="center" />
                   <th className="px-3 py-2 text-[10px] uppercase tracking-wide text-grigio font-semibold text-center">Azioni</th>
                 </tr>
@@ -247,6 +248,7 @@ export default function Admin() {
                         ) : '—'}
                       </td>
                       <td className="px-3 py-2 text-center font-semibold">{u.attivita_count}</td>
+                      <td className="px-3 py-2 whitespace-nowrap">{u.last_activity_date ? new Date(u.last_activity_date).toLocaleDateString('it-IT') : '—'}</td>
                       <td className="px-3 py-2 text-center">
                         {u.disabled ? (
                           <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rosso-light text-rosso">Disabilitato</span>
@@ -280,7 +282,7 @@ export default function Admin() {
                   );
                 })}
                 {activeUsers.length === 0 && (
-                  <tr><td colSpan={7} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
+                  <tr><td colSpan={8} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
                 )}
               </tbody>
             </table>
