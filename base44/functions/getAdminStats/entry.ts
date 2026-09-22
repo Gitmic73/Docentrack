@@ -33,11 +33,16 @@ export default async function(req) {
     const allActivities = await base44.asServiceRole.entities.Attivita.list('-created_date', 2000);
     const countByUser = {};
     const lastAccessByUser = {};
+    const lastActivityDateByUser = {};
     for (const a of allActivities) {
       countByUser[a.created_by_id] = (countByUser[a.created_by_id] || 0) + 1;
       const ad = a.created_date;
       if (ad && (!lastAccessByUser[a.created_by_id] || new Date(ad) > new Date(lastAccessByUser[a.created_by_id]))) {
         lastAccessByUser[a.created_by_id] = ad;
+      }
+      const dataAtt = a.data;
+      if (dataAtt && (!lastActivityDateByUser[a.created_by_id] || new Date(dataAtt) > new Date(lastActivityDateByUser[a.created_by_id]))) {
+        lastActivityDateByUser[a.created_by_id] = dataAtt;
       }
     }
 
@@ -64,7 +69,7 @@ export default async function(req) {
         created_date: u.created_date,
         attivita_count: count,
         last_access: lastAccess,
-        last_activity_date: lastAccessByUser[u.id] || null,
+        last_activity_date: lastActivityDateByUser[u.id] || null,
         scadenza: computeScadenza(u.created_date),
         stato,
         disabled: !!u.data?.disabled,
