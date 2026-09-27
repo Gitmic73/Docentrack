@@ -17,9 +17,19 @@ export function isValidAnno(anno) {
   return parseInt(m[2], 10) === parseInt(m[1], 10) + 1;
 }
 
-// Find the caller's entitlement record (service role bypasses RLS).
+// Find the user's entitlement record (service role bypasses RLS).
+// Lookup uses the explicit user_id field (set on creation), so records created
+// by an admin on behalf of another user are correctly attributed to that user.
+// Fall back to created_by_id for legacy records and backfill user_id so future
+// lookups use the fast path.
 export async function getEntitlementRecord(base44, userId) {
-  const list = await base44.asServiceRole.entities.Entitlement.filter({ created_by_id: userId });
+  let list = await base44.asServiceRole.entities.Entitlement.filter({ user_id: userId });
+  if (!list.length) {
+    list = await base44.asServiceRole.entities.Entitlement.filter({ created_by_id: userId });
+    if (list[0] && !list[0].user_id) {
+      try { await base44.asServiceRole.entities.Entitlement.update(list[0].id, { user_id: userId }); } catch (e) { /* ignore */ }
+    }
+  }
   return (list && list[0]) || null;
 }
 
@@ -33,6 +43,7 @@ export async function ensureEntitlementRecord(base44, userId) {
       anni_licenza: [],
       ads_removed: false,
       disabled: false,
+      user_id: userId,
     });
   }
   return ent;

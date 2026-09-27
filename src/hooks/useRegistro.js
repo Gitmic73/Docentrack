@@ -64,8 +64,8 @@ export function useRegistro() {
     const existing = await base44.entities.AnnoScolastico.list();
     const have = new Set(existing.map((x) => x.nome));
     const toCreate = [...yearsNeeded].filter((y) => !have.has(y));
-    if (toCreate.length) {
-      await base44.entities.AnnoScolastico.bulkCreate(toCreate.map((y) => ({ nome: y })));
+    for (const y of toCreate) {
+      try { await base44.functions.invoke('createAnnoScolastico', { nome: y }); } catch (e) { /* anno non in piano: salta */ }
     }
     return updates.length;
   }, []);
@@ -109,7 +109,7 @@ export function useRegistro() {
         }
         let a = await loadAnni();
       if (a.length === 0) {
-        await base44.entities.AnnoScolastico.create({ nome: freeYear });
+        try { await base44.functions.invoke('createAnnoScolastico', { nome: freeYear }); } catch (e) { /* ignore */ }
         a = [freeYear];
       }
       setAnni(a);

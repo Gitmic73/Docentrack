@@ -32,7 +32,7 @@ export default async function(req) {
         await base44.asServiceRole.entities.Entitlement.update(targetEnt.id, { disabled: action === 'disable' });
       } else {
         await base44.asServiceRole.entities.Entitlement.create({
-          piano: 'free', anno_gratuito: null, anni_licenza: [], ads_removed: false, disabled: action === 'disable',
+          piano: 'free', anno_gratuito: null, anni_licenza: [], ads_removed: false, disabled: action === 'disable', user_id: userId,
         });
       }
       return Response.json({ success: true, action, userId });

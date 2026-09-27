@@ -22,8 +22,9 @@ export default async function(req) {
       return Response.json({ error: 'Anno scolastico non inclus nel tuo piano. Acquista la licenza per sbloccarlo.' }, { status: 403 });
     }
 
-    // User-scoped create — RLS sets created_by_id to the caller.
-    const created = await base44.entities.AnnoScolastico.create({ nome });
+    // Service-role create bypasses the admin-only create RLS; created_by_id is
+    // set to the caller so the user can read their own year record.
+    const created = await base44.asServiceRole.entities.AnnoScolastico.create({ nome });
     return Response.json({ success: true, id: created.id, nome });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

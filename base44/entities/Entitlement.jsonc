@@ -33,6 +33,10 @@
       "type": "boolean",
       "default": false,
       "description": "Account disabilitato dall'amministratore"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "ID dell'utente a cui appartiene l'entitlement (chiave di lookup server-side)"
     }
   },
   "required": [

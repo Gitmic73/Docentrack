@@ -38,7 +38,7 @@ export default async function(req) {
     const allEntitlements = await base44.asServiceRole.entities.Entitlement.list('-created_date', 1000);
     const disabledByUser = {};
     for (const e of allEntitlements) {
-      if (e.disabled) disabledByUser[e.created_by_id] = true;
+      if (e.disabled) disabledByUser[e.user_id || e.created_by_id] = true;
     }
 
     const allActivities = await base44.asServiceRole.entities.Attivita.list('-created_date', 2000);
