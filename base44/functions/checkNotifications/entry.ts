@@ -3,6 +3,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 const MAX_MIN = 2400;       // 40 ore
 const APPROACH_MIN = 1440;  // 60% = 24 ore
 
+// School-year format: YYYY/YYYY+1 (e.g. "2025/2026")
+function isValidAnno(anno) {
+  const m = /^(\d{4})\/(\d{4})$/.exec(String(anno || ''));
+  if (!m) return false;
+  return parseInt(m[2], 10) === parseInt(m[1], 10) + 1;
+}
+
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -13,8 +20,20 @@ export default async function(req) {
     const body = await req.json();
     const anno = body.anno;
     const sez = body.sez || null;
-    const totaleMinA = Number(body.totaleMinA) || 0;
-    const totaleMinB = Number(body.totaleMinB) || 0;
+
+    // Validate inputs — reject invalid anno or section early.
+    if (!isValidAnno(anno)) return Response.json({ error: 'Anno scolastico non valido' }, { status: 400 });
+    if (sez !== null && sez !== 'a' && sez !== 'b') return Response.json({ error: 'Sezione non valida' }, { status: 400 });
+
+    // Compute totals SERVER-SIDE from the database — do NOT trust client-supplied
+    // values. This prevents callers from triggering emails with fake content.
+    const activities = await base44.entities.Attivita.filter({ anno_scolastico: anno });
+    let totaleMinA = 0;
+    let totaleMinB = 0;
+    for (const a of activities) {
+      if (a.sezione === 'a') totaleMinA += a.durata_min || 0;
+      else if (a.sezione === 'b') totaleMinB += a.durata_min || 0;
+    }
 
     function fmtH(min) {
       const h = Math.floor(min / 60);

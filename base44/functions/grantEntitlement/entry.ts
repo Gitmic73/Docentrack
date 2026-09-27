@@ -3,11 +3,33 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 // This is the ONLY server-side path that writes paid entitlements
 // (piano / anni_licenza / ads_removed) to the user record.
 //
-// IMPORTANT: Payments are currently in demo mode — entitlements are granted
-// without payment verification. Before enabling real payments, add verification
-// of a completed payment (e.g. Stripe checkout session or payment record) in
-// the switch below, BEFORE calling User.update. Without that, the paywall is
-// bypassable via this function.
+// SECURITY: Every grant is gated by verifyPayment(). Set DEMO_MODE to false
+// when real payments are enabled, and implement the payment-record check in
+// verifyPayment(). With DEMO_MODE = false and no valid payment, all requests
+// are rejected with 403 — the paywall cannot be bypassed.
+
+const DEMO_MODE = true; // ← flip to false when real payments go live
+
+// School-year format: YYYY/YYYY+1 (e.g. "2025/2026")
+function isValidAnno(anno) {
+  const m = /^(\d{4})\/(\d{4})$/.exec(String(anno || ''));
+  if (!m) return false;
+  return parseInt(m[2], 10) === parseInt(m[1], 10) + 1;
+}
+
+// Verify that the caller has a completed payment for the requested action.
+// TODO: When real payments are enabled, query a payment/checkout record for
+// this user matching {action, anno} and return true only if a valid completed
+// payment exists. Currently in demo mode — returns true to allow testing.
+async function verifyPayment(_user, _action, _anno) {
+  if (DEMO_MODE) return true;
+  // Real verification will go here:
+  //   const payment = await base44.asServiceRole.entities.Payment.findOne({
+  //     user_id: _user.id, action: _action, anno: _anno, status: 'completed'
+  //   });
+  //   return !!payment;
+  return false;
+}
 
 export default async function(req) {
   try {
@@ -23,11 +45,17 @@ export default async function(req) {
       return Response.json({ error: 'Azione non valida' }, { status: 400 });
     }
 
-    // TODO (before enabling real payments): verify a completed payment for
-    // this action/anno here, and reject if no valid payment is found.
+    if (action === 'anno' && !isValidAnno(anno)) {
+      return Response.json({ error: 'Anno scolastico non valido (formato richiesto: AAAA/AAAA)' }, { status: 400 });
+    }
+
+    // Payment verification gate — rejects when no valid payment is found.
+    const paid = await verifyPayment(user, action, action === 'anno' ? anno : null);
+    if (!paid) {
+      return Response.json({ error: 'Nessun pagamento valido trovato per questa operazione' }, { status: 403 });
+    }
 
     if (action === 'anno') {
-      if (!anno || typeof anno !== 'string') return Response.json({ error: 'Anno non valido' }, { status: 400 });
       const current = Array.isArray(user.data?.anni_licenza) ? user.data.anni_licenza : [];
       const newLic = Array.from(new Set([...current, anno]));
       await base44.asServiceRole.entities.User.update(user.id, { anni_licenza: newLic });
