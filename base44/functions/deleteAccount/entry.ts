@@ -5,6 +5,7 @@ export default async function (req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     // Log the uninstallation (service role bypasses RLS on the audit entity)
     await base44.asServiceRole.entities.AuditDisinstallazione.create({

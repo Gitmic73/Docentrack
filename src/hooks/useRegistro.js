@@ -314,17 +314,16 @@ export function useRegistro() {
   const acquistaAnno = useCallback(async (anno) => {
     setSaving(true);
     try {
-      const newLic = Array.from(new Set([...anniLicenza, anno]));
-      await base44.auth.updateMe({ anni_licenza: newLic });
+      await base44.functions.invoke('grantEntitlement', { action: 'anno', anno });
       const u = await base44.auth.me();
       setUser(u);
     } finally { setSaving(false); }
-  }, [anniLicenza]);
+  }, []);
 
   const acquistaPermanente = useCallback(async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ piano: 'permanente', ads_removed: true });
+      await base44.functions.invoke('grantEntitlement', { action: 'permanente' });
       const u = await base44.auth.me();
       setUser(u);
     } finally { setSaving(false); }
@@ -333,7 +332,7 @@ export function useRegistro() {
   const acquistaRimozioneAds = useCallback(async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ ads_removed: true });
+      await base44.functions.invoke('grantEntitlement', { action: 'ads' });
       const u = await base44.auth.me();
       setUser(u);
     } finally { setSaving(false); }

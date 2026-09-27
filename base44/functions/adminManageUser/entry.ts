@@ -6,6 +6,7 @@ export default async function(req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     const body = await req.json();
     const { action, userId } = body;
