@@ -12,9 +12,9 @@ export default function FooterLegale() {
         Per le ore ex lett. b, il Collegio Docenti delibera le modalità di gestione dell'eccedenza.
       </em>
       <div className="mt-2 pt-1.5 border-t border-bordo text-[9px] text-grigio">
-        DocenTrack v1.0 — Registro Attività Funzionali all'Insegnamento · by Michele Maccarrone
+        DocenTrack v1.0 — Registro Attività Funzionali all'Insegnamento
         <br />
-        © 2026 DocenTrack — Tutti i diritti riservati
+        © 2026 DocenTrack — Tutti i diritti riservati · Michele Maccarrone
       </div>
     </div>
   );
