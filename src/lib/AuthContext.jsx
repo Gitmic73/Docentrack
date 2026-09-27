@@ -94,8 +94,15 @@ export const AuthProvider = ({ children }) => {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
-      // Blocca gli account disabilitati dall'amministratore
-      if (currentUser?.data?.disabled || currentUser?.disabled) {
+      // Blocca gli account disabilitati dall'amministratore.
+      // The disabled flag lives in the protected Entitlement entity (not
+      // caller-writable user.data), so verify it server-side.
+      let disabled = false;
+      try {
+        const entRes = await base44.functions.invoke('getEntitlement', {});
+        disabled = !!entRes.data?.disabled;
+      } catch (e) { /* backend functions also enforce; ignore here */ }
+      if (disabled) {
         base44.auth.logout();
         setAuthError({
           type: 'account_disabled',

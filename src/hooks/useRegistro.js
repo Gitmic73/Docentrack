@@ -18,10 +18,11 @@ export function useRegistro() {
   // Profilo utente
   const profilo = user?.data?.profilo || user?.profilo || null;
   const nomeDocente = user?.data?.nome_docente || user?.full_name || '';
-  const piano = user?.data?.piano || user?.piano || 'free';
-  const annoGratuito = user?.data?.anno_gratuito || user?.anno_gratuito || null;
-  const anniLicenza = user?.data?.anni_licenza || user?.anni_licenza || [];
-  const adsRemoved = !!(user?.data?.ads_removed || user?.ads_removed);
+  const [entitlement, setEntitlement] = useState({ piano: 'free', anno_gratuito: null, anni_licenza: [], ads_removed: false, disabled: false });
+  const piano = entitlement.piano || 'free';
+  const annoGratuito = entitlement.anno_gratuito || null;
+  const anniLicenza = entitlement.anni_licenza || [];
+  const adsRemoved = !!entitlement.ads_removed;
   const email = user?.data?.email || user?.email || '';
   const telefono = user?.data?.telefono || user?.telefono || '';
   const docenteDi = user?.data?.docente_di || user?.docente_di || '';
@@ -35,6 +36,13 @@ export function useRegistro() {
     try {
       await base44.functions.invoke('checkNotifications', { anno, sez, totaleMinA: aMin, totaleMinB: bMin });
     } catch (e) { /* notifiche non bloccanti */ }
+  }, []);
+
+  const refreshEntitlement = useCallback(async () => {
+    try {
+      const res = await base44.functions.invoke('getEntitlement', {});
+      setEntitlement(res.data);
+    } catch (e) { /* ignore */ }
   }, []);
 
   // Migrazione una-tantum: ricolloca ogni attività nell'anno scolastico corretto in base alla data
@@ -85,16 +93,13 @@ export function useRegistro() {
       try { u = await base44.auth.me(); } catch (e) { setUser(null); }
       let freeYear = schoolYearFromDate();
       if (u) {
-        const curPiano = u?.data?.piano || u?.piano;
-        const curAnno = u?.data?.anno_gratuito || u?.anno_gratuito;
-        if (!curPiano || !curAnno) {
-          try {
-            await base44.auth.updateMe({ piano: curPiano || 'free', anno_gratuito: curAnno || freeYear });
-            u = await base44.auth.me();
-          } catch (e) { /* ignore */ }
-        }
+        // Entitlements are authoritative server-side (protected Entitlement entity).
+        try {
+          const entRes = await base44.functions.invoke('getEntitlement', {});
+          setEntitlement(entRes.data);
+          freeYear = entRes.data?.anno_gratuito || freeYear;
+        } catch (e) { /* ignore */ }
         setUser(u);
-        freeYear = u?.data?.anno_gratuito || u?.anno_gratuito || freeYear;
         }
         if (u && !u?.data?.mig_date_range_v1) {
         try { await redistributeByDate(); } catch (e) { /* ignore */ }
@@ -143,7 +148,8 @@ export function useRegistro() {
     setSaving(true);
     try {
       if (!anni.includes(nome)) {
-        await base44.entities.AnnoScolastico.create({ nome });
+        // Paywall enforced server-side via createAnnoScolastico (entitlement-checked).
+        await base44.functions.invoke('createAnnoScolastico', { nome });
         const a = await reloadAnni();
         setAnni(a);
       }
@@ -315,8 +321,7 @@ export function useRegistro() {
     setSaving(true);
     try {
       await base44.functions.invoke('grantEntitlement', { action: 'anno', anno });
-      const u = await base44.auth.me();
-      setUser(u);
+      await refreshEntitlement();
     } finally { setSaving(false); }
   }, []);
 
@@ -324,8 +329,7 @@ export function useRegistro() {
     setSaving(true);
     try {
       await base44.functions.invoke('grantEntitlement', { action: 'permanente' });
-      const u = await base44.auth.me();
-      setUser(u);
+      await refreshEntitlement();
     } finally { setSaving(false); }
   }, []);
 
@@ -333,8 +337,7 @@ export function useRegistro() {
     setSaving(true);
     try {
       await base44.functions.invoke('grantEntitlement', { action: 'ads' });
-      const u = await base44.auth.me();
-      setUser(u);
+      await refreshEntitlement();
     } finally { setSaving(false); }
   }, []);
 

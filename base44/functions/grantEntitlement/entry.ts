@@ -1,7 +1,9 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
+import { ensureEntitlementRecord, getEntitlementRecord, isValidAnno } from '../../shared/entitlement.ts';
 
 // This is the ONLY server-side path that writes paid entitlements
-// (piano / anni_licenza / ads_removed) to the user record.
+// (piano / anni_licenza / ads_removed) — now to the protected Entitlement entity,
+// NOT to caller-writable user.data. A user cannot self-grant via updateMe.
 //
 // SECURITY: Every grant is gated by verifyPayment(). DEMO_MODE is sourced from
 // the DEMO_MODE environment variable and defaults to FALSE (secure) — so in any
@@ -12,13 +14,6 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 
 const DEMO_MODE = process.env.DEMO_MODE === 'true';
 
-// School-year format: YYYY/YYYY+1 (e.g. "2025/2026")
-function isValidAnno(anno) {
-  const m = /^(\d{4})\/(\d{4})$/.exec(String(anno || ''));
-  if (!m) return false;
-  return parseInt(m[2], 10) === parseInt(m[1], 10) + 1;
-}
-
 // Verify that the caller has a completed payment for the requested action.
 // TODO: When real payments are enabled, query a payment/checkout record for
 // this user matching {action, anno} and return true only if a valid completed
@@ -26,11 +21,6 @@ function isValidAnno(anno) {
 // allow testing the checkout flow; otherwise rejects all grants.
 async function verifyPayment(_user, _action, _anno) {
   if (DEMO_MODE) return true;
-  // Real verification will go here:
-  //   const payment = await base44.asServiceRole.entities.Payment.findOne({
-  //     user_id: _user.id, action: _action, anno: _anno, status: 'completed'
-  //   });
-  //   return !!payment;
   return false;
 }
 
@@ -39,7 +29,10 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
+
+    // Disabled check reads from the protected Entitlement entity, not user.data.
+    const ent = await ensureEntitlementRecord(base44, user.id);
+    if (ent.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     const body = await req.json();
     const { action, anno } = body;
@@ -59,19 +52,19 @@ export default async function(req) {
     }
 
     if (action === 'anno') {
-      const current = Array.isArray(user.data?.anni_licenza) ? user.data.anni_licenza : [];
+      const current = Array.isArray(ent.anni_licenza) ? ent.anni_licenza : [];
       const newLic = Array.from(new Set([...current, anno]));
-      await base44.asServiceRole.entities.User.update(user.id, { anni_licenza: newLic });
+      await base44.asServiceRole.entities.Entitlement.update(ent.id, { anni_licenza: newLic });
       return Response.json({ success: true, action, anno });
     }
 
     if (action === 'permanente') {
-      await base44.asServiceRole.entities.User.update(user.id, { piano: 'permanente', ads_removed: true });
+      await base44.asServiceRole.entities.Entitlement.update(ent.id, { piano: 'permanente', ads_removed: true });
       return Response.json({ success: true, action });
     }
 
     // action === 'ads'
-    await base44.asServiceRole.entities.User.update(user.id, { ads_removed: true });
+    await base44.asServiceRole.entities.Entitlement.update(ent.id, { ads_removed: true });
     return Response.json({ success: true, action });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

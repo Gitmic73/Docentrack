@@ -1,11 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { getEntitlementRecord } from '../../shared/entitlement.ts';
 
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
+    // Disabled flag lives in the protected Entitlement entity, not user.data.
+    const ent = await getEntitlementRecord(base44, user.id);
+    if (ent && ent.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     // Log the uninstallation (service role bypasses RLS on the audit entity)
     await base44.asServiceRole.entities.AuditDisinstallazione.create({
@@ -20,6 +23,10 @@ export default async function (req) {
     await base44.entities.Attivita.deleteMany({ created_by_id: user.id });
     await base44.entities.Scuola.deleteMany({ created_by_id: user.id });
     await base44.entities.AnnoScolastico.deleteMany({ created_by_id: user.id });
+    // Remove the protected entitlement record too.
+    if (ent) {
+      try { await base44.asServiceRole.entities.Entitlement.delete(ent.id); } catch (e) { /* best-effort */ }
+    }
 
     // Best-effort deletion of the user record (requires service role).
     // The platform may refuse for the app owner; data is already cleared and the

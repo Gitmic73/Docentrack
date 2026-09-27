@@ -1,0 +1,61 @@
+{
+  "name": "Entitlement",
+  "type": "object",
+  "properties": {
+    "piano": {
+      "type": "string",
+      "enum": [
+        "free",
+        "annuale",
+        "permanente"
+      ],
+      "default": "free",
+      "description": "Piano attivo (free/annuale/permanente)"
+    },
+    "anno_gratuito": {
+      "type": "string",
+      "description": "Anno scolastico gratuito assegnato alla prima attivazione"
+    },
+    "anni_licenza": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Anni scolastici sbloccati tramite acquisto"
+    },
+    "ads_removed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Rimozione banner pubblicitari acquistata"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Account disabilitato dall'amministratore"
+    }
+  },
+  "required": [
+    "piano"
+  ],
+  "rls": {
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

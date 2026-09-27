@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { getEntitlementRecord } from '../../shared/entitlement.ts';
 
 // Calcola la data di scadenza del primo anno gratuito.
 // L'a.s. va dal 01/09 al 31/08. Registrazioni di agosto non scadono a fine
@@ -27,9 +28,18 @@ export default async function(req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
-    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
+    // Admin's own disabled flag lives in the protected Entitlement entity.
+    const adminEnt = await getEntitlementRecord(base44, user.id);
+    if (adminEnt && adminEnt.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     const users = await base44.asServiceRole.entities.User.list('-created_date', 500);
+
+    // Disabled flags live in the protected Entitlement entity (not user.data).
+    const allEntitlements = await base44.asServiceRole.entities.Entitlement.list('-created_date', 1000);
+    const disabledByUser = {};
+    for (const e of allEntitlements) {
+      if (e.disabled) disabledByUser[e.created_by_id] = true;
+    }
 
     const allActivities = await base44.asServiceRole.entities.Attivita.list('-created_date', 2000);
     const countByUser = {};
@@ -73,7 +83,7 @@ export default async function(req) {
         last_activity_date: lastActivityDateByUser[u.id] || null,
         scadenza: computeScadenza(u.created_date),
         stato,
-        disabled: !!u.data?.disabled,
+        disabled: !!disabledByUser[u.id],
       };
     });
 

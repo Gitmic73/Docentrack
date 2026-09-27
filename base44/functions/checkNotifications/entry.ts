@@ -1,21 +1,17 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { ensureEntitlementRecord, isValidAnno } from '../../shared/entitlement.ts';
 
 const MAX_MIN = 2400;       // 40 ore
 const APPROACH_MIN = 1440;  // 60% = 24 ore
-
-// School-year format: YYYY/YYYY+1 (e.g. "2025/2026")
-function isValidAnno(anno) {
-  const m = /^(\d{4})\/(\d{4})$/.exec(String(anno || ''));
-  if (!m) return false;
-  return parseInt(m[2], 10) === parseInt(m[1], 10) + 1;
-}
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (user.data?.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
+    // Disabled flag lives in the protected Entitlement entity, not user.data.
+    const ent = await ensureEntitlementRecord(base44, user.id);
+    if (ent.disabled) return Response.json({ error: 'Account disabilitato' }, { status: 403 });
 
     const body = await req.json();
     const anno = body.anno;
