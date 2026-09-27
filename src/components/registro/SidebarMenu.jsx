@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, User as UserIcon, School, Settings, Crown, UserPlus, Star, Shield, FileText, FileSpreadsheet } from 'lucide-react';
 import { PIANI } from '@/lib/plans';
+import Logo from './Logo';
 
 export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose, onNavigate, onAdmin, onExportPDF, onExportCSV }) {
   const pianoInfo = PIANI[piano] || PIANI.free;
@@ -81,7 +82,13 @@ export default function SidebarMenu({ open, nomeDocente, piano, isAdmin, onClose
                   <FileSpreadsheet size={14} /> Esporta CSV
                 </button>
               </div>
-              <div className="text-[10px] text-grigio text-center">DocenTrack · v1.0</div>
+              <div className="flex items-center justify-center gap-2 pt-1">
+                <Logo size={26} />
+                <div className="text-[10px] text-grigio text-center leading-tight">
+                  DocenTrack · v1.0
+                  <div className="text-[9px] text-grigio/80">© 2026 Michele Maccarrone</div>
+                </div>
+              </div>
             </div>
           </motion.aside>
         </>

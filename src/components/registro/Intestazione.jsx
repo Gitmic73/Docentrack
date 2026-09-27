@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pencil, Settings, Menu, Sun, Moon } from 'lucide-react';
 import { setStoredTheme } from '@/lib/theme';
+import Logo from './Logo';
 
 export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, scuolaSecondaNome, onEditNome, onEditScuola, onOpenSettings, onOpenMenu }) {
   const [nome, setNome] = useState(nomeDocente);
@@ -52,9 +53,12 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, sc
       >
         {isDark ? <Sun size={20} /> : <Moon size={20} />}
       </button>
-      <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-blu to-oro bg-clip-text text-transparent">
-        DocenTrack
-      </h1>
+      <div className="flex items-center justify-center gap-2.5 mb-1">
+        <Logo size={40} />
+        <h1 className="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-blu to-oro bg-clip-text text-transparent">
+          DocenTrack
+        </h1>
+      </div>
       <div className="text-[11px] text-grigio mt-0.5">
         Registro Attività Funzionali all'Insegnamento
       </div>

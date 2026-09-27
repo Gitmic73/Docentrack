@@ -13,6 +13,8 @@ export default function FooterLegale() {
       </em>
       <div className="mt-2 pt-1.5 border-t border-bordo text-[9px] text-grigio">
         DocenTrack v1.0 — Registro Attività Funzionali all'Insegnamento · by Michele Maccarrone
+        <br />
+        © 2026 DocenTrack — Tutti i diritti riservati
       </div>
     </div>
   );
