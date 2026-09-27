@@ -156,25 +156,24 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
             className="w-full text-base sm:text-xs px-1.5 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         {hasSeconda && (
-          <div className="select-none">
+          <div>
             <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Scuola</label>
-            <div className="flex gap-1">
-              <button type="button" onClick={() => setForm({ ...form, scuola_tipo: 'prima' })}
-                className={`flex-1 text-sm px-1.5 py-1.5 rounded border-2 transition-colors min-h-[40px] ${form.scuola_tipo !== 'seconda' ? 'bg-blu text-white border-blu' : 'border-bordo text-grigio bg-white'}`}>1ª</button>
-              <button type="button" onClick={() => setForm({ ...form, scuola_tipo: 'seconda' })}
-                className={`flex-1 text-sm px-1.5 py-1.5 rounded border-2 transition-colors min-h-[40px] ${form.scuola_tipo === 'seconda' ? 'bg-teal-600 text-white border-teal-600 dark:bg-teal-700 dark:border-teal-700' : 'border-bordo text-grigio bg-white'}`}>2ª</button>
-            </div>
+            <select value={form.scuola_tipo} onChange={(e) => setForm({ ...form, scuola_tipo: e.target.value })}
+              className="w-full text-base sm:text-xs px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu">
+              <option value="prima">1ª</option>
+              <option value="seconda">2ª</option>
+            </select>
           </div>
         )}
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Inizio</label>
           <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.inizio} onChange={(e) => setForm({ ...form, inizio: formatTimeInput(e.target.value) })}
-            className="w-full text-base sm:text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-xs px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Fine</label>
           <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.fine} onChange={(e) => setForm({ ...form, fine: formatTimeInput(e.target.value) })}
-            className="w-full text-base sm:text-[13px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-xs px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div className="min-w-0">
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Tipologia</label>
@@ -184,7 +183,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
             options={c.tipi}
             placeholder="— Seleziona —"
             label="Tipologia"
-            className="w-full text-base sm:text-[11px] px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
+            className="w-full text-base sm:text-xs px-1 py-1 border border-bordo rounded bg-white outline-none focus:border-blu"
           />
         </div>
         <button onClick={handleAdd} disabled={saving}
