@@ -3,12 +3,14 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 // This is the ONLY server-side path that writes paid entitlements
 // (piano / anni_licenza / ads_removed) to the user record.
 //
-// SECURITY: Every grant is gated by verifyPayment(). Set DEMO_MODE to false
-// when real payments are enabled, and implement the payment-record check in
-// verifyPayment(). With DEMO_MODE = false and no valid payment, all requests
-// are rejected with 403 — the paywall cannot be bypassed.
+// SECURITY: Every grant is gated by verifyPayment(). DEMO_MODE is sourced from
+// the DEMO_MODE environment variable and defaults to FALSE (secure) — so in any
+// deployed build that does not explicitly opt in, self-grants are rejected
+// with 403 and the paywall cannot be bypassed. Set DEMO_MODE=true in dev
+// secrets only to test the checkout flow. When real payments go live, implement
+// the payment-record lookup in verifyPayment() and remove the DEMO_MODE path.
 
-const DEMO_MODE = true; // ← flip to false when real payments go live
+const DEMO_MODE = process.env.DEMO_MODE === 'true';
 
 // School-year format: YYYY/YYYY+1 (e.g. "2025/2026")
 function isValidAnno(anno) {
@@ -20,7 +22,8 @@ function isValidAnno(anno) {
 // Verify that the caller has a completed payment for the requested action.
 // TODO: When real payments are enabled, query a payment/checkout record for
 // this user matching {action, anno} and return true only if a valid completed
-// payment exists. Currently in demo mode — returns true to allow testing.
+// payment exists. In demo mode (DEMO_MODE env var = 'true') returns true to
+// allow testing the checkout flow; otherwise rejects all grants.
 async function verifyPayment(_user, _action, _anno) {
   if (DEMO_MODE) return true;
   // Real verification will go here:
