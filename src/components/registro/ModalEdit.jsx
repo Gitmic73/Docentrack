@@ -44,17 +44,17 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
         <div className="col-span-2">
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Inizio</label>
           <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.inizio} onChange={(e) => setForm({ ...form, inizio: formatTimeInput(e.target.value) })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Fine</label>
           <input type="text" inputMode="numeric" placeholder="HH:MM" maxLength={5} value={form.fine} onChange={(e) => setForm({ ...form, fine: formatTimeInput(e.target.value) })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         {hasSeconda && (
           <div className="col-span-2 flex items-center gap-2 select-none">
@@ -73,7 +73,7 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
             options={tipi}
             placeholder="— Seleziona —"
             label="Tipologia"
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
           />
         </div>
         <div className="col-span-2">
@@ -81,7 +81,7 @@ export default function ModalEdit({ open, record, sezione, onClose, onSave, savi
             Note{form.tipo.startsWith('Altro') && <span className="text-rosso"> *</span>}
           </label>
           <input type="text" value={form.note} placeholder={form.tipo.startsWith('Altro') ? 'obbligatorio' : 'facoltativo'} onChange={(e) => setForm({ ...form, note: e.target.value })}
-            className={`w-full text-[13px] px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${form.tipo.startsWith('Altro') ? 'border-rosso' : 'border-bordo'}`} />
+            className={`w-full text-base sm:text-[13px] px-2 py-1.5 border rounded bg-white outline-none focus:border-blu ${form.tipo.startsWith('Altro') ? 'border-rosso' : 'border-bordo'}`} />
         </div>
       </div>
       {err && <div className="mt-2 text-[11px] text-rosso">{err}</div>}

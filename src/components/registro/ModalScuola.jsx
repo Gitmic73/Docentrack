@@ -91,32 +91,32 @@ export default function ModalScuola({ open, annoCorrente, scuolaPrima, scuolaSec
         <div className="col-span-2">
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Denominazione</label>
           <input value={form.nome} placeholder="Istituto Comprensivo ..." onChange={(e) => setForm({ ...form, nome: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div className="col-span-2">
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Indirizzo</label>
           <input value={form.indirizzo} placeholder="Via ..., n. – CAP Comune (Prov)" onChange={(e) => setForm({ ...form, indirizzo: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Telefono</label>
           <input value={form.tel} placeholder="0000/000000" onChange={(e) => setForm({ ...form, tel: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Email</label>
           <input value={form.mail} placeholder="...@istruzione.it" onChange={(e) => setForm({ ...form, mail: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Codice meccanografico</label>
           <input value={form.codice} placeholder="MOIC00000X" onChange={(e) => setForm({ ...form, codice: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
         <div>
           <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Dirigente Scolastico</label>
           <input value={form.ds} placeholder="Prof./ssa ..." onChange={(e) => setForm({ ...form, ds: e.target.value })}
-            className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
+            className="w-full text-base sm:text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu" />
         </div>
       </div>
       {tab === 'seconda' && (

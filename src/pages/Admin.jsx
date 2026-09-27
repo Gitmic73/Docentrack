@@ -217,7 +217,7 @@ export default function Admin() {
           <div className="bg-blu px-4 py-2.5">
             <h2 className="font-display text-sm font-semibold text-white">Utenti Registrati</h2>
           </div>
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-bordo bg-[#F4E8D0]">
@@ -286,6 +286,55 @@ export default function Admin() {
                 )}
               </tbody>
             </table>
+          </div>
+          {/* Mobile cards */}
+          <div className="md:hidden divide-y divide-bordo">
+            {sortedUsers.map((u) => {
+              const scad = u.scadenza ? new Date(u.scadenza) : null;
+              const scaduta = scad && scad.getTime() < Date.now();
+              return (
+                <div key={u.id} className="px-4 py-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold text-foreground truncate select-text">{u.email}</div>
+                      <div className="text-xs text-grigio mt-0.5 select-text">{u.full_name || '—'}</div>
+                    </div>
+                    {u.disabled ? (
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rosso-light text-rosso shrink-0">Disabilitato</span>
+                    ) : (
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATO_BADGE[u.stato]} shrink-0`}>{STATO_LABEL[u.stato]}</span>
+                    )}
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-grigio">
+                    <div>Registrato: <span className="text-foreground">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</span></div>
+                    <div>Scadenza: <span className={scaduta ? 'text-rosso font-semibold' : 'text-foreground'}>{scad ? scad.toLocaleDateString('it-IT') : '—'}</span></div>
+                    <div>Attività: <span className="text-foreground font-semibold">{u.attivita_count}</span></div>
+                    <div>Ultima: <span className="text-foreground">{u.last_activity_date ? new Date(u.last_activity_date).toLocaleDateString('it-IT') : '—'}</span></div>
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleAction(u.disabled ? 'enable' : 'disable', u.id)}
+                      disabled={!!actionLoading}
+                      className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#F4E8D0]'}`}
+                      title={u.disabled ? 'Riattiva account' : 'Disabilita account'}
+                    >
+                      {u.disabled ? <CircleCheck size={16} /> : <Ban size={16} />}
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(u)}
+                      disabled={!!actionLoading}
+                      className="p-1.5 rounded text-rosso hover:bg-rosso-light transition-colors disabled:opacity-50"
+                      title="Elimina account"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            {activeUsers.length === 0 && (
+              <div className="px-4 py-4 text-center text-grigio italic">Nessun utente registrato</div>
+            )}
           </div>
         </div>
 
