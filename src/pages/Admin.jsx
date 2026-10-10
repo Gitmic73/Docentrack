@@ -19,7 +19,7 @@ export default function Admin() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [sortKey, setSortKey] = useState('created_date');
+  const [sortKey, setSortKey] = useState('last_activity_date');
   const [sortDir, setSortDir] = useState('desc');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);

@@ -20,6 +20,7 @@ import FooterLegale from '@/components/registro/FooterLegale';
 import CalendarioMese from '@/components/registro/CalendarioMese';
 import PieChartTipologie from '@/components/registro/PieChartTipologie';
 import BarChartTipologie from '@/components/registro/BarChartTipologie';
+import BarChartMensile from '@/components/registro/BarChartMensile';
 import RiepilogoTipologie from '@/components/registro/RiepilogoTipologie';
 import BottomTabs from '@/components/registro/BottomTabs';
 import PullToRefresh from '@/components/registro/PullToRefresh';
@@ -193,6 +194,11 @@ export default function Home() {
               {vista === 'statistiche' && (
                 <motion.div key="statistiche" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
                   <div className="space-y-4">
+                    <BarChartMensile
+                      attivitaA={r.attivitaA}
+                      attivitaB={r.attivitaB}
+                      titolo="Carico mensile — ore per mese (lett. a + lett. b)"
+                    />
                     <BarChartTipologie
                       attivita={allAttivita}
                       titolo="Ore per tipologia — Totale anno (ordinato per tempo)"
