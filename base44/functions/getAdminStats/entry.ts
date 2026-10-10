@@ -51,9 +51,11 @@ export default async function(req) {
       if (ad && (!lastAccessByUser[a.created_by_id] || new Date(ad) > new Date(lastAccessByUser[a.created_by_id]))) {
         lastAccessByUser[a.created_by_id] = ad;
       }
-      const dataAtt = a.data;
-      if (dataAtt && (!lastActivityDateByUser[a.created_by_id] || new Date(dataAtt) > new Date(lastActivityDateByUser[a.created_by_id]))) {
-        lastActivityDateByUser[a.created_by_id] = dataAtt;
+      // "Ultima attività" = data di inserimento del record (created_date),
+      // non il giorno a cui si riferisce l'attività (a.data).
+      const dataIns = a.created_date;
+      if (dataIns && (!lastActivityDateByUser[a.created_by_id] || new Date(dataIns) > new Date(lastActivityDateByUser[a.created_by_id]))) {
+        lastActivityDateByUser[a.created_by_id] = dataIns;
       }
     }
 
