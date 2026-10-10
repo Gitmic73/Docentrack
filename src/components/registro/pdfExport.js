@@ -1,6 +1,8 @@
 import { jsPDF } from 'jspdf';
 import { m2h, fmtD, MAX_ORE, coloreTipologia } from './registroConstants';
 
+const MESI_NOMI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+
 function hexToRgb(hex) {
   const h = hex.replace('#', '');
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
@@ -65,7 +67,13 @@ function pieToDataURL(data, size = 500) {
   return canvas.toDataURL('image/png');
 }
 
-export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, attivitaA, attivitaB }) {
+export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno, attivitaA, attivitaB, mese }) {
+  // Filtro opzionale per il mese corrente (formato YYYY-MM): riduce le attività
+  // al solo periodo richiesto, così totali e tabelle riflettono il mese.
+  if (mese) {
+    attivitaA = attivitaA.filter((v) => (v.data || '').slice(0, 7) === mese);
+    attivitaB = attivitaB.filter((v) => (v.data || '').slice(0, 7) === mese);
+  }
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
@@ -131,6 +139,14 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
   y += 4;
   doc.setFontSize(9);
   doc.text(`Anno Scolastico ${anno}`, W / 2, y, { align: 'center' });
+  if (mese) {
+    y += 5;
+    const [yy, mm] = mese.split('-');
+    doc.setFontSize(9);
+    doc.setTextColor(176, 58, 46);
+    doc.text(`Report mensile — ${MESI_NOMI[parseInt(mm, 10) - 1]} ${yy}`, W / 2, y, { align: 'center' });
+    doc.setTextColor(34, 34, 34);
+  }
   y += 7;
 
   // Docente
@@ -158,7 +174,7 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
     doc.setFontSize(10);
     doc.text(titolo, M + 2, y + 5.5);
     const tot = dati.reduce((s, v) => s + (v.durata_min || 0), 0);
-    doc.text(`${m2h(tot)} / 40 ore`, W - M - 2, y + 5.5, { align: 'right' });
+    doc.text(mese ? `Totale mese: ${m2h(tot)}` : `${m2h(tot)} / 40 ore`, W - M - 2, y + 5.5, { align: 'right' });
     y += 12;
 
     // intestazione tabella
@@ -207,17 +223,19 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
     }
 
     y += 3;
-    const ecc = Math.max(0, tot - MAX_ORE);
-    const res = Math.max(0, MAX_ORE - tot);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(194, 141, 67);
     doc.text(`Totale ore svolte: ${m2h(tot)}`, M, y);
-    if (ecc > 0) {
-      doc.setTextColor(176, 58, 46);
-      doc.text(`Ore eccedenti: ${m2h(ecc)}`, M + 55, y);
-    } else {
-      doc.text(`Ore residue: ${m2h(res)}`, M + 55, y);
+    if (!mese) {
+      const ecc = Math.max(0, tot - MAX_ORE);
+      const res = Math.max(0, MAX_ORE - tot);
+      if (ecc > 0) {
+        doc.setTextColor(176, 58, 46);
+        doc.text(`Ore eccedenti: ${m2h(ecc)}`, M + 55, y);
+      } else {
+        doc.text(`Ore residue: ${m2h(res)}`, M + 55, y);
+      }
     }
     y += 11;
   }
@@ -235,6 +253,13 @@ export async function esportaPDF({ docente, profilo, scuola, scuolaSeconda, anno
     "Le ore eccedenti le 40 (lett. a) danno diritto al compenso (Tab. 5 CCNL) o all'esonero. Per le ore ex lett. b, il Collegio Docenti delibera la gestione.",
     M, y, { maxWidth: W - 2 * M, align: 'left' }
   );
+
+  // Nel report mensile saltiamo le pagine statistiche/normative/firma
+  // (riguardano l'intero anno) e chiudiamo il documento focalizzato sul mese.
+  if (mese) {
+    window.open(doc.output('bloburl'), '_blank');
+    return;
+  }
 
   // ===== Pagina statistica: due torte affiancate + tabella riepilogo =====
   const pieA = buildPieData(attivitaA);

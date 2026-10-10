@@ -67,6 +67,9 @@ export default function Home() {
   const editRecord = editId ? allAttivita.find((a) => a.id === editId) : null;
   const editSezione = editRecord?.sezione || 'a';
 
+  const meseCorrente = new Date().toISOString().slice(0, 7);
+  const hasMeseAttivita = allAttivita.some((a) => (a.data || '').slice(0, 7) === meseCorrente);
+
   function handleExport() {
     esportaPDF({
       docente: r.nomeDocente,
@@ -95,6 +98,19 @@ export default function Home() {
       anno: 'tutti',
       attivitaA: all.filter((x) => x.sezione === 'a'),
       attivitaB: all.filter((x) => x.sezione === 'b'),
+    });
+  }
+
+  function handleExportMese() {
+    esportaPDF({
+      docente: r.nomeDocente,
+      profilo: r.profilo,
+      scuola: r.scuola,
+      scuolaSeconda: r.scuolaSeconda,
+      anno: r.annoCorrente,
+      attivitaA: r.attivitaA,
+      attivitaB: r.attivitaB,
+      mese: meseCorrente,
     });
   }
 
@@ -152,7 +168,7 @@ export default function Home() {
               })}
             </div>
 
-            <ExportToolbar onPDF={handleExport} onCSV={handleCSV} disabled={allAttivita.length === 0} />
+            <ExportToolbar onPDF={handleExport} onCSV={handleCSV} onPDFMese={handleExportMese} disabled={allAttivita.length === 0} disabledMese={!hasMeseAttivita} />
 
             <AnimatePresence mode="wait">
               {vista === 'registro' && (

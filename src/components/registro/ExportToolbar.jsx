@@ -1,9 +1,16 @@
 import React from 'react';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
-export default function ExportToolbar({ onPDF, onCSV, disabled }) {
+export default function ExportToolbar({ onPDF, onCSV, onPDFMese, disabled, disabledMese }) {
   return (
     <div className="flex justify-end gap-1.5 mb-3 select-none">
+      <button
+        onClick={onPDFMese}
+        disabled={disabledMese}
+        className="flex items-center gap-1.5 text-oro border border-oro rounded-lg px-3 py-1.5 text-xs font-semibold hover:bg-oro hover:text-white transition-colors disabled:opacity-40"
+      >
+        <FileText size={14} /> PDF mese
+      </button>
       <button
         onClick={onPDF}
         disabled={disabled}
