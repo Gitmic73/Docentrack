@@ -2,25 +2,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { ensureEntitlementRecord, getEntitlementRecord, isValidAnno } from '../../shared/entitlement.ts';
 
 // This is the ONLY server-side path that writes paid entitlements
-// (piano / anni_licenza / ads_removed) — now to the protected Entitlement entity,
+// (piano / anni_licenza / ads_removed) — to the protected Entitlement entity,
 // NOT to caller-writable user.data. A user cannot self-grant via updateMe.
 //
-// SECURITY: Every grant is gated by verifyPayment(). DEMO_MODE is sourced from
-// the DEMO_MODE environment variable and defaults to FALSE (secure) — so in any
-// deployed build that does not explicitly opt in, self-grants are rejected
-// with 403 and the paywall cannot be bypassed. Set DEMO_MODE=true in dev
-// secrets only to test the checkout flow. When real payments go live, implement
-// the payment-record lookup in verifyPayment() and remove the DEMO_MODE path.
+// SECURITY: Every grant is gated by verifyPayment(). Until a real payment
+// provider is integrated, verifyPayment() rejects ALL grants — no
+// environment variable can bypass the paywall. When payments go live,
+// implement the payment-record lookup in verifyPayment() (query a
+// completed checkout record for this user matching {action, anno}).
 
-const DEMO_MODE = process.env.DEMO_MODE === 'true';
-
-// Verify that the caller has a completed payment for the requested action.
-// TODO: When real payments are enabled, query a payment/checkout record for
-// this user matching {action, anno} and return true only if a valid completed
-// payment exists. In demo mode (DEMO_MODE env var = 'true') returns true to
-// allow testing the checkout flow; otherwise rejects all grants.
 async function verifyPayment(_user, _action, _anno) {
-  if (DEMO_MODE) return true;
+  // No payment provider is connected yet — reject all grants.
+  // Replace this with a real payment-record lookup once checkout is live.
   return false;
 }
 
