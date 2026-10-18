@@ -15,17 +15,17 @@ export function useRegistro() {
   const [saving, setSaving] = useState(false);
   const initialized = useRef(false);
 
-  // Profilo utente
-  const profilo = user?.data?.profilo || user?.profilo || null;
-  const nomeDocente = user?.data?.nome_docente || user?.full_name || '';
+  // Profilo utente — i campi custom vivono al top-level dell'oggetto User (non in .data)
+  const profilo = user?.profilo || null;
+  const nomeDocente = user?.nome_docente || user?.full_name || '';
   const [entitlement, setEntitlement] = useState({ piano: 'free', anno_gratuito: null, anni_licenza: [], ads_removed: false, disabled: false });
   const piano = entitlement.piano || 'free';
   const annoGratuito = entitlement.anno_gratuito || null;
   const anniLicenza = entitlement.anni_licenza || [];
   const adsRemoved = !!entitlement.ads_removed;
-  const email = user?.data?.email || user?.email || '';
-  const telefono = user?.data?.telefono || user?.telefono || '';
-  const docenteDi = user?.data?.docente_di || user?.docente_di || '';
+  const email = user?.email || '';
+  const telefono = user?.telefono || '';
+  const docenteDi = user?.docente_di || '';
 
   const loadAnni = useCallback(async () => {
     const list = await base44.entities.AnnoScolastico.list('nome');
