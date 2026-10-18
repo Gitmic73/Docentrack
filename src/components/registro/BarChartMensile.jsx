@@ -57,15 +57,15 @@ export default function BarChartMensile({ attivitaA = [], attivitaB = [], titolo
         )}
       </div>
       <div className="flex items-center gap-3 mb-2 text-xs">
-        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: '#C28D43' }} />Lett. a</span>
-        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: '#6F5536' }} />Lett. b</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: '#5B7DB1' }} />Lett. a</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm" style={{ background: '#3A5A85' }} />Lett. b</span>
       </div>
       <div className="w-full h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 5, right: 8, left: -18, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
-            <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#5a5a5a' }} axisLine={{ stroke: '#d0d5dd' }} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: '#5a5a5a' }} axisLine={false} tickLine={false} tickFormatter={(v) => m2h(v)} width={48} />
+            <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={{ stroke: '#D5DBE6' }} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} tickFormatter={(v) => m2h(v)} width={48} />
             <Tooltip
               cursor={{ fill: 'rgba(194,141,67,0.08)' }}
               content={({ payload, label }) => {
@@ -73,17 +73,17 @@ export default function BarChartMensile({ attivitaA = [], attivitaB = [], titolo
                 const a = payload.find((p) => p.dataKey === 'a')?.value || 0;
                 const b = payload.find((p) => p.dataKey === 'b')?.value || 0;
                 return (
-                  <div style={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #d0d5dd', background: '#fff', padding: '6px 10px' }}>
+                  <div style={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #D5DBE6', background: '#fff', padding: '6px 10px' }}>
                     <div style={{ fontWeight: 600, marginBottom: 2 }}>{label}</div>
-                    <div style={{ color: '#C28D43' }}>Lett. a: {m2h(a)}</div>
-                    <div style={{ color: '#6F5536' }}>Lett. b: {m2h(b)}</div>
+                    <div style={{ color: '#5B7DB1' }}>Lett. a: {m2h(a)}</div>
+                    <div style={{ color: '#3A5A85' }}>Lett. b: {m2h(b)}</div>
                     <div style={{ borderTop: '1px solid #e5e7eb', marginTop: 3, paddingTop: 3, fontWeight: 600 }}>Tot: {m2h(a + b)}</div>
                   </div>
                 );
               }}
             />
-            <Bar dataKey="a" stackId="1" fill="#C28D43" radius={[0, 0, 0, 0]} maxBarSize={42} />
-            <Bar dataKey="b" stackId="1" fill="#6F5536" radius={[4, 4, 0, 0]} maxBarSize={42} />
+            <Bar dataKey="a" stackId="1" fill="#5B7DB1" radius={[0, 0, 0, 0]} maxBarSize={42} />
+            <Bar dataKey="b" stackId="1" fill="#3A5A85" radius={[4, 4, 0, 0]} maxBarSize={42} />
           </BarChart>
         </ResponsiveContainer>
       </div>

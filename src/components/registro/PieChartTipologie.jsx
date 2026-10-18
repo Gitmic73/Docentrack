@@ -49,7 +49,7 @@ export default function PieChartTipologie({ attivita, titolo }) {
                 content={({ payload }) => {
                   if (!payload || !payload.length) return null;
                   return (
-                    <div style={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #d0d5dd', background: '#fff', padding: '4px 8px', maxWidth: '240px' }}>
+                    <div style={{ fontSize: '12px', borderRadius: '6px', border: '1px solid #D5DBE6', background: '#fff', padding: '4px 8px', maxWidth: '240px' }}>
                       {payload[0].name}
                     </div>
                   );

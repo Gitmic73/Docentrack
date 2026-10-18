@@ -27,7 +27,7 @@ TIPI_A.forEach((t, i) => { COLORI_TIPI[t] = COLORI_A[i]; });
 TIPI_B.forEach((t, i) => { COLORI_TIPI[t] = COLORI_B[i]; });
 
 export function coloreTipologia(nome) {
-  return COLORI_TIPI[nome] || '#5a5a5a';
+  return COLORI_TIPI[nome] || '#6B7280';
 }
 
 export function t2m(t) {

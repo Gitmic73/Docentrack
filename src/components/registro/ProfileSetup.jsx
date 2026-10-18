@@ -5,7 +5,7 @@ export default function ProfileSetup({ nomeIniziale, onSave, saving }) {
   const [nome, setNome] = useState(nomeIniziale || '');
 
   return (
-    <div className="fixed inset-0 bg-[#FAF4EA] z-[900] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#F4F6F9] z-[900] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl border border-bordo shadow-[0_8px_40px_rgba(0,0,0,0.12)] w-full max-w-[460px] overflow-hidden">
         <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
         <div className="p-7">
@@ -29,13 +29,13 @@ export default function ProfileSetup({ nomeIniziale, onSave, saving }) {
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             placeholder="Nome e Cognome"
-            className="w-full font-display text-[15px] text-center border-0 border-b-[1.5px] border-blu bg-transparent outline-none placeholder:italic placeholder:text-[#bbb] py-1"
+            className="w-full font-display text-[15px] text-center border-0 border-b-[1.5px] border-blu bg-transparent outline-none placeholder:italic placeholder:text-[#C5CDD9] py-1"
           />
 
           <button
             onClick={() => nome.trim() && onSave('docente', nome.trim())}
             disabled={!nome.trim() || saving}
-            className="w-full mt-6 bg-blu text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-[#A57635] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full mt-6 bg-blu text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-[#4A6A9E] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {saving ? 'Salvataggio…' : 'Inizia a registrare'}
           </button>

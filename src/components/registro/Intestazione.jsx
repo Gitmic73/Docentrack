@@ -70,7 +70,7 @@ export default function Intestazione({ annoCorrente, nomeDocente, scuolaNome, sc
           onChange={(e) => setNome(e.target.value)}
           onBlur={handleBlur}
           placeholder="Nome e Cognome"
-          className="border-0 border-b-[1.5px] border-blu bg-transparent font-display text-[15px] text-center w-[220px] outline-none placeholder:italic placeholder:text-[#bbb] px-1 py-0.5"
+          className="border-0 border-b-[1.5px] border-blu bg-transparent font-display text-[15px] text-center w-[220px] outline-none placeholder:italic placeholder:text-[#C5CDD9] px-1 py-0.5"
         />
       </div>
       <div className="flex items-center justify-center gap-2 mt-1.5 text-xs text-grigio">

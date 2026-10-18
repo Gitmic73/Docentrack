@@ -10,8 +10,8 @@ const STATO_LABEL = {
 };
 const STATO_BADGE = {
   attivo: 'bg-verde-light text-verde',
-  inattivo: 'bg-[#F4E8D0] text-oro',
-  mai_usata: 'bg-[#F4E8D0] text-grigio',
+  inattivo: 'bg-[#E8EEF6] text-oro',
+  mai_usata: 'bg-[#E8EEF6] text-grigio',
 };
 
 export default function Admin() {
@@ -119,7 +119,7 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF4EA]">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#F4F6F9]">
         <div className="w-8 h-8 border-4 border-blu-light border-t-blu rounded-full animate-spin"></div>
       </div>
     );
@@ -127,7 +127,7 @@ export default function Admin() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#FAF4EA] flex items-center justify-center font-body">
+      <div className="min-h-screen bg-[#F4F6F9] flex items-center justify-center font-body">
         <div className="text-center">
           <p className="text-rosso mb-4 text-sm">{error}</p>
           <button onClick={() => navigate('/')} className="bg-blu text-white px-4 py-2 rounded text-sm">Torna alla home</button>
@@ -139,7 +139,7 @@ export default function Admin() {
   const attivi = activeUsers.filter((u) => u.attivita_count > 0).length;
 
   return (
-    <div className="min-h-screen bg-[#FAF4EA] font-body pb-12">
+    <div className="min-h-screen bg-[#F4F6F9] font-body pb-12">
       <div className="h-[5px] bg-gradient-to-r from-blu to-oro" />
       <div className="max-w-[900px] mx-auto px-4">
       <div className="flex items-center gap-3 pt-6 pb-4">
@@ -193,7 +193,7 @@ export default function Admin() {
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#F4E8D0] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-[#E8EEF6] flex items-center justify-center shrink-0">
                 <Pause size={16} className="text-oro" />
               </div>
               <div>
@@ -202,7 +202,7 @@ export default function Admin() {
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#F4E8D0] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-[#E8EEF6] flex items-center justify-center shrink-0">
                 <CircleSlash size={16} className="text-grigio" />
               </div>
               <div>
@@ -220,7 +220,7 @@ export default function Admin() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-bordo bg-[#F4E8D0]">
+                <tr className="border-b border-bordo bg-[#E8EEF6]">
                   <Th col="email" label="Email" />
                   <Th col="full_name" label="Nome" />
                   <Th col="created_date" label="Registrato il" />
@@ -236,7 +236,7 @@ export default function Admin() {
                   const scad = u.scadenza ? new Date(u.scadenza) : null;
                   const scaduta = scad && scad.getTime() < Date.now();
                   return (
-                    <tr key={u.id} className="border-b border-bordo hover:bg-[#F4E8D0]">
+                    <tr key={u.id} className="border-b border-bordo hover:bg-[#E8EEF6]">
                       <td className="px-3 py-2 select-text">{u.email}</td>
                       <td className="px-3 py-2 select-text">{u.full_name || '—'}</td>
                       <td className="px-3 py-2 whitespace-nowrap">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</td>
@@ -263,7 +263,7 @@ export default function Admin() {
                           <button
                             onClick={() => handleAction(u.disabled ? 'enable' : 'disable', u.id)}
                             disabled={!!actionLoading}
-                            className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#F4E8D0]'}`}
+                            className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#E8EEF6]'}`}
                             title={u.disabled ? 'Riattiva account' : 'Disabilita account'}
                           >
                             {u.disabled ? <CircleCheck size={15} /> : <Ban size={15} />}
@@ -315,7 +315,7 @@ export default function Admin() {
                     <button
                       onClick={() => handleAction(u.disabled ? 'enable' : 'disable', u.id)}
                       disabled={!!actionLoading}
-                      className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#F4E8D0]'}`}
+                      className={`p-1.5 rounded transition-colors disabled:opacity-50 ${u.disabled ? 'text-verde hover:bg-verde-light' : 'text-oro hover:bg-[#E8EEF6]'}`}
                       title={u.disabled ? 'Riattiva account' : 'Disabilita account'}
                     >
                       {u.disabled ? <CircleCheck size={16} /> : <Ban size={16} />}
@@ -376,7 +376,7 @@ export default function Admin() {
                 Confermi l'eliminazione definitiva dell'account di <strong className="text-foreground">{confirmDelete.email}</strong>? Tutti i dati associati (attività, scuole, anni scolastici) verranno cancellati.
               </p>
               <div className="flex justify-end gap-2">
-                <button onClick={() => setConfirmDelete(null)} className="text-grigio border border-bordo rounded px-4 py-1.5 text-sm hover:bg-[#F4E8D0]">Annulla</button>
+                <button onClick={() => setConfirmDelete(null)} className="text-grigio border border-bordo rounded px-4 py-1.5 text-sm hover:bg-[#E8EEF6]">Annulla</button>
                 <button
                   onClick={() => handleAction('delete', confirmDelete.id)}
                   disabled={!!actionLoading}

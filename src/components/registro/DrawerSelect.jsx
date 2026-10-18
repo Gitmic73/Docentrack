@@ -25,7 +25,7 @@ export default function DrawerSelect({ value, onChange, options, placeholder, la
         onClick={() => setOpen(true)}
         className={`${className} text-left flex items-center justify-between truncate`}
       >
-        <span className={`flex-1 min-w-0 truncate ${value ? 'text-foreground' : 'text-[#bbb]'}`}>{selectedLabel}</span>
+        <span className={`flex-1 min-w-0 truncate ${value ? 'text-foreground' : 'text-[#C5CDD9]'}`}>{selectedLabel}</span>
         <ChevronDown size={14} className="shrink-0 ml-1 text-grigio" />
       </button>
       <Drawer open={open} onOpenChange={setOpen}>
@@ -39,7 +39,7 @@ export default function DrawerSelect({ value, onChange, options, placeholder, la
               <button
                 type="button"
                 onClick={() => { onChange(''); setOpen(false); }}
-                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 transition-colors ${!value ? 'bg-blu-light text-blu font-semibold' : 'text-grigio hover:bg-[#F4E8D0]'}`}
+                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 transition-colors ${!value ? 'bg-blu-light text-blu font-semibold' : 'text-grigio hover:bg-[#E8EEF6]'}`}
               >
                 {placeholder}
               </button>
@@ -49,7 +49,7 @@ export default function DrawerSelect({ value, onChange, options, placeholder, la
                 key={o}
                 type="button"
                 onClick={() => { onChange(o); setOpen(false); }}
-                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 flex items-center justify-between transition-colors ${value === o ? 'bg-blu-light text-blu font-semibold' : 'text-foreground hover:bg-[#F4E8D0]'}`}
+                className={`w-full text-left text-sm px-3 py-3.5 rounded-lg mb-1.5 flex items-center justify-between transition-colors ${value === o ? 'bg-blu-light text-blu font-semibold' : 'text-foreground hover:bg-[#E8EEF6]'}`}
               >
                 <span className="flex-1 min-w-0">{o}</span>
                 {value === o && <Check size={16} className="text-blu shrink-0 ml-2" />}

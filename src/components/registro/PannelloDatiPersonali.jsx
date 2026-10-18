@@ -51,7 +51,7 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
       {step === 'dati' && (
         <>
           <h3 className="font-display text-[17px] text-blu mb-4 border-b border-bordo pb-2.5">Impostazioni profilo</h3>
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#F4E8D0] mb-4">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#E8EEF6] mb-4">
             <div className="w-10 h-10 rounded-full bg-blu-light flex items-center justify-center text-blu">
               <UserIcon size={20} />
             </div>
@@ -63,7 +63,7 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
           <div className="space-y-3">
             <div>
               <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Email di registrazione</label>
-              <div className="flex items-center gap-2 w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-[#f4f4f2] text-grigio">
+              <div className="flex items-center gap-2 w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-[#EEF1F6] text-grigio">
                 <Mail size={14} className="shrink-0" /> <span className="truncate">{email || '—'}</span>
               </div>
             </div>
@@ -118,14 +118,14 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
             </div>
           </div>
           <div className="flex justify-end gap-2 mt-5 select-none">
-            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0]">Annulla</button>
-            <button onClick={handleSave} disabled={saving || !nome.trim()} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A57635] disabled:opacity-50">Salva</button>
+            <button onClick={onClose} className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#E8EEF6]">Annulla</button>
+            <button onClick={handleSave} disabled={saving || !nome.trim()} className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#4A6A9E] disabled:opacity-50">Salva</button>
           </div>
 
           <div className="mt-5 pt-4 border-t border-bordo space-y-2 select-none">
             <button
               onClick={onLogout}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#F4E8D0] transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
             >
               <LogOut size={16} className="text-grigio" /> Esci dall&apos;account
             </button>
@@ -156,7 +156,7 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
             <li>Gli anni scolastici creati</li>
             <li>Il tuo account utente e l&apos;accesso</li>
           </ul>
-          <div className="rounded-lg border border-bordo bg-[#F4E8D0] p-3 mb-4 flex items-start gap-2">
+          <div className="rounded-lg border border-bordo bg-[#E8EEF6] p-3 mb-4 flex items-start gap-2">
             <FileDown size={16} className="text-blu shrink-0 mt-0.5" />
             <div className="text-xs text-foreground">
               <strong>Prima di eliminare, salva i tuoi dati</strong> esportandoli in CSV.
@@ -173,14 +173,14 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
             <button
               onClick={() => setStep('dati')}
               disabled={saving}
-              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#F4E8D0] disabled:opacity-50"
+              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#E8EEF6] disabled:opacity-50"
             >
               Annulla
             </button>
             <button
               onClick={handleDelete}
               disabled={saving}
-              className="bg-rosso text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#8e2e25] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+              className="bg-rosso text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#A84A4A] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
             >
               {saving ? (
                 <>

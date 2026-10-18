@@ -37,7 +37,7 @@ export default function BarChartTipologie({ attivita, titolo }) {
           return (
             <div key={d.name} className="flex items-center gap-2">
               <div className="w-[42%] min-w-0 text-xs text-foreground truncate" title={d.name}>{d.name}</div>
-              <div className="flex-1 min-w-0 h-5 bg-[#F4E8D0] rounded overflow-hidden">
+              <div className="flex-1 min-w-0 h-5 bg-[#E8EEF6] rounded overflow-hidden">
                 <div
                   className="h-full rounded transition-all duration-500 flex items-center justify-end pr-1"
                   style={{ width: `${Math.max(w, 2)}%`, background: coloreTipologia(d.name) }}
