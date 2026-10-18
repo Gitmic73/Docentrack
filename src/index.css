@@ -107,6 +107,10 @@
 .dark .bg-white { background-color: #121212 !important; }
 .dark .bg-\[\#F4F6F9\] { background-color: #121212 !important; }
 .dark .bg-\[\#E8EEF6\] { background-color: #1a1a1a !important; }
+.dark .bg-\[\#EDF3FB\] { background-color: #1a1e28 !important; }
+.dark .bg-\[\#7BA7D1\] { background-color: #4A6A9E !important; }
+.dark .hover\:bg-\[\#EDF3FB\]:hover { background-color: #1a1e28 !important; }
+.dark .hover\:bg-\[\#6A97C1\]:hover { background-color: #3A5A85 !important; }
 .dark .border-bordo { border-color: #27272a !important; }
 .dark .border-oro { border-color: #4A6A9E !important; }
 .dark .text-grigio { color: #a1a1aa !important; }

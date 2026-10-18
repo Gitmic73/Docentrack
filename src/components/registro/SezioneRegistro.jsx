@@ -10,6 +10,8 @@ const CONF = {
     tipi: TIPI_A,
     headerClass: 'bg-blu',
     barraClass: 'bg-oro',
+    bodyClass: 'bg-[#E8EEF6]',
+    bodyHoverClass: 'hover:bg-[#E8EEF6]',
     pillClass: 'bg-blu-light text-blu',
     btnAddClass: 'bg-blu hover:bg-[#4A6A9E]',
     noteLabel: 'Note',
@@ -20,10 +22,12 @@ const CONF = {
     titolo: "Fino a 40 ore — Art. 29 CCNL/2007 (lett. b)",
     desc: "Consigli di classe · interclasse soli docenti / docenti+genitori · intersezione · GLO con genitori",
     tipi: TIPI_B,
-    headerClass: 'bg-oro',
+    headerClass: 'bg-[#7BA7D1]',
     barraClass: 'bg-blu',
+    bodyClass: 'bg-[#EDF3FB]',
+    bodyHoverClass: 'hover:bg-[#EDF3FB]',
     pillClass: 'bg-oro-light text-[#3A5A85]',
-    btnAddClass: 'bg-oro hover:bg-[#56442A]',
+    btnAddClass: 'bg-[#7BA7D1] hover:bg-[#6A97C1]',
     noteLabel: 'Note / Classe',
     notePlaceholder: 'es. 3A',
     alertEccMsg: 'Il Collegio Docenti delibera la gestione.',
@@ -129,11 +133,11 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Stats */}
-      <div className="px-4 py-2 flex justify-between items-center border-b border-bordo bg-[#E8EEF6]">
+      <div className={`px-4 py-2 flex justify-between items-center border-b border-bordo ${c.bodyClass}`}>
         <div className="flex gap-[18px] flex-wrap">
           <div className="stat">
-            <span className="block text-lg font-semibold text-verde">{m2h(totMin)}</span>
-            <span className="text-[10px] uppercase tracking-[0.5px] text-grigio">Ore svolte</span>
+            <span className="block text-xl font-bold text-verde">{m2h(totMin)}</span>
+            <span className="text-[10px] uppercase tracking-[0.5px] text-verde font-semibold">Ore svolte</span>
           </div>
           <div className="stat">
             <span className="block text-lg font-semibold text-blu">{completato ? '0:00' : m2h(residuo)}</span>
@@ -149,7 +153,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       </div>
 
       {/* Form inserimento */}
-      <div className={`px-4 py-2 bg-[#E8EEF6] border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-[104px_72px_100px_100px_minmax(115px,1fr)_auto]' : 'sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_auto]'} gap-1.5 items-end select-none`}>
+      <div className={`px-4 py-2 ${c.bodyClass} border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-[104px_72px_100px_100px_minmax(115px,1fr)_auto]' : 'sm:grid-cols-[104px_100px_100px_minmax(115px,1fr)_auto]'} gap-1.5 items-end select-none`}>
         <div>
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Data</label>
           <input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })}
@@ -194,7 +198,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       {err && <div className="px-4 py-1.5 text-[11px] text-rosso bg-rosso-light">{err}</div>}
 
       {/* Ricerca, note e filtri */}
-      <div className="px-4 py-2 bg-[#E8EEF6] border-b border-bordo flex items-end gap-2">
+      <div className={`px-4 py-2 ${c.bodyClass} border-b border-bordo flex items-end gap-2`}>
         <div className="flex-1 min-w-0">
           <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">
             {c.noteLabel}{isAltro && <span className="text-rosso"> *</span>}
@@ -228,7 +232,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
         </button>
       </div>
       {showFiltri && (
-        <div className={`px-4 py-2 bg-[#E8EEF6] border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-2 items-end select-none`}>
+        <div className={`px-4 py-2 ${c.bodyClass} border-b border-bordo grid grid-cols-2 ${hasSeconda ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-2 items-end select-none`}>
           <div>
             <label className="text-[10px] uppercase tracking-[0.3px] text-grigio block mb-1">Dal</label>
             <input type="date" value={filtDa} onChange={(e) => setFiltDa(e.target.value)}
@@ -313,16 +317,16 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
               { k: 'dur', l: 'Durata' },
             ].map((h) => (
               <th key={h.k} onClick={() => toggleSort(h.k)}
-                className={`px-2.5 py-1.5 text-[10px] uppercase tracking-[0.5px] text-grigio font-semibold border-b border-bordo text-left bg-[#E8EEF6] cursor-pointer hover:text-blu whitespace-nowrap ${sort.col === h.k ? 'text-blu' : ''}`}>
+                className={`px-2.5 py-1.5 text-[10px] uppercase tracking-[0.5px] text-grigio font-semibold border-b border-bordo text-left ${c.bodyClass} cursor-pointer hover:text-blu whitespace-nowrap ${sort.col === h.k ? 'text-blu' : ''}`}>
                 {h.l} <ArrowUpDown size={9} className="inline opacity-50" />
               </th>
             ))}
-            <th className="px-2.5 py-1.5 border-b border-bordo bg-[#E8EEF6]"></th>
+            <th className={`px-2.5 py-1.5 border-b border-bordo ${c.bodyClass}`}></th>
           </tr>
         </thead>
         <tbody>
           {filtered.map((v) => (
-            <tr key={v.id} className={`border-b border-bordo hover:bg-[#E8EEF6] ${v.scuola_tipo === 'seconda' ? SCUOLA_ROW_SECONDA : ''}`}>
+            <tr key={v.id} className={`border-b border-bordo ${c.bodyHoverClass} ${v.scuola_tipo === 'seconda' ? SCUOLA_ROW_SECONDA : ''}`}>
               <td className="px-2.5 py-1.5">{fmtD(v.data)}</td>
               <td className="px-2.5 py-1.5 whitespace-nowrap">{v.inizio}–{v.fine}</td>
               <td className="px-2.5 py-1.5">
@@ -352,7 +356,7 @@ export default function SezioneRegistro({ sezione, dati, onAdd, onEdit, onDelete
       ) : null}
 
       {/* Footer sezione */}
-      <div className="px-4 py-2 border-t border-bordo bg-[#E8EEF6] flex items-center justify-between gap-2.5 flex-wrap">
+      <div className={`px-4 py-2 border-t border-bordo ${c.bodyClass} flex items-center justify-between gap-2.5 flex-wrap`}>
         <div>
           {dati.length > 0 && (
             <div className="text-xs text-grigio">
