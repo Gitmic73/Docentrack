@@ -4,9 +4,9 @@ import ModalShell from './ModalShell';
 import { base44 } from '@/api/base44Client';
 
 const LIVELLI = [
-  { k: 'infanzia', l: "Scuola dell'Infanzia" },
-  { k: 'primaria', l: 'Scuola Primaria' },
-  { k: 'secondaria1', l: 'Secondaria di I grado' },
+  { k: 'infanzia', l: 'Infanzia', t: "Scuola dell'Infanzia" },
+  { k: 'primaria', l: 'Primaria', t: 'Scuola Primaria' },
+  { k: 'secondaria1', l: 'Sec. I grado', t: 'Secondaria di I grado' },
 ];
 
 export default function PannelloDatiPersonali({ open, email, nomeDocente, telefono, docenteDi, livelli, onClose, onSave, saving, onLogout, onDeleteAccount, onExportCSV, onResetSettings }) {
@@ -33,7 +33,9 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
   }, [open, nomeDocente, telefono, docenteDi, livelli]);
 
   function toggleLivello(k) {
-    setLiv((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]));
+    const next = liv.includes(k) ? liv.filter((x) => x !== k) : [...liv, k];
+    setLiv(next);
+    if (k === 'secondaria1' && !next.includes('secondaria1')) setDocDi('');
   }
 
   async function handlePassword() {
@@ -112,18 +114,8 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
               </div>
             </div>
             <div>
-              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Docente di</label>
-              <input
-                type="text"
-                value={docDi}
-                onChange={(e) => setDocDi(e.target.value)}
-                placeholder="es. Matematica e Scienze"
-                className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1.5">Livello di servizio</label>
-              <div className="space-y-1.5">
+              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1.5">Ordine di scuola</label>
+              <div className="flex flex-wrap gap-1.5">
                 {LIVELLI.map((l) => {
                   const checked = liv.includes(l.k);
                   return (
@@ -131,17 +123,30 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
                       key={l.k}
                       type="button"
                       onClick={() => toggleLivello(l.k)}
-                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded border text-left transition-colors ${checked ? 'border-blu bg-blu-light' : 'border-bordo bg-white hover:bg-[#E8EEF6]'}`}
+                      title={l.t}
+                      className={`flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-2 py-2 rounded border text-[12px] transition-colors ${checked ? 'border-blu bg-blu-light text-blu font-semibold' : 'border-bordo bg-white text-foreground hover:bg-[#E8EEF6]'}`}
                     >
-                      <span className={`w-[18px] h-[18px] rounded-[4px] border flex items-center justify-center shrink-0 ${checked ? 'bg-blu border-blu text-white' : 'border-bordo bg-white'}`}>
-                        {checked && <Check size={13} />}
+                      <span className={`w-[15px] h-[15px] rounded-[4px] border flex items-center justify-center shrink-0 ${checked ? 'bg-blu border-blu text-white' : 'border-bordo bg-white'}`}>
+                        {checked && <Check size={11} />}
                       </span>
-                      <span className={`text-[13px] ${checked ? 'text-blu font-semibold' : 'text-foreground'}`}>{l.l}</span>
+                      {l.l}
                     </button>
                   );
                 })}
               </div>
             </div>
+            {liv.includes('secondaria1') && (
+              <div>
+                <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Docente di</label>
+                <input
+                  type="text"
+                  value={docDi}
+                  onChange={(e) => setDocDi(e.target.value)}
+                  placeholder="es. Matematica e Scienze"
+                  className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+                />
+              </div>
+            )}
             <div className="pt-2 border-t border-bordo">
               <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1.5">Password di accesso</label>
               {pwdSent ? (
@@ -195,7 +200,7 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
           <p className="text-sm text-foreground mb-2">Verranno riportate ai valori predefiniti:</p>
           <ul className="text-xs text-grigio list-disc pl-5 mb-4 space-y-1">
             <li>Tema grafico: chiaro</li>
-            <li>Livello di servizio: nessuno selezionato</li>
+            <li>Ordine di scuola: nessuno selezionato</li>
           </ul>
           <div className="rounded-lg border border-bordo bg-[#E8EEF6] p-3 mb-4 text-xs text-foreground">
             I tuoi dati personali, la scuola e le attività registrate non vengono modificati.
