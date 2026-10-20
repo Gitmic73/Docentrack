@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { suggerisciAnno, annoScolasticoDaData } from '@/components/registro/registroConstants';
 import { schoolYearFromDate, canCreateYear as canCreateYearFn } from '@/lib/plans';
+import { setStoredTheme } from '@/lib/theme';
 
 export function useRegistro() {
   const [user, setUser] = useState(null);
@@ -26,6 +27,7 @@ export function useRegistro() {
   const email = user?.email || '';
   const telefono = user?.telefono || '';
   const docenteDi = user?.docente_di || '';
+  const livelli = Array.isArray(user?.livelli) ? user.livelli : [];
 
   const loadAnni = useCallback(async () => {
     const list = await base44.entities.AnnoScolastico.list('nome');
@@ -344,16 +346,27 @@ export function useRegistro() {
   const saveDatiPersonali = useCallback(async (data) => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ nome_docente: data.nome, telefono: data.telefono, docente_di: data.docente_di });
+      await base44.auth.updateMe({ nome_docente: data.nome, telefono: data.telefono, docente_di: data.docente_di, livelli: data.livelli || [] });
+      const u = await base44.auth.me();
+      setUser(u);
+    } finally { setSaving(false); }
+  }, []);
+
+  // Ripristina le impostazioni predefinite: tema chiaro e nessun livello selezionato
+  const resetImpostazioni = useCallback(async () => {
+    setSaving(true);
+    try {
+      setStoredTheme('light');
+      await base44.auth.updateMe({ livelli: [] });
       const u = await base44.auth.me();
       setUser(u);
     } finally { setSaving(false); }
   }, []);
 
   return {
-    user, profilo, nomeDocente, email, telefono, docenteDi,
+    user, profilo, nomeDocente, email, telefono, docenteDi, livelli,
     piano, annoGratuito, anniLicenza, adsRemoved,
-    canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds, saveDatiPersonali,
+    canCreateYear, acquistaAnno, acquistaPermanente, acquistaRimozioneAds, saveDatiPersonali, resetImpostazioni,
     anni, annoCorrente, setAnnoCorrente,
     attivitaA, attivitaB, scuola, scuolaSeconda,
     loading, saving,

@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, KeyRound, Trash2, AlertTriangle, LogOut, FileDown, User as UserIcon } from 'lucide-react';
+import { Mail, Phone, KeyRound, Trash2, AlertTriangle, LogOut, FileDown, User as UserIcon, Check, RotateCcw } from 'lucide-react';
 import ModalShell from './ModalShell';
 import { base44 } from '@/api/base44Client';
 
-export default function PannelloDatiPersonali({ open, email, nomeDocente, telefono, docenteDi, onClose, onSave, saving, onLogout, onDeleteAccount, onExportCSV }) {
+const LIVELLI = [
+  { k: 'infanzia', l: "Scuola dell'Infanzia" },
+  { k: 'primaria', l: 'Scuola Primaria' },
+  { k: 'secondaria1', l: 'Secondaria di I grado' },
+];
+
+export default function PannelloDatiPersonali({ open, email, nomeDocente, telefono, docenteDi, livelli, onClose, onSave, saving, onLogout, onDeleteAccount, onExportCSV, onResetSettings }) {
   const [nome, setNome] = useState('');
   const [tel, setTel] = useState('');
   const [docDi, setDocDi] = useState('');
+  const [liv, setLiv] = useState([]);
   const [pwdSent, setPwdSent] = useState(false);
   const [pwdLoading, setPwdLoading] = useState(false);
   const [step, setStep] = useState('dati');
@@ -17,12 +24,17 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
       setNome(nomeDocente || '');
       setTel(telefono || '');
       setDocDi(docenteDi || '');
+      setLiv(Array.isArray(livelli) ? livelli : []);
       setPwdSent(false);
       setPwdLoading(false);
       setStep('dati');
       setErr('');
     }
-  }, [open, nomeDocente, telefono, docenteDi]);
+  }, [open, nomeDocente, telefono, docenteDi, livelli]);
+
+  function toggleLivello(k) {
+    setLiv((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]));
+  }
 
   async function handlePassword() {
     if (!email) return;
@@ -34,7 +46,16 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
 
   function handleSave() {
     if (!nome.trim()) return;
-    onSave({ nome: nome.trim(), telefono: tel.trim(), docente_di: docDi.trim() });
+    onSave({ nome: nome.trim(), telefono: tel.trim(), docente_di: docDi.trim(), livelli: liv });
+  }
+
+  async function handleReset() {
+    setErr('');
+    try {
+      await onResetSettings();
+    } catch (e) {
+      setErr(e.message || 'Errore durante il ripristino');
+    }
   }
 
   async function handleDelete() {
@@ -100,6 +121,27 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
                 className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
               />
             </div>
+            <div>
+              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1.5">Livello di servizio</label>
+              <div className="space-y-1.5">
+                {LIVELLI.map((l) => {
+                  const checked = liv.includes(l.k);
+                  return (
+                    <button
+                      key={l.k}
+                      type="button"
+                      onClick={() => toggleLivello(l.k)}
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded border text-left transition-colors ${checked ? 'border-blu bg-blu-light' : 'border-bordo bg-white hover:bg-[#E8EEF6]'}`}
+                    >
+                      <span className={`w-[18px] h-[18px] rounded-[4px] border flex items-center justify-center shrink-0 ${checked ? 'bg-blu border-blu text-white' : 'border-bordo bg-white'}`}>
+                        {checked && <Check size={13} />}
+                      </span>
+                      <span className={`text-[13px] ${checked ? 'text-blu font-semibold' : 'text-foreground'}`}>{l.l}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <div className="pt-2 border-t border-bordo">
               <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1.5">Password di accesso</label>
               {pwdSent ? (
@@ -124,6 +166,12 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
 
           <div className="mt-5 pt-4 border-t border-bordo space-y-2 select-none">
             <button
+              onClick={() => { setErr(''); setStep('reset'); }}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
+            >
+              <RotateCcw size={16} className="text-grigio" /> Ripristina impostazioni
+            </button>
+            <button
               onClick={onLogout}
               className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
             >
@@ -134,6 +182,39 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
               className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-rosso text-sm text-rosso hover:bg-rosso-light transition-colors"
             >
               <Trash2 size={16} /> Elimina account
+            </button>
+          </div>
+        </>
+      )}
+
+      {step === 'reset' && (
+        <>
+          <h3 className="font-display text-[17px] text-blu mb-3 border-b border-bordo pb-2.5 flex items-center gap-2">
+            <RotateCcw size={18} /> Ripristina impostazioni
+          </h3>
+          <p className="text-sm text-foreground mb-2">Verranno riportate ai valori predefiniti:</p>
+          <ul className="text-xs text-grigio list-disc pl-5 mb-4 space-y-1">
+            <li>Tema grafico: chiaro</li>
+            <li>Livello di servizio: nessuno selezionato</li>
+          </ul>
+          <div className="rounded-lg border border-bordo bg-[#E8EEF6] p-3 mb-4 text-xs text-foreground">
+            I tuoi dati personali, la scuola e le attività registrate non vengono modificati.
+          </div>
+          {err && <div className="mb-3 text-[11px] text-rosso bg-rosso-light rounded px-2 py-1.5">{err}</div>}
+          <div className="flex justify-end gap-2 select-none">
+            <button
+              onClick={() => setStep('dati')}
+              disabled={saving}
+              className="text-grigio border border-bordo rounded px-4 py-1.5 text-[13px] hover:bg-[#E8EEF6] disabled:opacity-50"
+            >
+              Annulla
+            </button>
+            <button
+              onClick={handleReset}
+              disabled={saving}
+              className="bg-blu text-white rounded px-4 py-1.5 text-[13px] font-semibold hover:bg-[#4A6A9E] disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <RotateCcw size={14} /> {saving ? 'Ripristino…' : 'Ripristina'}
             </button>
           </div>
         </>

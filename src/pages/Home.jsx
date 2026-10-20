@@ -281,8 +281,10 @@ export default function Home() {
         nomeDocente={r.nomeDocente}
         telefono={r.telefono}
         docenteDi={r.docenteDi}
+        livelli={r.livelli}
         onClose={closeModal}
         onSave={(data) => { r.saveDatiPersonali(data); closeModal(); }}
+        onResetSettings={r.resetImpostazioni}
         onLogout={r.logout}
         onDeleteAccount={r.deleteAccount}
         onExportCSV={handleExportAllCSV}
