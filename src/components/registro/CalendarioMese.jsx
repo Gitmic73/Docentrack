@@ -1,6 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { m2h, fmtD } from './registroConstants';
+import { m2h, fmtD, coloreTipologia } from './registroConstants';
+
+// Tinta chiara (alpha) a partire dal colore esadecimale della tipologia
+function tinta(hex, a = 0.16) {
+  const h = (hex || '#6B7280').replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 
 const MESI = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
 const GIORNI = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
@@ -82,12 +91,21 @@ export default function CalendarioMese({ attivita }) {
           const day = parseInt(key.split('-')[2], 10);
           const isSel = selGiorno === key;
           const weekend = i % 7 >= 5;
+          // Tipologie del giorno (minuti per tipo) — stesso colore usato nelle statistiche
+          const perTipo = {};
+          list.forEach((v) => {
+            const t = v.tipo || 'Altro';
+            perTipo[t] = (perTipo[t] || 0) + (v.durata_min || 0);
+          });
+          const tipiGiorno = Object.entries(perTipo).sort((a, b) => b[1] - a[1]);
+          const dominante = tipiGiorno[0] ? tipiGiorno[0][0] : null;
           return (
             <button
               key={i}
               onClick={() => setSelGiorno(isSel ? null : key)}
+              style={list.length > 0 ? { backgroundColor: tinta(coloreTipologia(dominante)) } : undefined}
               className={`min-h-[60px] border-b border-r border-bordo p-1 text-left align-top flex flex-col gap-0.5 transition-colors ${
-                isSel ? 'bg-blu-light ring-1 ring-blu' : list.length > 0 ? 'bg-white hover:bg-blu-light/50' : `${weekend ? 'bg-[#E8EEF6]' : 'bg-white'} hover:bg-blu-light/30`
+                isSel ? 'ring-1 ring-inset ring-blu' : list.length > 0 ? 'hover:brightness-95' : `${weekend ? 'bg-[#E8EEF6]' : 'bg-white'} hover:bg-blu-light/30`
               }`}
             >
               <span className={`text-[11px] font-semibold ${list.length > 0 ? 'text-blu' : 'text-grigio'}`}>{day}</span>
@@ -96,6 +114,13 @@ export default function CalendarioMese({ attivita }) {
                   <span className="text-[10px] font-semibold text-foreground leading-tight">{m2h(min)}</span>
                   <span className="text-[9px] text-grigio leading-tight">{list.length} att.</span>
                 </>
+              )}
+              {tipiGiorno.length > 0 && (
+                <span className="flex gap-0.5 flex-wrap mt-auto">
+                  {tipiGiorno.slice(0, 4).map(([t]) => (
+                    <span key={t} className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: coloreTipologia(t) }} title={t} />
+                  ))}
+                </span>
               )}
             </button>
           );
@@ -110,6 +135,7 @@ export default function CalendarioMese({ attivita }) {
             <div className="space-y-1">
               {selList.map((v) => (
                 <div key={v.id} className="flex items-center gap-2 text-xs bg-white border border-bordo rounded px-2 py-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: coloreTipologia(v.tipo) }} title={v.tipo} />
                   <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold whitespace-nowrap ${v.sezione === 'a' ? 'bg-blu-light text-blu' : 'bg-oro-light text-[#3A5A85]'}`}>
                     {v.sezione === 'a' ? 'lett. a' : 'lett. b'}
                   </span>
