@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { ensureEntitlementRecord, isValidAnno } from '../../shared/entitlement.ts';
+import { internalErrorBody } from '../../shared/http.ts';
 
 const MAX_MIN = 2400;       // 40 ore
 const APPROACH_MIN = 1440;  // 60% = 24 ore
@@ -104,6 +105,6 @@ export default async function(req) {
 
     return Response.json({ sent: sent });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json(internalErrorBody(error), { status: 500 });
   }
 }

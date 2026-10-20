@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { getEntitlementRecord } from '../../shared/entitlement.ts';
+import { internalErrorBody } from '../../shared/http.ts';
 
 // Calcola la data di scadenza del primo anno gratuito.
 // L'a.s. va dal 01/09 al 31/08. Registrazioni di agosto non scadono a fine
@@ -94,6 +95,6 @@ export default async function(req) {
 
     return Response.json({ activeUsers, deletedUsers });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json(internalErrorBody(error), { status: 500 });
   }
 }

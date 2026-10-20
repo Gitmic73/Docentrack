@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { ensureEntitlementRecord, getEntitlementRecord, isValidAnno } from '../../shared/entitlement.ts';
+import { internalErrorBody } from '../../shared/http.ts';
 
 // This is the ONLY server-side path that writes paid entitlements
 // (piano / anni_licenza / ads_removed) — to the protected Entitlement entity,
@@ -60,6 +61,6 @@ export default async function(req) {
     await base44.asServiceRole.entities.Entitlement.update(ent.id, { ads_removed: true });
     return Response.json({ success: true, action });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json(internalErrorBody(error), { status: 500 });
   }
 }

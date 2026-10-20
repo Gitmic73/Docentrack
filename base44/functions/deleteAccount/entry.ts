@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { getEntitlementRecord } from '../../shared/entitlement.ts';
+import { internalErrorBody } from '../../shared/http.ts';
 
 export default async function (req) {
   try {
@@ -34,11 +35,12 @@ export default async function (req) {
     try {
       await base44.asServiceRole.entities.User.delete(user.id);
     } catch (userErr) {
-      return Response.json({ success: true, userDeleted: false, note: userErr.message });
+      console.error('[deleteAccount] eliminazione utente non riuscita:', userErr instanceof Error ? userErr.message : String(userErr));
+      return Response.json({ success: true, userDeleted: false, note: 'Profilo utente non eliminato' });
     }
 
     return Response.json({ success: true, userDeleted: true });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json(internalErrorBody(error), { status: 500 });
   }
 }

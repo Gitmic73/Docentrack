@@ -101,7 +101,13 @@ export const AuthProvider = ({ children }) => {
       try {
         const entRes = await base44.functions.invoke('getEntitlement', {});
         disabled = !!entRes.data?.disabled;
-      } catch (e) { /* backend functions also enforce; ignore here */ }
+      } catch (e) {
+        // Un account sospeso riceve 403 (con disabled: true) da getEntitlement.
+        const body = e?.response?.data ?? e?.data;
+        const status = e?.status ?? e?.response?.status;
+        if (body?.disabled === true || status === 403) disabled = true;
+        // Altri errori (rete, token scaduto) non implicano una sospensione.
+      }
       if (disabled) {
         base44.auth.logout();
         setAuthError({

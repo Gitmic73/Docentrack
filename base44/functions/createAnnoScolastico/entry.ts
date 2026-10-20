@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.49';
 import { ensureEntitlementRecord, canCreateYear, isValidAnno } from '../../shared/entitlement.ts';
+import { internalErrorBody } from '../../shared/http.ts';
 
 // Server-side paywall gate for school-year creation. Verifies the caller's
 // entitlement via the protected Entitlement entity (which the user cannot
@@ -18,6 +19,10 @@ export default async function(req) {
     }
 
     const ent = await ensureEntitlementRecord(base44, user.id);
+    // Un account sospeso dall'amministratore non può usare l'app lato server.
+    if (ent.disabled) {
+      return Response.json({ error: 'Account disabilitato', disabled: true }, { status: 403 });
+    }
     if (!canCreateYear(nome, ent)) {
       return Response.json({ error: 'Anno scolastico non inclus nel tuo piano. Acquista la licenza per sbloccarlo.' }, { status: 403 });
     }
@@ -27,6 +32,6 @@ export default async function(req) {
     const created = await base44.asServiceRole.entities.AnnoScolastico.create({ nome });
     return Response.json({ success: true, id: created.id, nome });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json(internalErrorBody(error), { status: 500 });
   }
 }
