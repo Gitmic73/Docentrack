@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { ArrowLeft, Users, UserX, Activity, ChevronUp, ChevronDown, ChevronsUpDown, Clock, Pause, CircleSlash, Ban, CircleCheck, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Users, UserX, Activity, ChevronUp, ChevronDown, ChevronsUpDown, Clock, Pause, CircleSlash, Ban, CircleCheck, Trash2, AlertTriangle, GraduationCap } from 'lucide-react';
 
 const STATO_LABEL = {
   attivo: 'Attivo',
@@ -13,6 +13,14 @@ const STATO_BADGE = {
   inattivo: 'bg-[#E8EEF6] text-oro',
   mai_usata: 'bg-[#E8EEF6] text-grigio',
 };
+
+const ORDINI = [
+  { k: 'infanzia', l: 'Infanzia' },
+  { k: 'primaria', l: 'Primaria' },
+  { k: 'secondaria1', l: 'Sec. I grado' },
+];
+
+const labelOrdine = (k) => (ORDINI.find((o) => o.k === k) || {}).l || k;
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -65,6 +73,16 @@ export default function Admin() {
   const conteggiStato = useMemo(() => {
     const c = { attivo: 0, inattivo: 0, mai_usata: 0 };
     activeUsers.forEach((u) => { if (c[u.stato] != null) c[u.stato]++; });
+    return c;
+  }, [activeUsers]);
+
+  const conteggiOrdine = useMemo(() => {
+    const c = { infanzia: 0, primaria: 0, secondaria1: 0, nessuno: 0 };
+    activeUsers.forEach((u) => {
+      const liv = Array.isArray(u.livelli) ? u.livelli : [];
+      if (liv.length === 0) c.nessuno++;
+      ORDINI.forEach((o) => { if (liv.includes(o.k)) c[o.k]++; });
+    });
     return c;
   }, [activeUsers]);
 
@@ -213,6 +231,33 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Riepilogo ordine di scuola */}
+        <div className="bg-white border border-bordo rounded-lg p-4 mb-6">
+          <h2 className="text-[11px] uppercase tracking-wide text-grigio font-semibold mb-3">Riepilogo ordine di scuola</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {ORDINI.map((o) => (
+              <div key={o.k} className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-blu-light flex items-center justify-center shrink-0">
+                  <GraduationCap size={16} className="text-blu" />
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-foreground leading-none">{conteggiOrdine[o.k]}</div>
+                  <div className="text-[10px] text-grigio uppercase tracking-wide mt-0.5">{o.l}</div>
+                </div>
+              </div>
+            ))}
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-[#E8EEF6] flex items-center justify-center shrink-0">
+                <CircleSlash size={16} className="text-grigio" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-foreground leading-none">{conteggiOrdine.nessuno}</div>
+                <div className="text-[10px] text-grigio uppercase tracking-wide mt-0.5">Non indicato</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white border border-bordo rounded-lg overflow-hidden mb-6">
           <div className="bg-blu px-4 py-2.5">
             <h2 className="font-display text-sm font-semibold text-white">Utenti Registrati</h2>
@@ -223,6 +268,7 @@ export default function Admin() {
                 <tr className="border-b border-bordo bg-[#E8EEF6]">
                   <Th col="email" label="Email" />
                   <Th col="full_name" label="Nome" />
+                  <th className="px-3 py-2 text-[10px] uppercase tracking-wide text-grigio font-semibold text-left">Ordine</th>
                   <Th col="created_date" label="Registrato il" />
                   <Th col="scadenza" label="Scadenza" />
                   <Th col="attivita_count" label="N. attività" align="center" />
@@ -239,6 +285,17 @@ export default function Admin() {
                     <tr key={u.id} className="border-b border-bordo hover:bg-[#E8EEF6]">
                       <td className="px-3 py-2 select-text">{u.email}</td>
                       <td className="px-3 py-2 select-text">{u.full_name || '—'}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex flex-wrap gap-1">
+                          {(!Array.isArray(u.livelli) || u.livelli.length === 0) ? (
+                            <span className="text-grigio">—</span>
+                          ) : (
+                            u.livelli.map((k) => (
+                              <span key={k} className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blu-light text-blu">{labelOrdine(k)}</span>
+                            ))
+                          )}
+                        </div>
+                      </td>
                       <td className="px-3 py-2 whitespace-nowrap">{u.created_date ? new Date(u.created_date).toLocaleDateString('it-IT') : '—'}</td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         {scad ? (
@@ -282,7 +339,7 @@ export default function Admin() {
                   );
                 })}
                 {activeUsers.length === 0 && (
-                  <tr><td colSpan={8} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
+                  <tr><td colSpan={9} className="px-3 py-4 text-center text-grigio italic">Nessun utente registrato</td></tr>
                 )}
               </tbody>
             </table>
@@ -303,6 +360,16 @@ export default function Admin() {
                       <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rosso-light text-rosso shrink-0">Disabilitato</span>
                     ) : (
                       <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${STATO_BADGE[u.stato]} shrink-0`}>{STATO_LABEL[u.stato]}</span>
+                    )}
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-1">
+                    <span className="text-[10px] uppercase tracking-wide text-grigio">Ordine:</span>
+                    {(!Array.isArray(u.livelli) || u.livelli.length === 0) ? (
+                      <span className="text-xs text-grigio">—</span>
+                    ) : (
+                      u.livelli.map((k) => (
+                        <span key={k} className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blu-light text-blu">{labelOrdine(k)}</span>
+                      ))
                     )}
                   </div>
                   <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-grigio">

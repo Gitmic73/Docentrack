@@ -86,6 +86,7 @@ export default async function(req) {
         scadenza: computeScadenza(u.created_date),
         stato,
         disabled: !!disabledByUser[u.id],
+        livelli: Array.isArray(u.livelli) ? u.livelli : (Array.isArray(u.data?.livelli) ? u.data.livelli : []),
       };
     });
 

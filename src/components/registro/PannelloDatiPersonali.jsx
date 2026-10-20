@@ -90,27 +90,29 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
                 <Mail size={14} className="shrink-0" /> <span className="truncate">{email || '—'}</span>
               </div>
             </div>
-            <div>
-              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Nome e cognome</label>
-              <input
-                type="text"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Nome e Cognome"
-                className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Telefono</label>
-              <div className="relative">
-                <Phone size={13} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Nome e cognome</label>
                 <input
-                  type="tel"
-                  value={tel}
-                  onChange={(e) => setTel(e.target.value)}
-                  placeholder="0000/000000"
-                  className="w-full text-[13px] pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Nome e Cognome"
+                  className="w-full text-[13px] px-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
                 />
+              </div>
+              <div>
+                <label className="text-[10px] text-grigio uppercase tracking-[0.4px] block mb-1">Telefono</label>
+                <div className="relative">
+                  <Phone size={13} className="absolute left-2 top-1/2 -translate-y-1/2 text-grigio pointer-events-none" />
+                  <input
+                    type="tel"
+                    value={tel}
+                    onChange={(e) => setTel(e.target.value)}
+                    placeholder="0000/000000"
+                    className="w-full text-[13px] pl-7 pr-2 py-1.5 border border-bordo rounded bg-white outline-none focus:border-blu"
+                  />
+                </div>
               </div>
             </div>
             <div>
