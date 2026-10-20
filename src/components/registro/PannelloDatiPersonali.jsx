@@ -172,21 +172,23 @@ export default function PannelloDatiPersonali({ open, email, nomeDocente, telefo
           </div>
 
           <div className="mt-5 pt-4 border-t border-bordo space-y-2 select-none">
-            <button
-              onClick={() => { setErr(''); setStep('reset'); }}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
-            >
-              <RotateCcw size={16} className="text-grigio" /> Ripristina impostazioni
-            </button>
-            <button
-              onClick={onLogout}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
-            >
-              <LogOut size={16} className="text-grigio" /> Esci dall&apos;account
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => { setErr(''); setStep('reset'); }}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
+              >
+                <RotateCcw size={16} className="text-grigio shrink-0" /> Ripristina
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-bordo text-sm text-foreground hover:bg-[#E8EEF6] transition-colors"
+              >
+                <LogOut size={16} className="text-grigio shrink-0" /> Esci
+              </button>
+            </div>
             <button
               onClick={() => setStep('confirm')}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-rosso text-sm text-rosso hover:bg-rosso-light transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-rosso text-white text-sm font-semibold hover:bg-[#A84A4A] transition-colors"
             >
               <Trash2 size={16} /> Elimina account
             </button>
